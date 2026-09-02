@@ -1,0 +1,5 @@
+import type { Metadata } from "next";
+import { SiteFooter } from "../components/SiteFooter";
+import { SiteHeader } from "../components/SiteHeader";
+export const metadata: Metadata = { title: "Impressum", description: "Impressum von SofortTools.", alternates: { canonical: "/impressum" } };
+export default function Impressum() { return <><SiteHeader /><main className="legal-page shell"><p className="eyebrow"><span /> Rechtliches</p><h1>Impressum</h1><div className="notice"><strong>Vor öffentlichem Start ergänzen</strong><p>Hier müssen Name bzw. Unternehmen, ladungsfähige Anschrift, E-Mail-Adresse und gegebenenfalls weitere Pflichtangaben des Betreibers eingetragen werden.</p></div><h2>Haftung für Inhalte</h2><p>Die Ergebnisse der bereitgestellten Werkzeuge dienen der allgemeinen Information. Trotz sorgfältiger Entwicklung kann keine Gewähr für die Richtigkeit und Vollständigkeit übernommen werden.</p><h2>Urheberrecht</h2><p>Die durch den Betreiber erstellten Inhalte und Funktionen dieser Website unterliegen dem deutschen Urheberrecht.</p></main><SiteFooter /></>; }
