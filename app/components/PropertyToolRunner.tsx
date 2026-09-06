@@ -1,18 +1,7 @@
 "use client";
 
 import { useState } from "react";
-
-const number = (value: string) => Number(String(value).replace(",", ".")) || 0;
-const fmt = (value: number, digits = 2) => new Intl.NumberFormat("de-DE", { maximumFractionDigits: digits }).format(value);
-const money = (value: number) => new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(value || 0);
-
-function Field({ label, value, onChange, suffix, min = 0, step = "0.01" }: { label: string; value: string; onChange: (value: string) => void; suffix?: string; min?: number; step?: string }) {
-  return <label className="field"><span>{label}</span><div><input type="number" value={value} min={min} step={step} onChange={(e) => onChange(e.target.value)} />{suffix && <b>{suffix}</b>}</div></label>;
-}
-
-function Result({ label, value, detail }: { label: string; value: string; detail?: string }) {
-  return <div className="result-box"><span>{label}</span><strong>{value}</strong>{detail && <small>{detail}</small>}</div>;
-}
+import { NumberField as Field, Result, fmt, money, number } from "./ToolUI";
 
 function RentalYieldTool() {
   const [purchasePrice, setPurchasePrice] = useState("250000");
