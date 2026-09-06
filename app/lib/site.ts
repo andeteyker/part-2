@@ -1,4 +1,4 @@
-const fallbackSiteUrl = "https://soforttools.de";
+const fallbackSiteUrl = "https://sofort-tools.de";
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || fallbackSiteUrl).replace(/\/$/, "");
 export const SITE_NAME = "Sofort-Tools";
