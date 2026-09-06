@@ -8,7 +8,7 @@ import { ToolRunner } from "../../components/ToolRunner";
 import { PropertyToolRunner } from "../../components/PropertyToolRunner";
 import { ShiftToolRunner } from "../../components/ShiftToolRunner";
 import { HandwerkerToolRunner } from "../../components/HandwerkerToolRunner";
-import { getTool, handwerkerTools, propertyTools, shiftTools, tools } from "../../data/tool-registry-all";
+import { getTool, tools } from "../../data/tool-registry";
 
 export function generateStaticParams() { return tools.map((tool) => ({ slug: tool.slug })); }
 
@@ -20,10 +20,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function ToolPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params; const tool = getTool(slug); if (!tool) notFound();
   const related = tools.filter((item) => item.category === tool.category && item.slug !== tool.slug).slice(0, 3);
-  const isPropertyTool = propertyTools.some((item) => item.slug === tool.slug);
-  const isShiftTool = shiftTools.some((item) => item.slug === tool.slug);
-  const isHandwerkerTool = handwerkerTools.some((item) => item.slug === tool.slug);
-  const runner = isPropertyTool ? <PropertyToolRunner slug={tool.slug} /> : isShiftTool ? <ShiftToolRunner slug={tool.slug} /> : isHandwerkerTool ? <HandwerkerToolRunner slug={tool.slug} /> : <ToolRunner slug={tool.slug} />;
+  const runner = {
+    core: <ToolRunner slug={tool.slug} />,
+    property: <PropertyToolRunner slug={tool.slug} />,
+    shift: <ShiftToolRunner slug={tool.slug} />,
+    handwerker: <HandwerkerToolRunner slug={tool.slug} />,
+  }[tool.runner];
   const schema = { "@context": "https://schema.org", "@graph": [
     { "@type": "WebApplication", name: tool.title, url: `https://soforttools.mielerik.chatgpt.site/tools/${tool.slug}`, applicationCategory: "UtilitiesApplication", operatingSystem: "Alle", offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" }, description: tool.description },
     { "@type": "FAQPage", mainEntity: tool.faq.map((item) => ({ "@type": "Question", name: item.question, acceptedAnswer: { "@type": "Answer", text: item.answer } })) },

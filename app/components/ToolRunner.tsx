@@ -3,18 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import QRCode from "qrcode";
-
-const number = (value: string) => Number(String(value).replace(",", ".")) || 0;
-const fmt = (value: number, digits = 2) => new Intl.NumberFormat("de-DE", { maximumFractionDigits: digits }).format(value);
-const money = (value: number) => new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(value || 0);
-
-function Field({ label, value, onChange, type = "number", suffix, min, step }: { label: string; value: string; onChange: (value: string) => void; type?: string; suffix?: string; min?: number; step?: string }) {
-  return <label className="field"><span>{label}</span><div><input type={type} value={value} min={min} step={step} onChange={(e) => onChange(e.target.value)} />{suffix && <b>{suffix}</b>}</div></label>;
-}
-
-function Result({ label, value, detail }: { label: string; value: string; detail?: string }) {
-  return <div className="result-box"><span>{label}</span><strong>{value}</strong>{detail && <small>{detail}</small>}</div>;
-}
+import { Field, Result, SelectField, fmt, money, number } from "./ToolUI";
 
 function Percentage() {
   const [base, setBase] = useState("250"); const [rate, setRate] = useState("19");
@@ -113,7 +102,7 @@ function DurationTool() {
 
 function VatTool() {
   const [amount, setAmount] = useState("100"); const [rate, setRate] = useState("19"); const [direction, setDirection] = useState("net"); const a = number(amount), r = number(rate) / 100; const net = direction === "net" ? a : a / (1 + r); const gross = direction === "net" ? a * (1 + r) : a;
-  return <><div className="segmented"><button className={direction === "net" ? "active" : ""} onClick={() => setDirection("net")}>Netto → Brutto</button><button className={direction === "gross" ? "active" : ""} onClick={() => setDirection("gross")}>Brutto → Netto</button></div><div className="field-grid"><Field label={direction === "net" ? "Nettobetrag" : "Bruttobetrag"} value={amount} onChange={setAmount} suffix="€" /><label className="field"><span>Mehrwertsteuersatz</span><div><select value={rate} onChange={(e) => setRate(e.target.value)}><option value="19">19 %</option><option value="7">7 %</option><option value="0">0 %</option></select></div></label></div><div className="stats-grid three"><div><strong>{money(net)}</strong><span>Netto</span></div><div><strong>{money(gross - net)}</strong><span>MwSt.</span></div><div><strong>{money(gross)}</strong><span>Brutto</span></div></div></>;
+  return <><div className="segmented"><button className={direction === "net" ? "active" : ""} onClick={() => setDirection("net")}>Netto → Brutto</button><button className={direction === "gross" ? "active" : ""} onClick={() => setDirection("gross")}>Brutto → Netto</button></div><div className="field-grid"><Field label={direction === "net" ? "Nettobetrag" : "Bruttobetrag"} value={amount} onChange={setAmount} suffix="€" /><SelectField label="Mehrwertsteuersatz" value={rate} onChange={setRate} options={[{ value: "19", label: "19 %" }, { value: "7", label: "7 %" }, { value: "0", label: "0 %" }]} /></div><div className="stats-grid three"><div><strong>{money(net)}</strong><span>Netto</span></div><div><strong>{money(gross - net)}</strong><span>MwSt.</span></div><div><strong>{money(gross)}</strong><span>Brutto</span></div></div></>;
 }
 
 function HourlyTool() {

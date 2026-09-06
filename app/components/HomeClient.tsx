@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { categories, categoryDetails, tools, type ToolCategory } from "../data/tool-registry-all";
+import { categories, categoryDetails, tools, type ToolCategory } from "../data/tool-registry";
 
 export function HomeClient() {
   const [query, setQuery] = useState("");

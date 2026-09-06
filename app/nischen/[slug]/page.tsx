@@ -4,7 +4,7 @@ import Script from "next/script";
 import { notFound } from "next/navigation";
 import { SiteFooter } from "../../components/SiteFooter";
 import { SiteHeader } from "../../components/SiteHeader";
-import { categories, categoryDetails, getCategoryBySlug } from "../../data/tool-registry-all";
+import { categories, categoryDetails, getCategoryBySlug } from "../../data/tool-registry";
 
 export function generateStaticParams() {
   return categories.map((category) => ({ slug: categoryDetails[category].slug }));
