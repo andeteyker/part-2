@@ -82,7 +82,7 @@ function SearchFirst() {
             <input placeholder="z. B. Schichtlohn, Dachkosten, Passwort …" aria-label="Tool suchen" />
             <kbd>⌘ K</kbd>
           </label>
-          <div className={styles.quickLinks}><span>Häufig gesucht:</span><a href="/tools/schichtlohn-rechner">Schichtlohn</a><a href="/tools/dachkosten-rechner">Dachkosten</a><a href="/tools/mietrendite-rechner">Mietrendite</a></div>
+          <div className={styles.quickLinks}><span>Häufig gesucht:</span><Link href="/tools/schichtlohn-rechner">Schichtlohn</Link><Link href="/tools/dachkosten-rechner">Dachkosten</Link><Link href="/tools/mietrendite-rechner">Mietrendite</Link></div>
         </div>
         <aside className={styles.dailyCard}>
           <span>Tool des Tages</span>
