@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { categories, categoryDetails, tools, type ToolCategory } from "../data/tool-registry";
+import { categories, categoryDetails, tools, type ToolCategory } from "../data/tool-registry-all";
 
 export function HomeClient() {
   const [query, setQuery] = useState("");
@@ -16,7 +16,7 @@ export function HomeClient() {
     });
   }, [query, category]);
   const groups = categories.map((name) => ({ name, details: categoryDetails[name], items: visible.filter((tool) => tool.category === name) })).filter((group) => group.items.length);
-  const popular = ["schichtlohn-rechner", "mietrendite-rechner", "haus-leisten-rechner", "nachtzuschlag-rechner", "woerter-aus-buchstaben"].map((slug) => tools.find((tool) => tool.slug === slug)!).filter(Boolean);
+  const popular = ["dachkosten-rechner", "badrenovierung-rechner", "schichtlohn-rechner", "mietrendite-rechner", "haus-leisten-rechner"].map((slug) => tools.find((tool) => tool.slug === slug)!).filter(Boolean);
 
   return (
     <>
@@ -24,7 +24,7 @@ export function HomeClient() {
         <div className="hero-copy">
           <p className="eyebrow"><span /> Kostenlos · Ohne Anmeldung · Direkt im Browser</p>
           <h1>Ein Problem.<br /><em>Ein klares Tool.</em></h1>
-          <p className="hero-text">Spezialisierte Werkzeuge für konkrete Aufgaben – von Immobilien und Finanzierung bis Schichtlohn, Zuschlägen und Alltagsrechnern.</p>
+          <p className="hero-text">Spezialisierte Werkzeuge für konkrete Aufgaben – von Renovierung und Immobilien bis Schichtlohn, Zuschlägen und Alltagsrechnern.</p>
           <label className="tool-search">
             <span aria-hidden="true">⌕</span>
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Welches Tool brauchst du?" aria-label="Tools durchsuchen" />
