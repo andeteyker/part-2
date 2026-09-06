@@ -1,7 +1,7 @@
-import { categories as existingCategories, categoryDetails as existingCategoryDetails, tools as existingTools, propertyTools, shiftTools, type ToolCategory as ExistingToolCategory, type ToolDefinition } from "./tool-registry";
+import { categories as existingCategories, categoryDetails as existingCategoryDetails, tools as existingTools, propertyTools, shiftTools, type ToolCategory as ExistingToolCategory, type ToolDefinition as ExistingToolDefinition } from "./tool-registry";
 
 export type ToolCategory = ExistingToolCategory | "Handwerker & Renovierung";
-export type { ToolDefinition } from "./tool-registry";
+export type ToolDefinition = Omit<ExistingToolDefinition, "category"> & { category: ToolCategory };
 export { propertyTools, shiftTools };
 
 export const handwerkerTools: ToolDefinition[] = [
@@ -12,7 +12,7 @@ export const handwerkerTools: ToolDefinition[] = [
   { slug: "bodenverlegung-kosten-rechner", title: "Bodenverlegung-Kostenrechner", eyebrow: "Material, Verschnitt und Verlegung", description: "Berechne die Kosten für einen neuen Boden aus Fläche, Materialpreis, Verlegepreis, Verschnitt und zusätzlichen Untergrund- oder Nebenarbeiten.", short: "Bodenmaterial, Verschnitt und Verlegekosten zusammen kalkulieren.", category: "Handwerker & Renovierung", icon: "m²", keywords: ["Boden verlegen Kosten Rechner", "Bodenleger Kosten", "Laminat verlegen Kosten", "Vinyl verlegen Kosten"], faq: [{ question: "Warum wird Verschnitt berücksichtigt?", answer: "Zuschnitt und Raumgeometrie führen dazu, dass der Materialbedarf meist über der reinen Bodenfläche liegt. Der Prozentsatz kann frei eingestellt werden." }, { question: "Welche Zusatzarbeiten sollte ich einrechnen?", answer: "Zum Beispiel Altbelag entfernen, Untergrund ausgleichen, Trittschalldämmung, Sockelleisten, Übergangsprofile oder Türanpassungen." }] },
 ];
 
-export const tools: ToolDefinition[] = [...existingTools, ...handwerkerTools];
+export const tools: ToolDefinition[] = [...(existingTools as ToolDefinition[]), ...handwerkerTools];
 export const categories: ToolCategory[] = [...existingCategories, "Handwerker & Renovierung"];
 export const categoryDetails: Record<ToolCategory, { slug: string; kicker: string; description: string; icon: string }> = {
   ...(existingCategoryDetails as Record<ExistingToolCategory, { slug: string; kicker: string; description: string; icon: string }>),
