@@ -1,107 +1,298 @@
-# vinext-starter
+# SofortTools
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+SofortTools ist eine deutsche Plattform für kleine, spezialisierte Online-Rechner und Browser-Werkzeuge. Das Grundprinzip lautet:
 
-## Prerequisites
+> **Ein konkretes Problem → ein klares Tool → sofort ein Ergebnis.**
 
-- Node.js `>=22.13.0`
-- Linux with `flock`, `curl`, and GNU `timeout`
+Aktuell enthält die Website **35 Tools in 9 Kategorien** – darunter Immobilien, Schicht & Zuschläge, Handwerker & Renovierung, Geld & Beruf, Text, Bilder, Internet und Planung.
 
-## Sites Lifecycle
+## Inhaltsverzeichnis
 
-The Sites lifecycle CLI runs the locked dependency install before returning this checkout. Edit the source under `app/`, then checkpoint when a coherent milestone is ready to inspect or share. The remote Sites builder runs `npm run build` against the pushed commit. Do not repeat install or build as a normal pre-checkpoint step.
+- [Was ist SofortTools?](#was-ist-soforttools)
+- [Aktueller Stand](#aktueller-stand)
+- [Seitenübersicht](#seitenübersicht)
+- [Projektstruktur](#projektstruktur)
+- [Technik](#technik)
+- [Lokal starten](#lokal-starten)
+- [Wichtige Dateien](#wichtige-dateien)
+- [Wie entsteht ein neues Tool?](#wie-entsteht-ein-neues-tool)
+- [SEO und Indexierung](#seo-und-indexierung)
+- [Datenschutz und Rechtliches](#datenschutz-und-rechtliches)
+- [Weitere Dokumentation](#weitere-dokumentation)
 
-This starter does not use `wrangler.jsonc`.
+## Was ist SofortTools?
 
-`install:ci` is intentionally a single, non-retrying `npm ci`. It refuses a concurrent install for the same project, consumes a matching image-seeded npm cache with `--prefer-offline` while retaining registry fallback for a missing cache object, otherwise downloads and verifies the complete vinext tarball recorded in `package-lock.json`, limits npm to one socket, and terminates a stalled install. `build` applies a short timeout. These helpers target Linux and use GNU `timeout`; they are not native macOS scripts.
+Die Website bündelt viele kleine Werkzeuge unter einer gemeinsamen Marke und technischen Plattform. Statt für jeden Rechner eine eigene Website zu bauen, werden Navigation, Design, SEO, Kategorien, FAQ, strukturierte Daten und Seitengerüst zentral wiederverwendet.
 
-Scripts that need writable project-scoped home, npm, XDG, and temporary paths use `scripts/sites-env.sh`. The `dev` and `start` scripts honor the caller's runtime environment and keep Wrangler logs inside the checkout. The generated `.sites-runtime/` directory is disposable and ignored by Git.
+Dadurch funktioniert SofortTools als **Tool-Engine**: Ein neues Werkzeug benötigt hauptsächlich seine Metadaten und die eigentliche Berechnungs- oder Verarbeitungslogik.
 
-## Included Shape
+Aktuelle Beispiele:
 
-- edit site code under `app/`
-- `app/chatgpt-auth.ts` provides optional dispatch-owned ChatGPT sign-in helpers
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/index.ts` reads the D1 binding from the Cloudflare Worker environment
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
+- Mietrendite und Immobilien-Cashflow berechnen
+- Kaufnebenkosten und Kreditraten überschlagen
+- Schichtlohn sowie Nacht-, Sonntags- und Feiertagszuschläge kalkulieren
+- Dach-, Bad-, Fenster-, Maler- und Bodenkosten schätzen
+- Stundenlohn und Spritkosten berechnen
+- HEIC/WebP in JPG umwandeln
+- QR-Codes und Passwörter lokal erzeugen
+- Wordle-, Scrabble-, Text- und Zeitwerkzeuge nutzen
 
-## Workspace Auth Headers
+## Aktueller Stand
 
-OpenAI workspace sites can read the current user's email from
-`oai-authenticated-user-email`.
+| Bereich | Stand |
+| --- | --- |
+| Startseite | vorhanden |
+| Dynamische Tool-Seiten | vorhanden |
+| Dynamische Kategorie-/Nischenseiten | vorhanden |
+| Allgemeine Basis-Tools | 20 |
+| Immobilien-Tools | 5 |
+| Schicht-/Zuschlags-Tools | 5 |
+| Handwerker-/Renovierungs-Tools | 5 |
+| **Tools gesamt** | **35** |
+| **Kategorien gesamt** | **9** |
+| SEO-Metadaten | vorhanden |
+| FAQ-/WebApplication-/Breadcrumb-Schema | vorhanden |
+| Sitemap und robots.txt | vorhanden |
+| Impressum | Platzhalter vor öffentlichem Start ergänzen |
+| Datenschutz | vorhanden, bei Werbung/Tracking später erweitern |
+| Werbung / Affiliate / Leads | noch nicht produktiv eingebunden |
 
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
+## Seitenübersicht
 
-Treat the full name as optional and fall back to email when it is absent:
+### `/`
 
-```tsx
-import { headers } from "next/headers";
+**Startseite.** Zentrale Übersicht mit Hero-Bereich, Suche, Kategorien, beliebten Tools und allen verfügbaren Werkzeugen. Die Inhalte kommen aus der gemeinsamen Tool-Registry.
 
-export default async function Home() {
-  const requestHeaders = await headers();
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
+### `/tools/[slug]`
 
-  const displayName = fullName ?? email;
-  // ...
-}
+**Dynamische Werkzeugseite.** Eine gemeinsame Vorlage rendert alle 35 Tools. Titel, Beschreibung, Keywords, FAQ, verwandte Tools, strukturierte Daten und der passende ToolRunner werden automatisch anhand des Slugs geladen.
+
+Beispiele:
+
+- `/tools/mietrendite-rechner`
+- `/tools/schichtlohn-rechner`
+- `/tools/dachkosten-rechner`
+- `/tools/stundenlohnrechner`
+- `/tools/heic-zu-jpg`
+
+### `/nischen/[slug]`
+
+**Kategorie-/Nischenseiten.** Bündeln thematisch verwandte Tools, z. B. Immobilien, Schicht & Zuschläge oder Handwerker & Renovierung.
+
+### `/datenschutz`
+
+**Datenschutzerklärung.** Beschreibt den aktuellen Stand der lokalen Browser-Verarbeitung, Server-Protokolle und externen Abfragen.
+
+### `/impressum`
+
+**Impressum.** Noch nicht produktionsbereit, weil die vollständigen Betreiberangaben ergänzt werden müssen.
+
+### `/sitemap.xml` und `/robots.txt`
+
+Werden über Next.js automatisch erzeugt und unterstützen Suchmaschinen bei Crawling und Indexierung.
+
+Eine vollständige Übersicht aller Seiten, Kategorien und 35 Tools steht in [`docs/PAGES.md`](docs/PAGES.md).
+
+## Projektstruktur
+
+```text
+app/
+├── components/
+│   ├── HomeClient.tsx             Startseite, Suche und Filter
+│   ├── ToolRunner.tsx             20 allgemeine Basis-Tools
+│   ├── PropertyToolRunner.tsx     5 Immobilien-Rechner
+│   ├── ShiftToolRunner.tsx        5 Schicht-/Zuschlags-Rechner
+│   ├── HandwerkerToolRunner.tsx   5 Renovierungs-/Kosten-Rechner
+│   ├── SiteHeader.tsx             Globaler Header
+│   └── SiteFooter.tsx             Globaler Footer
+│
+├── data/
+│   ├── tools.ts                   Basis-Tools + Basis-Kategorien
+│   ├── tool-registry.ts           erweitert um Immobilien + Schicht
+│   └── tool-registry-all.ts       vollständige Registry inkl. Handwerker
+│
+├── tools/[slug]/page.tsx          Gemeinsame dynamische Tool-Seite
+├── nischen/[slug]/page.tsx        Gemeinsame dynamische Kategorie-Seite
+├── datenschutz/page.tsx           Datenschutz
+├── impressum/page.tsx             Impressum
+├── layout.tsx                     Globale Metadaten und Layout
+├── page.tsx                       Startseite
+├── robots.ts                      robots.txt
+├── sitemap.ts                     sitemap.xml
+└── globals.css                    Globales Styling
+
+db/                                Optionales D1/Drizzle-Datenbankgerüst
+drizzle/                           Migrationen / Datenbankstruktur
+examples/                          Optionale Beispielimplementierungen
+scripts/                           Build- und Hosting-Hilfsskripte
+tests/                             Render-/Metadaten-Tests
+public/                            Statische Assets
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+Die technische Architektur ist ausführlich in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) beschrieben.
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+## Technik
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+- **Next.js 16**
+- **React 19**
+- **TypeScript**
+- **Vinext / Vite**
+- **Cloudflare-kompatibles Hosting**
+- **Drizzle ORM** und optional Cloudflare D1
+- Clientseitige Verarbeitung für viele Tools
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+Voraussetzung laut Projektkonfiguration:
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+```text
+Node.js >= 22.13.0
+```
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+## Lokal starten
 
-## Diagnostic Commands
+Abhängigkeiten installieren:
 
-- `npm run install:ci`: perform the one bounded lockfile install
-- `npm run dev`: start the Vite/Vinext development server
-- `npm run build`: build the deployable Sites artifact
-- `npm run start`: start the built Vinext application
-- `npm test`: build and verify the rendered development-preview metadata
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+```bash
+npm ci
+```
 
-Use build commands for targeted diagnosis after a remote failure, not as part of the normal checkpoint path.
+Entwicklungsserver starten:
 
-The timeout defaults can be overridden for a controlled canary with `SITES_INSTALL_TIMEOUT`, `SITES_INSTALL_KILL_AFTER`, `SITES_BUILD_TIMEOUT`, and `SITES_BUILD_KILL_AFTER`. A timeout fails the command; the helpers never retry an unchanged install or build.
+```bash
+npm run dev
+```
 
-## Learn More
+Produktions-Build:
 
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+```bash
+npm run build
+```
+
+Tests:
+
+```bash
+npm test
+```
+
+Linting:
+
+```bash
+npm run lint
+```
+
+> Hinweis: Einige vorhandene Hilfsskripte unter `scripts/` sind auf Linux-/Cloudflare-/Sites-Umgebungen ausgelegt und verwenden Bash sowie GNU-Tools. Unter Windows kann WSL oder eine kompatible Shell notwendig sein.
+
+## Wichtige Dateien
+
+### `app/data/tool-registry-all.ts`
+
+**Zentrale vollständige Tool-Übersicht für die aktuelle Website.** Sie kombiniert Basis-, Immobilien-, Schicht- und Handwerker-Tools und liefert die vollständige Liste der 35 Werkzeuge und 9 Kategorien.
+
+### `app/data/tool-registry.ts`
+
+Erweitert die Basis-Tools um die Kategorien **Immobilien** und **Schicht & Zuschläge**.
+
+### `app/data/tools.ts`
+
+Enthält die ursprünglichen 20 Tool-Definitionen und sechs Basiskategorien inklusive Slug, Titel, Kurztext, Keywords und FAQ.
+
+### `app/components/ToolRunner.tsx`
+
+Berechnungs- und Browserlogik der allgemeinen Werkzeuge, z. B. Prozentrechnung, Textauswertung, Bildkonvertierung, QR-Code, Arbeitszeit und Passwortgenerator.
+
+### `app/components/PropertyToolRunner.tsx`
+
+Logik für:
+
+- Mietrendite
+- Kaufnebenkosten
+- Immobilien-Cashflow
+- leistbares Hausbudget
+- Kreditrate / Restschuld
+
+### `app/components/ShiftToolRunner.tsx`
+
+Logik für:
+
+- Schichtlohn
+- Nachtzuschlag
+- Sonntagszuschlag
+- Feiertagszuschlag
+- Überstunden
+
+### `app/components/HandwerkerToolRunner.tsx`
+
+Logik für:
+
+- Dachkosten
+- Badrenovierung
+- Fensterkosten
+- Malerkosten
+- Bodenverlegung
+
+### `app/tools/[slug]/page.tsx`
+
+Die zentrale Seitenvorlage. Sie erkennt anhand der Registry, welcher Runner benötigt wird, und erzeugt automatisch:
+
+- eigene URL
+- Seitentitel und Description
+- Keywords
+- Breadcrumbs
+- FAQ-Bereich
+- strukturierte Daten
+- verwandte Tools
+- passenden Rechner
+
+## Wie entsteht ein neues Tool?
+
+Der Grundablauf ist:
+
+1. Tool mit `slug`, Titel, Beschreibung, Kategorie, Keywords und FAQ registrieren.
+2. Berechnungs- oder Verarbeitungslogik als React-Komponente ergänzen.
+3. Den Slug im passenden Runner mit der Komponente verbinden.
+4. Prüfen, ob Kategorie und verwandte Tools korrekt erscheinen.
+5. Build und Tests ausführen.
+
+Die dynamische Route erzeugt danach automatisch die vollständige Tool-Seite.
+
+Eine detaillierte Anleitung steht in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md).
+
+## SEO und Indexierung
+
+SofortTools ist als SEO-orientierte Tool-Plattform aufgebaut.
+
+Vorhanden sind unter anderem:
+
+- individuelle Metadaten pro Tool
+- Canonical-URLs
+- Open-Graph-Daten
+- Twitter-Metadaten
+- `WebApplication`-Schema
+- FAQ-Schema
+- Breadcrumb-Schema
+- Kategorie-Seiten
+- interne Verlinkung zu verwandten Tools
+- automatisch erzeugte Sitemap
+- robots-Konfiguration
+
+Für die weitere Skalierung gilt: Nicht nur viele nahezu identische Keyword-Seiten veröffentlichen. Jedes Tool sollte einen klaren eigenen Nutzen, echte Eingaben, eine nachvollziehbare Berechnung und hilfreiche Erklärungen besitzen.
+
+## Datenschutz und Rechtliches
+
+Viele Funktionen laufen vollständig im Browser. Das reduziert Serverkosten und Datenschutzrisiken.
+
+Aktuell besonders relevant:
+
+- Texte und lokal verarbeitete Bilder werden bei den entsprechenden Tools nicht an SofortTools übertragen.
+- Der IP-Checker nutzt eine externe IP-Abfrage.
+- Es sind derzeit keine eigenen Analytics- oder Marketing-Cookies beschrieben.
+- Vor Werbung, Affiliate-Tracking oder Lead-Formularen muss die Datenschutzerklärung geprüft und erweitert werden.
+- Das Impressum enthält noch Platzhalter und ist **nicht bereit für einen öffentlichen kommerziellen Start**.
+
+## Weitere Dokumentation
+
+- [`docs/PAGES.md`](docs/PAGES.md) – jede öffentliche Seite, alle Kategorien und alle 35 Tools kurz erklärt
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) – technische Architektur und Anleitung zum Erweitern der Plattform
+
+---
+
+**Kurz gesagt:** SofortTools ist keine Sammlung einzeln gebauter Mini-Websites, sondern eine gemeinsame technische Plattform, auf der neue spezialisierte Rechner mit relativ wenig zusätzlichem Aufwand veröffentlicht werden können.
