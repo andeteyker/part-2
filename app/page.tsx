@@ -2,7 +2,7 @@ import Script from "next/script";
 import { HomeClient } from "./components/HomeClient";
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
-import { tools } from "./data/tool-registry-all";
+import { tools } from "./data/tool-registry";
 
 export default function Home() {
   const schema = {
