@@ -5,8 +5,7 @@ import { notFound } from "next/navigation";
 import { SiteFooter } from "../../components/SiteFooter";
 import { SiteHeader } from "../../components/SiteHeader";
 import { categories, categoryDetails, getCategoryBySlug } from "../../data/tool-registry";
-
-const base = "https://soforttools.mielerik.chatgpt.site";
+import { absoluteUrl } from "../../lib/site";
 
 export function generateStaticParams() {
   return categories.map((category) => ({ slug: categoryDetails[category].slug }));
@@ -39,7 +38,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const category = getCategoryBySlug(slug);
   if (!category) notFound();
 
-  const canonical = `${base}/nischen/${category.slug}`;
+  const canonical = absoluteUrl(`/nischen/${category.slug}`);
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
@@ -57,14 +56,14 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             "@type": "ListItem",
             position: index + 1,
             name: tool.title,
-            url: `${base}/tools/${tool.slug}`,
+            url: absoluteUrl(`/tools/${tool.slug}`),
           })),
         },
       },
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Startseite", item: `${base}/` },
+          { "@type": "ListItem", position: 1, name: "Startseite", item: absoluteUrl("/") },
           { "@type": "ListItem", position: 2, name: category.name, item: canonical },
         ],
       },
