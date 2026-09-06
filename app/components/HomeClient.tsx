@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { categories, categoryDetails, tools, type ToolCategory } from "../data/tools";
+import { categories, categoryDetails, tools, type ToolCategory } from "../data/tool-registry";
 
 export function HomeClient() {
   const [query, setQuery] = useState("");
@@ -16,7 +16,7 @@ export function HomeClient() {
     });
   }, [query, category]);
   const groups = categories.map((name) => ({ name, details: categoryDetails[name], items: visible.filter((tool) => tool.category === name) })).filter((group) => group.items.length);
-  const popular = ["woerter-aus-buchstaben", "heic-zu-jpg", "mehrwertsteuerrechner", "zeitdauer-berechnen", "qr-code-erstellen"].map((slug) => tools.find((tool) => tool.slug === slug)!);
+  const popular = ["mietrendite-rechner", "haus-leisten-rechner", "woerter-aus-buchstaben", "heic-zu-jpg", "mehrwertsteuerrechner"].map((slug) => tools.find((tool) => tool.slug === slug)!).filter(Boolean);
 
   return (
     <>
@@ -24,11 +24,11 @@ export function HomeClient() {
         <div className="hero-copy">
           <p className="eyebrow"><span /> Kostenlos · Ohne Anmeldung · Direkt im Browser</p>
           <h1>Ein Problem.<br /><em>Ein klares Tool.</em></h1>
-          <p className="hero-text">Spezialisierte Werkzeuge für konkrete Aufgaben – von Scrabble und iPhone-Fotos bis Arbeitszeit, Mehrwertsteuer und WLAN.</p>
+          <p className="hero-text">Spezialisierte Werkzeuge für konkrete Aufgaben – jetzt auch für Immobilienkauf, Finanzierung, Rendite und Cashflow.</p>
           <label className="tool-search">
             <span aria-hidden="true">⌕</span>
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Welches Tool brauchst du?" aria-label="Tools durchsuchen" />
-            <kbd>20 Tools</kbd>
+            <kbd>{tools.length} Tools</kbd>
           </label>
           <div className="trust-row"><span>✓ Keine Registrierung</span><span>✓ Viele Tools arbeiten lokal</span><span>✓ Mobil optimiert</span></div>
         </div>
