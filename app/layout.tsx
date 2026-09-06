@@ -1,32 +1,23 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { SITE_NAME, SITE_URL } from "./lib/site";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://soforttools.mielerik.chatgpt.site"),
-  title: { default: "SofortTools – Kostenlose Online-Rechner & Werkzeuge", template: "%s | SofortTools" },
-  description: "35 spezialisierte Online-Tools für Renovierung, Immobilien, Schichtarbeit, Geld, Beruf, Schule, Bilder, Internet und Planung. Kostenlos und ohne Anmeldung.",
-  keywords: ["spezialisierte Online Tools", "kostenlose Rechner", "Renovierung Kosten Rechner", "Dachkosten Rechner", "Badsanierung Rechner", "Immobilien Rechner", "Schichtlohn Rechner", "Arbeitszeit berechnen"],
-  authors: [{ name: "SofortTools" }],
-  creator: "SofortTools",
-  publisher: "SofortTools",
+  metadataBase: new URL(SITE_URL),
+  title: { default: `${SITE_NAME} – Kostenlose Online-Rechner & Werkzeuge`, template: `%s | ${SITE_NAME}` },
+  description: "Kostenlose Online-Rechner und Werkzeuge für Geld, Beruf, Immobilien, Renovierung, Schichtarbeit, Text, Bilder, Internet und Planung. Ohne Anmeldung und direkt nutzbar.",
+  authors: [{ name: SITE_NAME }],
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
   alternates: { canonical: "/" },
-  openGraph: { type: "website", locale: "de_DE", siteName: "SofortTools", title: "SofortTools – Spezialisierte Online-Werkzeuge", description: "Klare Tools für konkrete Aufgaben: Renovierung, Immobilien, Schichtarbeit, Geld, Beruf, Schule, Bilder, Internet und Planung.", url: "/", images: [{ url: "/og.png", width: 1731, height: 909, alt: "SofortTools – Kostenlose Online-Werkzeuge" }] },
-  twitter: { card: "summary_large_image", title: "SofortTools – Kostenlose Online-Werkzeuge", description: "35 praktische Werkzeuge, sofort und kostenlos nutzbar.", images: ["/og.png"] },
-  icons: {
-    icon: "/favicon.svg",
-    shortcut: "/favicon.svg",
-  },
-  other: {
-    "codex-preview": "development",
-  },
+  openGraph: { type: "website", locale: "de_DE", siteName: SITE_NAME, title: `${SITE_NAME} – Kostenlose Online-Rechner & Werkzeuge`, description: "Klare Tools für konkrete Aufgaben – kostenlos, ohne Anmeldung und direkt im Browser nutzbar.", url: "/", images: [{ url: "/og.png", width: 1731, height: 909, alt: `${SITE_NAME} – Kostenlose Online-Werkzeuge` }] },
+  twitter: { card: "summary_large_image", title: `${SITE_NAME} – Kostenlose Online-Werkzeuge`, description: "Praktische Rechner und Werkzeuge, sofort und kostenlos nutzbar.", images: ["/og.png"] },
+  icons: { icon: "/favicon.svg", shortcut: "/favicon.svg" },
+  other: { "codex-preview": "development" },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="de">
       <body className="antialiased">{children}</body>
