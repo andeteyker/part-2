@@ -1,34 +1,42 @@
 # Architektur – SofortTools
 
-Diese Datei erklärt den technischen Aufbau der Plattform und wo neue Funktionen ergänzt werden.
+Diese Datei erklärt den technischen Aufbau der Plattform und zeigt, wo neue Tools ergänzt werden.
 
 ## Ziel
 
-SofortTools soll viele kleine spezialisierte Werkzeuge auf einer gemeinsamen technischen Plattform veröffentlichen können, ohne für jedes Tool Navigation, Layout, SEO, FAQ und Seitenstruktur neu zu bauen.
+SofortTools soll viele kleine spezialisierte Werkzeuge auf einer gemeinsamen Plattform veröffentlichen können, ohne Navigation, Layout, SEO, FAQ und Seitenstruktur für jedes Tool neu zu bauen.
 
 Der zentrale Ablauf ist:
 
 ```text
-Tool-Definition
+Tool-Metadaten
     ↓
-Registry
+app/data/tool-registry.ts
     ↓
 /tools/[slug]
     ↓
-passender ToolRunner
+tool.runner
     ↓
-fertige Seite + SEO + FAQ + verwandte Tools
+passender Runner
+    ↓
+fertige Tool-Seite + SEO + FAQ + verwandte Tools
 ```
 
-## Registry-Struktur
+## Zentrale Registry
 
-Die aktuelle Registry ist schrittweise gewachsen und besteht aus drei Ebenen.
+### `app/data/tool-registry.ts`
 
-### `app/data/tools.ts`
+Dies ist die **einzige vollständige Registry**, die von Startseite, Suche, Kategorie-Seiten, Sitemap und Tool-Seiten verwendet wird.
 
-Enthält die ursprünglichen **20 Basis-Tools** und sechs Basiskategorien.
+Sie enthält bzw. registriert insgesamt:
 
-Eine Tool-Definition enthält typischerweise:
+- 20 allgemeine Basis-Tools
+- 5 Immobilien-Tools
+- 5 Schicht-/Zuschlags-Tools
+- 5 Handwerker-/Renovierungs-Tools
+- 9 Kategorien
+
+Jede vollständige Tool-Definition besitzt:
 
 ```ts
 {
@@ -40,39 +48,54 @@ Eine Tool-Definition enthält typischerweise:
   category,
   icon,
   keywords,
-  faq
+  faq,
+  runner
 }
 ```
 
-Diese Metadaten werden mehrfach wiederverwendet:
+`runner` kann aktuell sein:
 
-- Startseite
-- Suche
-- Kategorien
-- Tool-Seiten
-- SEO-Metadaten
-- FAQ-Schema
-- interne Verlinkung
-- Sitemap
+```ts
+"core" | "property" | "shift" | "handwerker"
+```
 
-### `app/data/tool-registry.ts`
+Die Registry erzeugt daraus eine gemeinsame `tools`-Liste. Dadurch müssen öffentliche Seiten nicht mehr mehrere Registries importieren oder Slugs gegen verschiedene Tool-Arrays prüfen.
 
-Erweitert die Basis um:
+### `app/data/tools.ts`
 
-- 5 Immobilien-Tools
-- 5 Schicht-/Zuschlags-Tools
+Diese Datei enthält nur noch die ursprünglichen 20 Basis-Tool-Metadaten und sechs Basiskategorien.
 
-Damit enthält diese Zwischenebene 30 Tools.
+Sie ist **keine zweite vollständige Registry**. `tool-registry.ts` übernimmt diese Einträge und registriert sie als `core`.
 
-### `app/data/tool-registry-all.ts`
+## Gemeinsame Tool-UI
 
-Erweitert die Zwischenebene um:
+### `app/components/ToolUI.tsx`
 
-- 5 Handwerker-/Renovierungs-Tools
+Die Runner teilen sich zentrale UI- und Formatierungsbausteine:
 
-Dies ist aktuell die **vollständige Registry** mit insgesamt **35 Tools und 9 Kategorien**.
+```text
+Field
+NumberField
+SelectField
+Result
+number()
+fmt()
+money()
+```
 
-Für Seiten, Suche, Kategorien und Sitemap sollte die vollständige Registry verwendet werden.
+Damit werden grundlegende Formularfelder, Ergebnisboxen und deutsche Zahlen-/Euroformatierung nicht mehr in jedem Runner erneut implementiert.
+
+`Field` ist für allgemeine Inputs gedacht.
+
+`NumberField` setzt standardmäßig:
+
+- `type="number"`
+- Mindestwert `0`
+- Schrittweite `0.01`
+
+`SelectField` vereinheitlicht Dropdowns.
+
+`Result` vereinheitlicht hervorgehobene Ergebnisboxen.
 
 ## Startseite
 
@@ -85,7 +108,9 @@ Aufgaben:
 - Header und Footer einbinden
 - `HomeClient` rendern
 - Website-Schema erzeugen
-- registrierte Tools im strukturierten Datenmodell referenzieren
+- alle registrierten Tools im strukturierten Datenmodell referenzieren
+
+Die Daten kommen ausschließlich aus `app/data/tool-registry.ts`.
 
 ### `app/components/HomeClient.tsx`
 
@@ -99,13 +124,13 @@ Aufgaben:
 - gruppierte Tool-Karten
 - dynamische Tool-Anzahl
 
-Die Suche arbeitet direkt auf den Metadaten der Registry.
+Die Suche arbeitet direkt auf den Metadaten der zentralen Registry.
 
 ## Dynamische Tool-Seite
 
 ### `app/tools/[slug]/page.tsx`
 
-Dies ist die zentrale Seitenvorlage für alle 35 Werkzeuge.
+Dies ist die gemeinsame Seitenvorlage für alle 35 Werkzeuge.
 
 Beispiel:
 
@@ -115,10 +140,19 @@ Beispiel:
 
 Ablauf:
 
-1. `getTool(slug)` sucht die Definition in `tool-registry-all.ts`.
-2. Die Seite prüft, zu welchem Tool-Cluster der Slug gehört.
-3. Der passende Runner wird ausgewählt.
+1. `getTool(slug)` lädt die Definition aus `tool-registry.ts`.
+2. Die Tool-Definition enthält bereits den `runner`-Typ.
+3. Die Seite rendert den passenden Runner.
 4. Metadaten, FAQ, Schema und verwandte Tools werden automatisch erzeugt.
+
+Runner-Auswahl:
+
+```text
+core        → ToolRunner
+property    → PropertyToolRunner
+shift       → ShiftToolRunner
+handwerker  → HandwerkerToolRunner
+```
 
 Automatisch erzeugte Bestandteile:
 
@@ -140,13 +174,9 @@ Automatisch erzeugte Bestandteile:
 
 ## Runner-Struktur
 
-Die eigentliche Rechnerlogik ist nach Tool-Cluster getrennt.
-
 ### `app/components/ToolRunner.tsx`
 
-Enthält die **20 allgemeinen Basis-Tools**.
-
-Beispiele:
+Enthält die 20 allgemeinen Basis-Tools, unter anderem:
 
 - Prozentrechner
 - Dreisatz
@@ -167,7 +197,7 @@ Beispiele:
 
 ### `app/components/PropertyToolRunner.tsx`
 
-Enthält die 5 Immobilien-Rechner:
+Enthält:
 
 - Mietrendite
 - Kaufnebenkosten
@@ -177,7 +207,7 @@ Enthält die 5 Immobilien-Rechner:
 
 ### `app/components/ShiftToolRunner.tsx`
 
-Enthält die 5 Schicht-/Zuschlags-Rechner:
+Enthält:
 
 - Schichtlohn
 - Nachtzuschlag
@@ -187,13 +217,15 @@ Enthält die 5 Schicht-/Zuschlags-Rechner:
 
 ### `app/components/HandwerkerToolRunner.tsx`
 
-Enthält die 5 Handwerker-/Renovierungs-Rechner:
+Enthält:
 
 - Dachkosten
 - Badrenovierung
 - Fensterkosten
 - Malerkosten
 - Bodenverlegung
+
+Alle vier Runner verwenden gemeinsame Grundbausteine aus `ToolUI.tsx`.
 
 ## Kategorie-Seiten
 
@@ -209,7 +241,7 @@ Beispiele:
 /nischen/handwerker-renovierung
 ```
 
-Die Seite lädt Kategorie-Metadaten und filtert die vollständige Tool-Liste nach dem jeweiligen Bereich.
+Die Seite verwendet `categories`, `categoryDetails` und `getCategoryBySlug()` aus der zentralen Registry.
 
 ## Globale UI
 
@@ -225,7 +257,7 @@ Gemeinsamer Footer inklusive rechtlicher Navigation.
 
 Zentrales Styling der Plattform.
 
-Da viele Seiten dieselben Klassen verwenden, können Änderungen hier sehr viele Seiten gleichzeitig beeinflussen.
+Da viele Seiten dieselben Klassen verwenden, können Änderungen hier viele Seiten gleichzeitig beeinflussen.
 
 ## SEO
 
@@ -241,14 +273,12 @@ Definiert globale Metadaten:
 - Twitter Card
 - Favicon
 
-Der aktuelle Stand beschreibt 35 spezialisierte Tools.
-
 ### `app/sitemap.ts`
 
-Erzeugt automatisch Sitemap-Einträge für:
+Erzeugt Sitemap-Einträge aus der zentralen Registry für:
 
 - Startseite
-- Kategorien
+- alle Kategorien
 - alle registrierten Tools
 - Datenschutz
 - Impressum
@@ -263,7 +293,7 @@ Erzeugt die Crawling-Regeln unter `/robots.txt`.
 
 Dokumentiert den aktuellen Stand der Datenverarbeitung.
 
-Bei späterer Einbindung von Werbung, Affiliate-Tracking, Analytics, Newsletter- oder Lead-Diensten muss die Seite erneut geprüft werden.
+Bei späterer Einbindung von Werbung, Affiliate-Tracking, Analytics, Newsletter- oder Lead-Diensten muss diese Seite erneut geprüft werden.
 
 ### `app/impressum/page.tsx`
 
@@ -271,7 +301,7 @@ Ist aktuell noch nicht produktionsbereit, weil vollständige Betreiber- und Kont
 
 ## Datenbank und Hosting
 
-Das Repository enthält bereits ein optionales Datenbankgerüst:
+Das Repository enthält ein optionales Datenbankgerüst:
 
 ```text
 db/
@@ -288,7 +318,7 @@ Interessant wird sie später z. B. für:
 - Favoriten
 - Leads
 - Anbieterprofile
-- eigene Conversion-Daten
+- Conversion-Daten
 - Premium-Funktionen
 
 Das Projekt enthält außerdem Vinext-/Vite-/Cloudflare-spezifische Build- und Hosting-Konfiguration.
@@ -297,7 +327,7 @@ Das Projekt enthält außerdem Vinext-/Vite-/Cloudflare-spezifische Build- und H
 
 ### 1. Tool registrieren
 
-Die Metadaten in der passenden Registry ergänzen.
+Die Metadaten in `app/data/tool-registry.ts` ergänzen.
 
 Beispiel:
 
@@ -320,15 +350,42 @@ Beispiel:
 }
 ```
 
-### 2. Berechnungslogik erstellen
+Die Registry ordnet den Eintrag über seine Tool-Gruppe automatisch einem Runner-Typ zu.
 
-Im thematisch passenden Runner eine React-Komponente ergänzen.
+### 2. Rechner-UI erstellen
 
-### 3. Slug mit Runner verbinden
+Im passenden Runner eine React-Komponente ergänzen.
 
-Der Runner muss den neuen Slug seiner Komponente zuordnen.
+Für Standardfelder und Ergebnisse möglichst verwenden:
 
-Falls ein komplett neuer Tool-Cluster entsteht, sollte dafür ein eigener Runner angelegt und in `app/tools/[slug]/page.tsx` ergänzt werden.
+```ts
+import {
+  Field,
+  NumberField,
+  SelectField,
+  Result,
+  number,
+  fmt,
+  money,
+} from "./ToolUI";
+```
+
+### 3. Slug im Runner verbinden
+
+Beispiel:
+
+```ts
+const content = {
+  "beispiel-rechner": <ExampleTool />,
+};
+```
+
+Falls ein komplett neuer Tool-Cluster entsteht:
+
+1. neuen Runner anlegen,
+2. `ToolRunnerKind` erweitern,
+3. neue Tool-Gruppe in `tool-registry.ts` registrieren,
+4. Runner-Mapping in `/tools/[slug]/page.tsx` ergänzen.
 
 ### 4. Automatische Bereiche prüfen
 
@@ -358,20 +415,16 @@ Bei größeren Änderungen zusätzlich:
 npm test
 ```
 
-## Empfohlene nächste Strukturverbesserungen
+## Nächste sinnvolle Strukturverbesserungen
 
-Die aktuelle Architektur funktioniert, ist aber sichtbar organisch gewachsen.
+Die größten Registry- und UI-Duplikate sind bereits entfernt. Als nächste Schritte bieten sich an:
 
-Sinnvolle nächste Schritte:
-
-1. `tools.ts`, `tool-registry.ts` und `tool-registry-all.ts` langfristig zu einer klaren Registry-Struktur zusammenführen.
-2. Gemeinsam genutzte Form-Felder und Ergebnis-Karten in eigene UI-Komponenten auslagern.
-3. Berechnungsformeln aus den React-Komponenten in reine TypeScript-Funktionen verschieben.
-4. Diese Formeln separat mit Unit-Tests absichern.
-5. Für neue große Themencluster weiterhin eigene Runner verwenden.
-6. Tool-spezifische Anleitungstexte stärker individualisieren.
-7. Monetarisierungskomponenten technisch strikt von den Rechnern trennen.
-8. Später Analytics-/Conversion-Daten verwenden, um erfolgreiche Cluster gezielt auszubauen.
+1. Berechnungsformeln aus React-Komponenten in reine TypeScript-Funktionen verschieben.
+2. Diese Funktionen mit Unit-Tests absichern.
+3. Wiederkehrende `stats-grid`-Darstellungen optional ebenfalls in UI-Komponenten auslagern.
+4. Tool-spezifische Anleitungstexte stärker individualisieren.
+5. Monetarisierungskomponenten technisch strikt von Rechnerlogik trennen.
+6. Analytics-/Conversion-Daten später nutzen, um erfolgreiche Cluster gezielt auszubauen.
 
 ## Qualitätsregel
 
