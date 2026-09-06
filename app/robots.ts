@@ -1,2 +1,13 @@
 import type { MetadataRoute } from "next";
-export default function robots(): MetadataRoute.Robots { return { rules: { userAgent: "*", allow: "/" }, sitemap: "https://soforttools.mielerik.chatgpt.site/sitemap.xml", host: "https://soforttools.mielerik.chatgpt.site" }; }
+import { siteUrl } from "./data/site";
+
+export default function robots(): MetadataRoute.Robots {
+  return {
+    rules: {
+      userAgent: "*",
+      allow: "/",
+    },
+    sitemap: `${siteUrl}/sitemap.xml`,
+    host: siteUrl,
+  };
+}
