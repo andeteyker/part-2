@@ -9,8 +9,8 @@ import { PropertyToolRunner } from "../../components/PropertyToolRunner";
 import { ShiftToolRunner } from "../../components/ShiftToolRunner";
 import { HandwerkerToolRunner } from "../../components/HandwerkerToolRunner";
 import { categoryDetails, getTool, tools } from "../../data/tool-registry";
-
-const base = "https://soforttools.mielerik.chatgpt.site";
+import { getToolSeo } from "../../data/tool-seo";
+import { absoluteUrl } from "../../lib/site";
 
 export function generateStaticParams() {
   return tools.map((tool) => ({ slug: tool.slug }));
@@ -44,7 +44,10 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
 
   const categorySlug = categoryDetails[tool.category].slug;
   const categoryHref = `/nischen/${categorySlug}`;
-  const related = tools.filter((item) => item.category === tool.category && item.slug !== tool.slug).slice(0, 4);
+  const seo = getToolSeo(tool.slug);
+  const configuredRelated = (seo.relatedSlugs ?? []).map((relatedSlug) => getTool(relatedSlug)).filter(Boolean);
+  const fallbackRelated = tools.filter((item) => item.category === tool.category && item.slug !== tool.slug && !configuredRelated.some((related) => related?.slug === item.slug));
+  const related = [...configuredRelated, ...fallbackRelated].slice(0, 4);
 
   const runner = {
     core: <ToolRunner slug={tool.slug} />,
@@ -53,7 +56,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
     handwerker: <HandwerkerToolRunner slug={tool.slug} />,
   }[tool.runner];
 
-  const canonical = `${base}/tools/${tool.slug}`;
+  const canonical = absoluteUrl(`/tools/${tool.slug}`);
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
@@ -72,8 +75,8 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Startseite", item: `${base}/` },
-          { "@type": "ListItem", position: 2, name: tool.category, item: `${base}${categoryHref}` },
+          { "@type": "ListItem", position: 1, name: "Startseite", item: absoluteUrl("/") },
+          { "@type": "ListItem", position: 2, name: tool.category, item: absoluteUrl(categoryHref) },
           { "@type": "ListItem", position: 3, name: tool.title, item: canonical },
         ],
       },
@@ -101,12 +104,14 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         <section className="content-grid">
           <article>
             <p className="eyebrow"><span /> Anleitung</p>
-            <h2>So funktioniert: {tool.title}</h2>
+            <h2>So funktioniert der {tool.title}</h2>
             <ol>
-              <li><b>Werte eingeben</b><span>Trage die benötigten Angaben in die übersichtlichen Felder ein.</span></li>
-              <li><b>Ergebnis erhalten</b><span>Das Werkzeug berechnet oder verarbeitet deine Eingabe direkt.</span></li>
-              <li><b>Ergebnis verwenden</b><span>Nutze das Ergebnis als schnelle Orientierung für deine nächste Entscheidung.</span></li>
+              {seo.steps.map((step) => <li key={step.title}><b>{step.title}</b><span>{step.text}</span></li>)}
             </ol>
+            {(seo.formula || seo.example) && <div className="tool-explanation">
+              {seo.formula && <p><strong>Formel:</strong> {seo.formula}</p>}
+              {seo.example && <p><strong>Beispiel:</strong> {seo.example}</p>}
+            </div>}
           </article>
           <aside>
             <h2>Häufige Fragen</h2>
@@ -116,11 +121,11 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
 
         {related.length > 0 && <section className="related">
           <div className="section-head">
-            <div><p className="eyebrow"><span /> Gleiche Nische</p><h2>Weitere Tools für {tool.category}</h2></div>
+            <div><p className="eyebrow"><span /> Passende Werkzeuge</p><h2>Diese Tools passen zu deiner nächsten Berechnung</h2></div>
             <Link href={categoryHref}>Alle {tool.category}-Tools →</Link>
           </div>
           <div className="tool-grid compact">
-            {related.map((item) => <Link href={`/tools/${item.slug}`} className="tool-card" key={item.slug}>
+            {related.map((item) => item && <Link href={`/tools/${item.slug}`} className="tool-card" key={item.slug}>
               <div className="card-top"><span className="tool-icon">{item.icon}</span><span className="tool-arrow">↗</span></div>
               <p>{item.eyebrow}</p><h3>{item.title}</h3><span>{item.short}</span>
             </Link>)}

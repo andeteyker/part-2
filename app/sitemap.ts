@@ -1,18 +1,17 @@
 import type { MetadataRoute } from "next";
 import { categories, categoryDetails, tools } from "./data/tool-registry";
-
-const base = "https://soforttools.mielerik.chatgpt.site";
+import { absoluteUrl } from "./lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
-    { url: base },
+    { url: absoluteUrl("/") },
     ...categories.map((category) => ({
-      url: `${base}/nischen/${categoryDetails[category].slug}`,
+      url: absoluteUrl(`/nischen/${categoryDetails[category].slug}`),
     })),
     ...tools.map((tool) => ({
-      url: `${base}/tools/${tool.slug}`,
+      url: absoluteUrl(`/tools/${tool.slug}`),
     })),
-    { url: `${base}/datenschutz` },
-    { url: `${base}/impressum` },
+    { url: absoluteUrl("/datenschutz") },
+    { url: absoluteUrl("/impressum") },
   ];
 }
