@@ -1,6 +1,6 @@
 # SofortTools
 
-SofortTools ist eine deutsche Plattform für kleine, spezialisierte Online-Rechner und Browser-Werkzeuge. Das Grundprinzip lautet:
+SofortTools ist eine deutsche Plattform für kleine, spezialisierte Online-Rechner und Browser-Werkzeuge.
 
 > **Ein konkretes Problem → ein klares Tool → sofort ein Ergebnis.**
 
@@ -22,9 +22,9 @@ Aktuell enthält die Website **35 Tools in 9 Kategorien** – darunter Immobilie
 
 ## Was ist SofortTools?
 
-Die Website bündelt viele kleine Werkzeuge unter einer gemeinsamen Marke und technischen Plattform. Statt für jeden Rechner eine eigene Website zu bauen, werden Navigation, Design, SEO, Kategorien, FAQ, strukturierte Daten und Seitengerüst zentral wiederverwendet.
+Die Website bündelt viele kleine Werkzeuge unter einer gemeinsamen Marke und technischen Plattform. Navigation, Design, SEO, Kategorien, FAQ, strukturierte Daten und Seitengerüst werden zentral wiederverwendet.
 
-Dadurch funktioniert SofortTools als **Tool-Engine**: Ein neues Werkzeug benötigt hauptsächlich seine Metadaten und die eigentliche Berechnungs- oder Verarbeitungslogik.
+Dadurch funktioniert SofortTools als **Tool-Engine**: Ein neues Werkzeug benötigt im Wesentlichen seine Metadaten und die eigentliche Berechnungs- oder Verarbeitungslogik.
 
 Aktuelle Beispiele:
 
@@ -50,6 +50,8 @@ Aktuelle Beispiele:
 | Handwerker-/Renovierungs-Tools | 5 |
 | **Tools gesamt** | **35** |
 | **Kategorien gesamt** | **9** |
+| Zentrale Registry | `app/data/tool-registry.ts` |
+| Gemeinsame Rechner-UI | `app/components/ToolUI.tsx` |
 | SEO-Metadaten | vorhanden |
 | FAQ-/WebApplication-/Breadcrumb-Schema | vorhanden |
 | Sitemap und robots.txt | vorhanden |
@@ -65,7 +67,7 @@ Aktuelle Beispiele:
 
 ### `/tools/[slug]`
 
-**Dynamische Werkzeugseite.** Eine gemeinsame Vorlage rendert alle 35 Tools. Titel, Beschreibung, Keywords, FAQ, verwandte Tools, strukturierte Daten und der passende ToolRunner werden automatisch anhand des Slugs geladen.
+**Dynamische Werkzeugseite.** Eine gemeinsame Vorlage rendert alle 35 Tools. Titel, Beschreibung, Keywords, FAQ, verwandte Tools und der passende Runner werden automatisch anhand der Registry geladen.
 
 Beispiele:
 
@@ -99,34 +101,34 @@ Eine vollständige Übersicht aller Seiten, Kategorien und 35 Tools steht in [`d
 app/
 ├── components/
 │   ├── HomeClient.tsx             Startseite, Suche und Filter
+│   ├── ToolUI.tsx                 gemeinsame Eingabe-/Ergebnis-Komponenten
 │   ├── ToolRunner.tsx             20 allgemeine Basis-Tools
 │   ├── PropertyToolRunner.tsx     5 Immobilien-Rechner
 │   ├── ShiftToolRunner.tsx        5 Schicht-/Zuschlags-Rechner
 │   ├── HandwerkerToolRunner.tsx   5 Renovierungs-/Kosten-Rechner
-│   ├── SiteHeader.tsx             Globaler Header
-│   └── SiteFooter.tsx             Globaler Footer
+│   ├── SiteHeader.tsx             globaler Header
+│   └── SiteFooter.tsx             globaler Footer
 │
 ├── data/
-│   ├── tools.ts                   Basis-Tools + Basis-Kategorien
-│   ├── tool-registry.ts           erweitert um Immobilien + Schicht
-│   └── tool-registry-all.ts       vollständige Registry inkl. Handwerker
+│   ├── tools.ts                   Metadaten der 20 Basis-Tools
+│   └── tool-registry.ts           zentrale Registry aller 35 Tools
 │
-├── tools/[slug]/page.tsx          Gemeinsame dynamische Tool-Seite
-├── nischen/[slug]/page.tsx        Gemeinsame dynamische Kategorie-Seite
+├── tools/[slug]/page.tsx          gemeinsame dynamische Tool-Seite
+├── nischen/[slug]/page.tsx        gemeinsame dynamische Kategorie-Seite
 ├── datenschutz/page.tsx           Datenschutz
 ├── impressum/page.tsx             Impressum
-├── layout.tsx                     Globale Metadaten und Layout
+├── layout.tsx                     globale Metadaten und Layout
 ├── page.tsx                       Startseite
 ├── robots.ts                      robots.txt
 ├── sitemap.ts                     sitemap.xml
-└── globals.css                    Globales Styling
+└── globals.css                    globales Styling
 
-db/                                Optionales D1/Drizzle-Datenbankgerüst
+db/                                optionales D1/Drizzle-Datenbankgerüst
 drizzle/                           Migrationen / Datenbankstruktur
-examples/                          Optionale Beispielimplementierungen
+examples/                          optionale Beispielimplementierungen
 scripts/                           Build- und Hosting-Hilfsskripte
 tests/                             Render-/Metadaten-Tests
-public/                            Statische Assets
+public/                            statische Assets
 ```
 
 Die technische Architektur ist ausführlich in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) beschrieben.
@@ -139,7 +141,7 @@ Die technische Architektur ist ausführlich in [`docs/ARCHITECTURE.md`](docs/ARC
 - **Vinext / Vite**
 - **Cloudflare-kompatibles Hosting**
 - **Drizzle ORM** und optional Cloudflare D1
-- Clientseitige Verarbeitung für viele Tools
+- clientseitige Verarbeitung für viele Tools
 
 Voraussetzung laut Projektkonfiguration:
 
@@ -179,39 +181,54 @@ Linting:
 npm run lint
 ```
 
-> Hinweis: Einige vorhandene Hilfsskripte unter `scripts/` sind auf Linux-/Cloudflare-/Sites-Umgebungen ausgelegt und verwenden Bash sowie GNU-Tools. Unter Windows kann WSL oder eine kompatible Shell notwendig sein.
+> Einige Hilfsskripte unter `scripts/` sind auf Linux-/Cloudflare-/Sites-Umgebungen ausgelegt und verwenden Bash sowie GNU-Tools. Unter Windows kann WSL oder eine kompatible Shell notwendig sein.
 
 ## Wichtige Dateien
 
-### `app/data/tool-registry-all.ts`
-
-**Zentrale vollständige Tool-Übersicht für die aktuelle Website.** Sie kombiniert Basis-, Immobilien-, Schicht- und Handwerker-Tools und liefert die vollständige Liste der 35 Werkzeuge und 9 Kategorien.
-
 ### `app/data/tool-registry.ts`
 
-Erweitert die Basis-Tools um die Kategorien **Immobilien** und **Schicht & Zuschläge**.
+**Zentrale Registry der gesamten Website.** Sie führt alle 35 Tools und alle 9 Kategorien zusammen.
+
+Jedes registrierte Tool erhält zusätzlich einen `runner`-Typ:
+
+- `core`
+- `property`
+- `shift`
+- `handwerker`
+
+Die dynamische Tool-Seite verwendet diesen Wert direkt zur Auswahl der richtigen Rechner-Komponente. Dadurch gibt es keine verketteten Registries und keine mehrfachen Slug-Prüfungen mehr.
 
 ### `app/data/tools.ts`
 
-Enthält die ursprünglichen 20 Tool-Definitionen und sechs Basiskategorien inklusive Slug, Titel, Kurztext, Keywords und FAQ.
+Enthält die Metadaten der ursprünglichen 20 Basis-Tools und sechs Basiskategorien. Diese werden von der zentralen Registry als `core`-Tools registriert.
 
-### `app/components/ToolRunner.tsx`
+### `app/components/ToolUI.tsx`
 
-Berechnungs- und Browserlogik der allgemeinen Werkzeuge, z. B. Prozentrechnung, Textauswertung, Bildkonvertierung, QR-Code, Arbeitszeit und Passwortgenerator.
+Gemeinsame UI- und Formatierungsbausteine für alle Runner:
 
-### `app/components/PropertyToolRunner.tsx`
+- `Field`
+- `NumberField`
+- `SelectField`
+- `Result`
+- Zahlenparser
+- deutsche Zahlenformatierung
+- Euro-Formatierung
 
-Logik für:
+Dadurch müssen neue Rechner diese Grundbausteine nicht erneut definieren.
+
+### Runner
+
+`ToolRunner.tsx` enthält die allgemeinen Browser-/Alltagswerkzeuge.
+
+`PropertyToolRunner.tsx` enthält:
 
 - Mietrendite
 - Kaufnebenkosten
 - Immobilien-Cashflow
-- leistbares Hausbudget
+- Hausbudget
 - Kreditrate / Restschuld
 
-### `app/components/ShiftToolRunner.tsx`
-
-Logik für:
+`ShiftToolRunner.tsx` enthält:
 
 - Schichtlohn
 - Nachtzuschlag
@@ -219,9 +236,7 @@ Logik für:
 - Feiertagszuschlag
 - Überstunden
 
-### `app/components/HandwerkerToolRunner.tsx`
-
-Logik für:
+`HandwerkerToolRunner.tsx` enthält:
 
 - Dachkosten
 - Badrenovierung
@@ -231,7 +246,7 @@ Logik für:
 
 ### `app/tools/[slug]/page.tsx`
 
-Die zentrale Seitenvorlage. Sie erkennt anhand der Registry, welcher Runner benötigt wird, und erzeugt automatisch:
+Die zentrale Seitenvorlage liest die Tool-Definition aus der Registry und erzeugt automatisch:
 
 - eigene URL
 - Seitentitel und Description
@@ -240,17 +255,18 @@ Die zentrale Seitenvorlage. Sie erkennt anhand der Registry, welcher Runner ben�
 - FAQ-Bereich
 - strukturierte Daten
 - verwandte Tools
-- passenden Rechner
+- passenden Rechner anhand von `tool.runner`
 
 ## Wie entsteht ein neues Tool?
 
 Der Grundablauf ist:
 
-1. Tool mit `slug`, Titel, Beschreibung, Kategorie, Keywords und FAQ registrieren.
-2. Berechnungs- oder Verarbeitungslogik als React-Komponente ergänzen.
-3. Den Slug im passenden Runner mit der Komponente verbinden.
-4. Prüfen, ob Kategorie und verwandte Tools korrekt erscheinen.
-5. Build und Tests ausführen.
+1. Tool mit `slug`, Titel, Beschreibung, Kategorie, Keywords und FAQ in `tool-registry.ts` registrieren.
+2. Berechnungs- oder Verarbeitungslogik im passenden Runner ergänzen.
+3. Den Slug im Runner mit der neuen Komponente verbinden.
+4. Gemeinsame Felder und Ergebnisboxen aus `ToolUI.tsx` verwenden.
+5. Prüfen, ob Kategorie, Suche und verwandte Tools korrekt erscheinen.
+6. Build, Lint und Tests ausführen.
 
 Die dynamische Route erzeugt danach automatisch die vollständige Tool-Seite.
 
@@ -295,4 +311,4 @@ Aktuell besonders relevant:
 
 ---
 
-**Kurz gesagt:** SofortTools ist keine Sammlung einzeln gebauter Mini-Websites, sondern eine gemeinsame technische Plattform, auf der neue spezialisierte Rechner mit relativ wenig zusätzlichem Aufwand veröffentlicht werden können.
+**Kurz gesagt:** SofortTools ist eine gemeinsame Tool-Plattform. Eine zentrale Registry steuert Seiten, Kategorien, Suche, SEO und Runner-Zuordnung; gemeinsame UI-Bausteine reduzieren den Aufwand für jeden neuen Rechner.
