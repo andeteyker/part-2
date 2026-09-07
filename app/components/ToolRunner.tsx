@@ -5,6 +5,7 @@ import Image from "next/image";
 import QRCode from "qrcode";
 import { Field, Result, SelectField, fmt, money, number } from "./ToolUI";
 import { useUrlState } from "../hooks/useUrlState";
+import { GrowthToolRunner } from "./GrowthToolRunner";
 
 function Percentage() {
   const [base, setBase] = useUrlState("grundwert", "250"); const [rate, setRate] = useUrlState("prozentsatz", "19");
@@ -137,5 +138,5 @@ export function ToolRunner({ slug }: { slug: string }) {
   const content: Record<string, React.ReactNode> = {
     prozentrechner: <Percentage />, dreisatzrechner: <RuleOfThree />, "woerter-aus-buchstaben": <WordFinder />, "wordle-hilfe": <Wordle />, "zeichen-zaehlen": <TextStats mode="chars" />, "woerter-zaehlen": <TextStats mode="words" />, "heic-zu-jpg": <ImageTool kind="heic" />, "webp-zu-jpg": <ImageTool kind="webp" />, "bild-komprimieren": <ImageTool kind="compress" />, "qr-code-erstellen": <QrTool />, "meine-ip": <IpTool />, "ping-test": <PingTool />, altersrechner: <AgeTool />, "zeitdauer-berechnen": <DurationTool />, mehrwertsteuerrechner: <VatTool />, stundenlohnrechner: <HourlyTool />, spritkostenrechner: <FuelTool />, kalenderwoche: <WeekTool />, zufallsgenerator: <RandomTool />, passwortgenerator: <PasswordTool />,
   };
-  return <div className="tool-surface">{content[slug]}</div>;
+  return content[slug] ? <div className="tool-surface">{content[slug]}</div> : <GrowthToolRunner slug={slug} />;
 }

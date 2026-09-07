@@ -1,4 +1,6 @@
-export type ToolCategory = "Geld & Beruf" | "Schule, Text & SEO" | "Wortspiele & Rätsel" | "iPhone & Bilder" | "Internet & Sicherheit" | "Zeit & Planung";
+import { growthCategories, growthCategoryDetails, growthTools, type GrowthCategory } from "./growth";
+
+export type ToolCategory = "Geld & Beruf" | "Schule, Text & SEO" | "Wortspiele & Rätsel" | "iPhone & Bilder" | "Internet & Sicherheit" | "Zeit & Planung" | GrowthCategory;
 
 export type ToolDefinition = {
   slug: string;
@@ -33,9 +35,10 @@ export const tools: ToolDefinition[] = [
   { slug: "kalenderwoche", title: "ISO-Kalenderwoche eines Datums", eyebrow: "KW nach ISO 8601 bestimmen", description: "Die ISO-Kalenderwoche eines beliebigen Datums sowie den zugehörigen Montag und Sonntag anzeigen.", short: "Kalenderwoche, Wochenbeginn und Wochenende anzeigen.", category: "Zeit & Planung", icon: "KW", keywords: ["ISO Kalenderwoche Datum", "Kalenderwoche berechnen", "aktuelle KW", "KW nach ISO 8601"], faq: [{ question: "Welche Kalenderwoche ist aktuell?", answer: "Wähle das heutige Datum aus; die aktuelle ISO-Kalenderwoche wird sofort angezeigt." }, { question: "Wann beginnt eine Kalenderwoche?", answer: "Nach ISO 8601 beginnt die Kalenderwoche am Montag und endet am Sonntag." }] },
   { slug: "zufallsgenerator", title: "Namen & Zahlen zufällig auslosen", eyebrow: "Faire Auswahl aus Liste oder Zahlenbereich", description: "Einen Namen aus einer Liste ziehen oder eine zufällige ganze Zahl innerhalb eines festgelegten Bereichs erzeugen.", short: "Namen, Teams oder Zahlen ohne Anmeldung auslosen.", category: "Zeit & Planung", icon: "🎲", keywords: ["Namen zufällig auslosen", "Zufallsgenerator Liste", "Zufallszahl", "Namen ziehen online"], faq: [{ question: "Sind beide Grenzen eingeschlossen?", answer: "Ja, Mindest- und Höchstwert können beide als Ergebnis gezogen werden." }, { question: "Kann ich Namen auslosen?", answer: "Ja, trage Namen oder andere Einträge zeilenweise ein und starte die Auswahl." }] },
   { slug: "passwortgenerator", title: "Sicheres Passwort mit Sonderzeichen", eyebrow: "Lokaler Passwortgenerator", description: "Ein starkes, kryptografisch zufälliges Passwort mit wählbarer Länge, Zahlen, Großbuchstaben und Sonderzeichen erstellen.", short: "Starkes Passwort lokal und ohne Übertragung erzeugen.", category: "Internet & Sicherheit", icon: "***", keywords: ["sicheres Passwort mit Sonderzeichen", "Passwortgenerator", "zufälliges Passwort", "starkes Passwort erstellen"], faq: [{ question: "Wird das Passwort übertragen?", answer: "Nein, das Passwort wird mit der sicheren Zufallsfunktion deines Browsers lokal erzeugt." }, { question: "Wie lang sollte ein Passwort sein?", answer: "Für wichtige Konten sind mindestens 16 zufällige Zeichen oder eine lange einzigartige Passphrase empfehlenswert." }] },
+  ...growthTools,
 ];
 
-export const categories: ToolCategory[] = ["Geld & Beruf", "Schule, Text & SEO", "Wortspiele & Rätsel", "iPhone & Bilder", "Internet & Sicherheit", "Zeit & Planung"];
+export const categories: ToolCategory[] = ["Geld & Beruf", "Schule, Text & SEO", "Wortspiele & Rätsel", "iPhone & Bilder", "Internet & Sicherheit", "Zeit & Planung", ...growthCategories];
 
 export const categoryDetails: Record<ToolCategory, { slug: string; kicker: string; description: string; icon: string }> = {
   "Geld & Beruf": { slug: "geld-beruf", kicker: "Preise, Gehalt und Mobilität", description: "Rechner für Rabatt, Mehrwertsteuer, Stundenlohn und gemeinsame Fahrtkosten.", icon: "€" },
@@ -44,6 +47,7 @@ export const categoryDetails: Record<ToolCategory, { slug: string; kicker: strin
   "iPhone & Bilder": { slug: "iphone-bilder", kicker: "Fotos umwandeln und verkleinern", description: "HEIC- und WebP-Dateien kompatibel machen oder Bilder für Upload und E-Mail komprimieren.", icon: "IMG" },
   "Internet & Sicherheit": { slug: "internet-sicherheit", kicker: "WLAN, Verbindung und Passwörter", description: "QR-Codes erzeugen, öffentliche IP und Latenz prüfen oder sichere Passwörter erstellen.", icon: "IP" },
   "Zeit & Planung": { slug: "zeit-planung", kicker: "Arbeit, Datum und faire Auswahl", description: "Arbeitszeit, Alter und Kalenderwochen berechnen oder Namen und Zahlen auslosen.", icon: "KW" },
+  ...growthCategoryDetails,
 };
 
 export function getCategoryBySlug(slug: string) {
