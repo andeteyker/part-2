@@ -24,14 +24,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const tool = getTool(slug);
   if (!tool) return {};
 
+  const canonical = `/tools/${tool.slug}`;
   return {
     title: tool.title,
     description: tool.description,
-    alternates: { canonical: `/tools/${tool.slug}` },
+    alternates: { canonical, languages: { "de-DE": canonical, "x-default": canonical } },
     openGraph: {
       title: `${tool.title} – kostenlos online`,
       description: tool.description,
-      url: `/tools/${tool.slug}`,
+      url: canonical,
     },
     twitter: {
       title: `${tool.title} – kostenlos online`,
@@ -51,7 +52,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const configuredRelated = (seo.relatedSlugs ?? []).map((relatedSlug) => getTool(relatedSlug)).filter(Boolean);
   const fallbackRelated = tools.filter((item) => item.category === tool.category && item.slug !== tool.slug && !configuredRelated.some((related) => related?.slug === item.slug));
   const related = [...configuredRelated, ...fallbackRelated].slice(0, 4);
-  const recommendation = getRecommendation(tool.slug);
+  const recommendation = getRecommendation(tool.slug, tool.title);
   const guide = getGuideByTool(tool.slug);
 
   const runner = {
@@ -85,6 +86,14 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           { "@type": "ListItem", position: 3, name: tool.title, item: canonical },
         ],
       },
+      {
+        "@type": "FAQPage",
+        mainEntity: tool.faq.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
+      },
     ],
   };
 
@@ -106,7 +115,11 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
 
         {runner}
 
-        {recommendation && <Recommendation rec={recommendation} />}
+        {recommendation && <Recommendation rec={recommendation} slug={tool.slug} />}
+        {seo.formula && <section className="calculation-guide" aria-label="Berechnungsweg">
+          <span className="calculation-guide-icon" aria-hidden="true">i</span>
+          <div><strong>So wird gerechnet</strong><p>{seo.formula}{seo.example ? ` · ${seo.example}` : ""}</p></div>
+        </section>}
 
         <section className="content-grid">
           <article>

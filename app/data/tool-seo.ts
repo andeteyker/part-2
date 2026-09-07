@@ -115,6 +115,211 @@ const toolSeo: Record<string, ToolSeoContent> = {
     formula: "Gesamtkosten = Dachfläche × Preis/m² + Zusatzkosten + Sicherheitspuffer",
     relatedSlugs: ["badrenovierung-rechner", "fensterkosten-rechner"],
   },
+  "dreisatzrechner": {
+    steps: [
+      { title: "Bekannte Werte eintragen", text: "Gib die beiden zusammengehörigen Ausgangswerte und den dritten bekannten Wert ein." },
+      { title: "Zuordnung prüfen", text: "Prüfe, ob sich die gesuchte Größe proportional verändert: mehr von A bedeutet entsprechend mehr von B." },
+      { title: "Rechenweg ablesen", text: "Der Rechner zeigt nicht nur das Ergebnis, sondern auch die verwendeten Zwischenschritte." },
+    ],
+    formula: "Gesuchter Wert = dritter Wert × zweiter Wert ÷ erster Wert",
+    example: "3 kg kosten 12 €. Dann kosten 5 kg: 5 × 12 ÷ 3 = 20 €.",
+    relatedSlugs: ["prozentrechner", "mehrwertsteuerrechner"],
+  },
+  "wordle-hilfe": {
+    steps: [
+      { title: "Bekannte Positionen eintragen", text: "Setze bereits bestätigte Buchstaben an die richtige Stelle und verwende Punkte für unbekannte Positionen." },
+      { title: "Enthaltene Buchstaben ergänzen", text: "Trage gelbe Buchstaben ein, die im Wort vorkommen, aber noch nicht richtig platziert sind." },
+      { title: "Buchstaben ausschließen", text: "Ergänze graue Buchstaben, damit unpassende Wörter aus der Trefferliste verschwinden." },
+    ],
+    example: "Das Muster A..EN findet deutsche Wörter mit A am Anfang und EN am Ende.",
+    relatedSlugs: ["woerter-aus-buchstaben", "woerter-zaehlen"],
+  },
+  "webp-zu-jpg": {
+    steps: [
+      { title: "WebP-Datei auswählen", text: "Wähle das WebP-Bild aus, das du für Programme oder Upload-Portale als JPG benötigst." },
+      { title: "Lokal umwandeln", text: "Die Konvertierung läuft direkt auf deinem Gerät; transparente Bereiche werden für JPG weiß hinterlegt." },
+      { title: "JPG herunterladen", text: "Speichere die erzeugte JPG-Datei bei unveränderter Bildbreite und Bildhöhe." },
+    ],
+    relatedSlugs: ["heic-zu-jpg", "bild-komprimieren"],
+  },
+  "qr-code-erstellen": {
+    steps: [
+      { title: "Inhalt festlegen", text: "Gib einen Link, einen Text oder die benötigten WLAN-Zugangsdaten ein." },
+      { title: "QR-Code erzeugen", text: "Der statische QR-Code wird direkt im Browser erstellt und enthält die eingegebenen Daten dauerhaft." },
+      { title: "PNG speichern und testen", text: "Lade die Grafik herunter und teste sie vor dem Drucken mit einer zweiten Kamera-App." },
+    ],
+    relatedSlugs: ["passwortgenerator", "meine-ip"],
+  },
+  "meine-ip": {
+    steps: [
+      { title: "Seite öffnen", text: "Beim Aufruf fragt das Tool deine aktuell nach außen sichtbare öffentliche IP-Adresse ab." },
+      { title: "IPv4 oder IPv6 erkennen", text: "Das Ergebnis zeigt die verfügbare öffentliche Adresse zusammen mit grundlegenden Browserdaten." },
+      { title: "Ergebnis sicher verwenden", text: "Teile eine IP-Adresse nur, wenn sie für Fehlersuche oder eine Freischaltung wirklich benötigt wird." },
+    ],
+    relatedSlugs: ["ping-test", "passwortgenerator", "qr-code-erstellen"],
+  },
+  "ping-test": {
+    steps: [
+      { title: "Messung starten", text: "Starte mehrere kleine Webanfragen an den SofortTools-Server." },
+      { title: "Werte vergleichen", text: "Das Tool ermittelt Durchschnitt, Minimum und Maximum der gemessenen Reaktionszeiten." },
+      { title: "Abweichungen einordnen", text: "Stark schwankende Werte können auf WLAN-, Mobilfunk- oder Auslastungsprobleme hindeuten." },
+    ],
+    formula: "Durchschnittliche Latenz = Summe aller Messzeiten ÷ Anzahl der Messungen",
+    relatedSlugs: ["meine-ip", "passwortgenerator"],
+  },
+  "altersrechner": {
+    steps: [
+      { title: "Geburtsdatum wählen", text: "Trage dein vollständiges Geburtsdatum ein." },
+      { title: "Stichtag festlegen", text: "Verwende das heutige Datum oder wähle einen anderen Stichtag für die Berechnung." },
+      { title: "Genaues Alter ablesen", text: "Das Ergebnis berücksichtigt echte Kalendermonate, unterschiedliche Monatslängen und Schaltjahre." },
+    ],
+    example: "So lässt sich etwa das genaue Alter an einem zukünftigen Vertrags- oder Prüfungstag bestimmen.",
+    relatedSlugs: ["kalenderwoche", "zeitdauer-berechnen"],
+  },
+  "kalenderwoche": {
+    steps: [
+      { title: "Datum auswählen", text: "Wähle den Tag, dessen ISO-Kalenderwoche du bestimmen möchtest." },
+      { title: "Kalenderwoche ermitteln", text: "Der Rechner ordnet das Datum nach ISO 8601 der korrekten Kalenderwoche zu." },
+      { title: "Wochenzeitraum prüfen", text: "Zusätzlich werden Montag und Sonntag der gefundenen Woche angezeigt." },
+    ],
+    example: "Die erste ISO-Kalenderwoche ist die Woche mit dem ersten Donnerstag des Jahres.",
+    relatedSlugs: ["altersrechner", "zeitdauer-berechnen"],
+  },
+  "zufallsgenerator": {
+    steps: [
+      { title: "Auslosung wählen", text: "Entscheide, ob du einen Namen aus einer Liste oder eine Zahl aus einem Bereich ziehen möchtest." },
+      { title: "Teilnehmer oder Grenzen eintragen", text: "Füge Listeneinträge zeilenweise ein oder bestimme Mindest- und Höchstzahl." },
+      { title: "Zufälliges Ergebnis ziehen", text: "Starte die Auswahl; bei Zahlen können beide eingegebenen Grenzen gezogen werden." },
+    ],
+    relatedSlugs: ["passwortgenerator", "woerter-aus-buchstaben"],
+  },
+  "passwortgenerator": {
+    steps: [
+      { title: "Passwortlänge bestimmen", text: "Wähle für wichtige Konten möglichst mindestens 16 Zeichen." },
+      { title: "Zeichenarten auswählen", text: "Aktiviere Groß- und Kleinbuchstaben, Zahlen und bei unterstützten Diensten Sonderzeichen." },
+      { title: "Passwort sicher speichern", text: "Kopiere das lokal erzeugte Passwort direkt in einen vertrauenswürdigen Passwortmanager." },
+    ],
+    relatedSlugs: ["qr-code-erstellen", "meine-ip"],
+  },
+  "mietrendite-rechner": {
+    steps: [
+      { title: "Kaufpreis und Miete eintragen", text: "Gib Kaufpreis und monatliche Kaltmiete der Immobilie ein." },
+      { title: "Nebenkosten berücksichtigen", text: "Ergänze Kaufnebenkosten und nicht umlagefähige jährliche Eigentümerkosten." },
+      { title: "Brutto und netto vergleichen", text: "Vergleiche Bruttomietrendite, Nettomietrendite und jährlichen Überschuss." },
+    ],
+    formula: "Bruttomietrendite = Jahreskaltmiete ÷ Kaufpreis × 100",
+    example: "12.000 € Jahreskaltmiete bei 240.000 € Kaufpreis entsprechen 5 % Bruttomietrendite.",
+    relatedSlugs: ["immobilien-cashflow-rechner", "kaufnebenkosten-rechner", "kreditraten-rechner"],
+  },
+  "kaufnebenkosten-rechner": {
+    steps: [
+      { title: "Kaufpreis eintragen", text: "Gib den vereinbarten Kaufpreis der Immobilie ein." },
+      { title: "Prozentsätze anpassen", text: "Wähle die Grunderwerbsteuer deines Bundeslands und ergänze Notar-, Grundbuch- und Maklerkosten." },
+      { title: "Gesamtbudget prüfen", text: "Der Rechner zeigt jede Kostenposition, die Nebenkostensumme und den gesamten Kapitalbedarf." },
+    ],
+    formula: "Gesamtkosten = Kaufpreis + Grunderwerbsteuer + Notar/Grundbuch + Makler",
+    relatedSlugs: ["haus-leisten-rechner", "kreditraten-rechner", "mietrendite-rechner"],
+  },
+  "immobilien-cashflow-rechner": {
+    steps: [
+      { title: "Monatliche Kaltmiete eingeben", text: "Trage die nachhaltig erzielbare monatliche Kaltmiete ein." },
+      { title: "Finanzierung und Kosten ergänzen", text: "Erfasse Kreditrate, nicht umlagefähiges Hausgeld, Rücklage, Verwaltung und weitere Ausgaben." },
+      { title: "Monatlichen Cashflow prüfen", text: "Das Ergebnis zeigt, ob vor Steuern ein monatlicher Überschuss oder Fehlbetrag entsteht." },
+    ],
+    formula: "Cashflow = Kaltmiete − Kreditrate − nicht umlagefähige Kosten − Rücklage",
+    relatedSlugs: ["mietrendite-rechner", "kreditraten-rechner", "kaufnebenkosten-rechner"],
+  },
+  "kreditraten-rechner": {
+    steps: [
+      { title: "Kreditsumme festlegen", text: "Gib den benötigten Darlehensbetrag für die Immobilienfinanzierung ein." },
+      { title: "Zins und Tilgung eintragen", text: "Ergänze Sollzins, anfängliche Tilgung und die gewünschte Dauer der Zinsbindung." },
+      { title: "Rate und Restschuld vergleichen", text: "Prüfe monatliche Annuität, anfänglichen Zins- und Tilgungsanteil sowie die geschätzte Restschuld." },
+    ],
+    formula: "Monatsrate = Kreditsumme × (Sollzins + anfängliche Tilgung) ÷ 12",
+    relatedSlugs: ["haus-leisten-rechner", "kaufnebenkosten-rechner", "immobilien-cashflow-rechner"],
+  },
+  "schichtlohn-rechner": {
+    steps: [
+      { title: "Grundlohn erfassen", text: "Trage Stundenlohn und regulär geleistete Monatsstunden ein." },
+      { title: "Zuschlagsstunden aufteilen", text: "Ergänze Nacht-, Sonntags- und Feiertagsstunden mit den jeweils vereinbarten Zuschlagssätzen." },
+      { title: "Monatsübersicht prüfen", text: "Der Rechner trennt Grundlohn und Zuschläge und addiert daraus den geschätzten Bruttolohn." },
+    ],
+    formula: "Schichtlohn = Grundlohn + Nachtzuschlag + Sonntagszuschlag + Feiertagszuschlag",
+    relatedSlugs: ["nachtzuschlag-rechner", "sonntagszuschlag-rechner", "feiertagszuschlag-rechner", "stundenlohnrechner"],
+  },
+  "nachtzuschlag-rechner": {
+    steps: [
+      { title: "Stundenlohn und Nachtstunden eingeben", text: "Trage den Grundlohn pro Stunde und die tatsächlich nachts geleisteten Stunden ein." },
+      { title: "Zuschlagssatz auswählen", text: "Nutze den arbeits- oder tarifvertraglich vereinbarten Satz, zum Beispiel 25 oder 40 Prozent." },
+      { title: "Zuschlag einordnen", text: "Vergleiche den errechneten Betrag mit der steuerlichen Höchstgrenze nach § 3b EStG." },
+    ],
+    formula: "Nachtzuschlag = Stundenlohn × Nachtstunden × Zuschlagssatz",
+    example: "20 € × 8 Stunden × 25 % ergeben 40 € Nachtzuschlag.",
+    relatedSlugs: ["schichtlohn-rechner", "sonntagszuschlag-rechner", "feiertagszuschlag-rechner"],
+  },
+  "sonntagszuschlag-rechner": {
+    steps: [
+      { title: "Grundlohn und Sonntagsstunden eingeben", text: "Erfasse Stundenlohn und tatsächlich am Sonntag geleistete Arbeitsstunden." },
+      { title: "Vereinbarten Zuschlag eintragen", text: "Gib den Prozentsatz aus Arbeitsvertrag, Tarifvertrag oder Betriebsvereinbarung an." },
+      { title: "Steuerliche Grenze vergleichen", text: "Das Ergebnis stellt den Arbeitgeberzuschlag der Höchstgrenze nach § 3b EStG gegenüber." },
+    ],
+    formula: "Sonntagszuschlag = Stundenlohn × Sonntagsstunden × Zuschlagssatz",
+    relatedSlugs: ["schichtlohn-rechner", "nachtzuschlag-rechner", "feiertagszuschlag-rechner"],
+  },
+  "feiertagszuschlag-rechner": {
+    steps: [
+      { title: "Feiertag auswählen", text: "Unterscheide normale gesetzliche Feiertage von besonders begünstigten Tagen wie Weihnachten oder dem 1. Mai." },
+      { title: "Lohn und Stunden eintragen", text: "Erfasse Grundlohn, geleistete Feiertagsstunden und den vereinbarten Zuschlag." },
+      { title: "125 oder 150 Prozent prüfen", text: "Vergleiche den errechneten Zuschlag mit der passenden steuerlichen Höchstgrenze nach § 3b EStG." },
+    ],
+    formula: "Feiertagszuschlag = Stundenlohn × Feiertagsstunden × Zuschlagssatz",
+    relatedSlugs: ["schichtlohn-rechner", "sonntagszuschlag-rechner", "nachtzuschlag-rechner"],
+  },
+  "ueberstunden-rechner": {
+    steps: [
+      { title: "Stundenlohn und Überstunden eintragen", text: "Gib deinen Stundenlohn und die Anzahl der auszugleichenden Mehrarbeitsstunden ein." },
+      { title: "Zuschlag ergänzen", text: "Trage den vereinbarten Überstundenzuschlag ein; ohne Vereinbarung kannst du mit 0 Prozent rechnen." },
+      { title: "Auszahlung oder Freizeit vergleichen", text: "Prüfe den Bruttowert der Überstunden und den entsprechenden Freizeitausgleich." },
+    ],
+    formula: "Auszahlung = Stundenlohn × Überstunden × (1 + Zuschlagssatz)",
+    relatedSlugs: ["stundenlohnrechner", "zeitdauer-berechnen", "schichtlohn-rechner"],
+  },
+  "badrenovierung-rechner": {
+    steps: [
+      { title: "Badfläche und Ausbaupreis eintragen", text: "Gib Raumgröße und den geschätzten Sanierungspreis pro Quadratmeter ein." },
+      { title: "Ausstattung und Installationen ergänzen", text: "Erfasse Sanitärobjekte, Möbel, Wasser-, Abwasser- und Elektroarbeiten separat." },
+      { title: "Budget mit Puffer prüfen", text: "Der Rechner addiert alle Positionen und berücksichtigt einen frei wählbaren Sicherheitspuffer." },
+    ],
+    formula: "Gesamtkosten = Fläche × Ausbaupreis/m² + Ausstattung + Installationen + Puffer",
+    relatedSlugs: ["bodenverlegung-kosten-rechner", "malerkosten-rechner", "fensterkosten-rechner"],
+  },
+  "fensterkosten-rechner": {
+    steps: [
+      { title: "Fensteranzahl erfassen", text: "Gib ein, wie viele Fenster ausgetauscht oder neu eingebaut werden sollen." },
+      { title: "Stück- und Montagepreise eintragen", text: "Ergänze Fensterpreis, Montagekosten und weitere Arbeiten je Element." },
+      { title: "Gesamtkosten vergleichen", text: "Das Ergebnis trennt Material, Einbau und Zusatzkosten für einen besseren Angebotsvergleich." },
+    ],
+    formula: "Gesamtkosten = Anzahl × (Fensterpreis + Montagepreis) + Zusatzkosten",
+    relatedSlugs: ["dachkosten-rechner", "malerkosten-rechner", "badrenovierung-rechner"],
+  },
+  "malerkosten-rechner": {
+    steps: [
+      { title: "Malerfläche bestimmen", text: "Trage die tatsächlich zu bearbeitende Wand- und Deckenfläche ein, nicht nur die Wohnfläche." },
+      { title: "Flächenpreis und Vorarbeiten ergänzen", text: "Erfasse Preis pro Quadratmeter sowie Kosten für Abdecken, Spachteln, Schleifen oder Grundieren." },
+      { title: "Material und Gesamtkosten prüfen", text: "Der Rechner addiert Arbeits-, Vorbereitungs- und zusätzliche Materialkosten." },
+    ],
+    formula: "Gesamtkosten = Malerfläche × Preis/m² + Vorarbeiten + Material",
+    relatedSlugs: ["bodenverlegung-kosten-rechner", "badrenovierung-rechner", "fensterkosten-rechner"],
+  },
+  "bodenverlegung-kosten-rechner": {
+    steps: [
+      { title: "Bodenfläche eingeben", text: "Trage die zu belegende Fläche in Quadratmetern ein." },
+      { title: "Material, Verschnitt und Verlegung ergänzen", text: "Erfasse Materialpreis, Verlegepreis und einen passenden Verschnitt für Raumform und Verlegemuster." },
+      { title: "Nebenarbeiten berücksichtigen", text: "Ergänze zum Beispiel Rückbau, Untergrundausgleich, Dämmung, Sockelleisten und Entsorgung." },
+    ],
+    formula: "Gesamtkosten = Fläche mit Verschnitt × Materialpreis + Fläche × Verlegepreis + Zusatzkosten",
+    relatedSlugs: ["malerkosten-rechner", "badrenovierung-rechner", "dachkosten-rechner"],
+  },
 };
 
 export function getToolSeo(slug: string): ToolSeoContent {
