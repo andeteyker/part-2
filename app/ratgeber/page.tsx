@@ -13,6 +13,7 @@ export const metadata: Metadata = {
 
 export default function RatgeberPage() {
   const guides = allGuides();
+  const clusters = [...new Set(guides.map((guide) => guide.cluster))];
   return (
     <>
       <SiteHeader />
@@ -24,19 +25,27 @@ export default function RatgeberPage() {
             <p>Praxisnah erklärte Themen zu unseren Rechnern – mit Formeln, Beispielen und konkreten Zahlen.</p>
           </section>
 
-          <div className="guide-grid">
-            {guides.map((guide) => {
-              const tool = getTool(guide.toolSlug);
-              return (
-                <Link href={`/ratgeber/${guide.slug}`} key={guide.slug} className="guide-card">
-                  <div className="card-top"><span className="tool-icon">Rat</span><span className="tool-arrow">↗</span></div>
-                  <p>{tool?.category ?? "Ratgeber"}</p>
-                  <h3>{guide.title}</h3>
-                  <span>{guide.excerpt}</span>
-                </Link>
-              );
-            })}
-          </div>
+          {clusters.map((cluster) => (
+            <section className="guide-cluster" key={cluster}>
+              <div className="section-head"><div><p className="eyebrow"><span /> Themencluster</p><h2>{cluster}</h2></div></div>
+              <div className="guide-grid">
+                {guides
+                  .filter((guide) => guide.cluster === cluster)
+                  .sort((a, b) => Number(b.kind === "pillar") - Number(a.kind === "pillar"))
+                  .map((guide) => {
+                    const tool = getTool(guide.toolSlug);
+                    return (
+                      <Link href={`/ratgeber/${guide.slug}`} key={guide.slug} className={`guide-card ${guide.kind === "pillar" ? "guide-card-pillar" : ""}`}>
+                        <div className="card-top"><span className="tool-icon">{guide.kind === "pillar" ? "Guide" : "Rat"}</span><span className="tool-arrow">↗</span></div>
+                        <p>{guide.kind === "pillar" ? "Leitfaden" : tool?.category ?? "Ratgeber"}</p>
+                        <h3>{guide.title}</h3>
+                        <span>{guide.excerpt}</span>
+                      </Link>
+                    );
+                  })}
+              </div>
+            </section>
+          ))}
           {guides.length === 0 && <p>Noch keine Ratgeber verfügbar.</p>}
         </div>
       </main>

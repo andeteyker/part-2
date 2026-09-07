@@ -4,7 +4,7 @@ import Script from "next/script";
 import { notFound } from "next/navigation";
 import { SiteFooter } from "../../components/SiteFooter";
 import { SiteHeader } from "../../components/SiteHeader";
-import { allGuides, getGuide } from "../../data/guides";
+import { allGuides, getGuide, getRelatedGuides } from "../../data/guides";
 import { getTool } from "../../data/tool-registry";
 import { absoluteUrl } from "../../lib/site";
 import { Recommendation } from "../../components/ToolUI";
@@ -60,8 +60,9 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
 
   const tool = getTool(guide.toolSlug);
   const canonical = absoluteUrl(`/ratgeber/${guide.slug}`);
-  const toolUrl = tool ? absoluteUrl(`/tools/${tool.slug}`) : null;
-  const recommendation = getRecommendation(guide.toolSlug);
+  const toolHref = tool ? `/tools/${tool.slug}` : null;
+  const relatedGuides = getRelatedGuides(guide);
+  const recommendation = getRecommendation(guide.toolSlug, tool?.title);
 
   const schema = {
     "@context": "https://schema.org",
@@ -72,7 +73,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         headline: guide.title,
         description: guide.description,
         inLanguage: "de-DE",
-        dateModified: guide.updated,
+        dateModified: `${guide.updated}-01`,
         author: { "@type": "Person", name: "Sofort-Tools" },
         publisher: { "@type": "Organization", name: "Sofort-Tools" },
         mainEntityOfPage: canonical,
@@ -99,11 +100,11 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
           </nav>
 
           <section className="tool-hero">
-            <p className="eyebrow"><span /> Ratgeber</p>
+            <p className="eyebrow"><span /> {guide.kind === "pillar" ? "Leitfaden" : "Ratgeber"} · {guide.cluster}</p>
             <h1>{guide.title}</h1>
             <p>{guide.description}</p>
-            {tool && toolUrl && (
-              <Link href={toolUrl} className="guide-tool-cta">Zum passenden Rechner: {tool.title}</Link>
+            {tool && toolHref && (
+              <Link href={toolHref} className="guide-tool-cta">Zum passenden Rechner: {tool.title}</Link>
             )}
           </section>
 
@@ -116,11 +117,26 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             ))}
           </article>
 
-          {tool && toolUrl && (
+          {relatedGuides.length > 0 && (
+            <section className="guide-related" aria-labelledby="related-guides-heading">
+              <h2 id="related-guides-heading">Passende Ratgeber</h2>
+              <div className="guide-grid compact">
+                {relatedGuides.map((related) => (
+                  <Link href={`/ratgeber/${related.slug}`} key={related.slug} className="guide-card">
+                    <p>{related.kind === "pillar" ? "Leitfaden" : related.cluster}</p>
+                    <h3>{related.title}</h3>
+                    <span>{related.excerpt}</span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {tool && toolHref && (
             <section className="guide-rechner-cta">
               <h2>Jetzt selbst berechnen</h2>
               <p>{tool.title} – kostenlos und ohne Anmeldung.</p>
-              <Link href={toolUrl} className="recommendation-link">Zum Rechner</Link>
+              <Link href={toolHref} className="recommendation-link">Zum Rechner</Link>
             </section>
           )}
 
