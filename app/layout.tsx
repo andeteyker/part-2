@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import "@fontsource-variable/inter/wght.css";
 import "./globals.css";
 import { SITE_NAME, SITE_URL } from "./lib/site";
 import ConsentBanner from "./components/ConsentBanner";
