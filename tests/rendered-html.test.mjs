@@ -64,9 +64,9 @@ test("brand and category artwork replace starter icons, abbreviations and emoji"
   assert.match(favicon, /#B8EF2C/i);
   assert.match(favicon, /#071A31/i);
   assert.doesNotMatch(favicon, /#2E9EFF|#0C79D8/i);
-  assert.match(home, /<svg[^>]+viewBox="0 0 24 24"/i);
-  assert.match(category, /<svg[^>]+viewBox="0 0 24 24"/i);
-  assert.match(guideIndex, /<svg[^>]+viewBox="0 0 24 24"/i);
+  assert.match(home, /<svg[^>]+viewBox="0 0 48 48"/i);
+  assert.match(category, /<svg[^>]+viewBox="0 0 48 48"/i);
+  assert.match(guideIndex, /<svg[^>]+viewBox="0 0 48 48"/i);
   assert.doesNotMatch(`${home}\n${category}\n${guideIndex}\n${localTool}`, /🎂|⏱|⛽|🏠|🌙|🔒/u);
   assert.doesNotMatch(`${homeSource}\n${categorySource}\n${toolPageSource}`, /\{(?:tool|item|category|group\.details)\.icon\}/);
 });
