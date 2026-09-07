@@ -24,7 +24,7 @@ export function HomeClient() {
         <div className="hero-copy">
           <p className="eyebrow"><span /> Kostenlos · Ohne Anmeldung · Direkt im Browser</p>
           <h1>Kostenlose Online-Rechner.<br /><em>Sofort ein klares Ergebnis.</em></h1>
-          <p className="hero-text">35 kostenlose Rechner und Tools für konkrete Aufgaben – von Arbeitszeit, Text und Bildern bis Immobilien, Renovierung und Schichtlohn.</p>
+          <p className="hero-text">55 kostenlose Rechner und Tools für konkrete Aufgaben – von Finanzen, Energie und Gesundheit bis Immobilien, Arbeit, Text und Bildern.</p>
           <label className="tool-search">
             <span aria-hidden="true">⌕</span>
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Welches Tool brauchst du?" aria-label="Tools durchsuchen" />

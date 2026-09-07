@@ -14,7 +14,7 @@ export default function Home() {
     alternateName: "Sofort-Tools",
     url: absoluteUrl("/"),
     inLanguage: "de-DE",
-    description: "35 kostenlose Online-Rechner und Werkzeuge für Renovierung, Immobilien, Geld, Arbeit, Text, Bilder, Internet und Alltag.",
+    description: "55 kostenlose Online-Rechner und Werkzeuge für Finanzen, Energie, Gesundheit, Familie, Arbeit, Immobilien, Text, Bilder und Alltag.",
     hasPart: tools.map((tool) => ({ "@type": "WebApplication", name: tool.title, url: absoluteUrl(`/tools/${tool.slug}`) })),
   };
   return <><Script id="website-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }} /><SiteHeader /><main><HomeClient /></main><SiteFooter /></>;
