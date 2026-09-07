@@ -87,3 +87,26 @@ test("every published tool has dedicated SEO guidance", async () => {
   assert.equal(publishedSlugs.length, 35);
   assert.deepEqual(publishedSlugs.filter((slug) => !optimizedSlugs.has(slug)), []);
 });
+
+test("calculator pages explain technical terms and the calculation close to the form", async () => {
+  const worker = await createWorker();
+  const response = await fetchFromWorker(worker, "/tools/mietrendite-rechner");
+  const html = await response.text();
+
+  assert.equal(response.status, 200);
+  assert.match(html, /Kaufnebenkosten erklären/i);
+  assert.match(html, /So wird gerechnet/i);
+  assert.match(html, /Bruttomietrendite = Jahreskaltmiete/i);
+});
+
+test("imprint identifies the operator and keeps missing address visible", async () => {
+  const worker = await createWorker();
+  const response = await fetchFromWorker(worker, "/impressum");
+  const html = await response.text();
+
+  assert.equal(response.status, 200);
+  assert.match(html, /Easysites/i);
+  assert.match(html, /Erik Miel/i);
+  assert.match(html, /kontakt@sofort-tools\.de/i);
+  assert.match(html, /Ladungsfähige Anschrift muss noch ergänzt werden/i);
+});

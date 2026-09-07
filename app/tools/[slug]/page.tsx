@@ -110,6 +110,11 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
 
         {runner}
 
+        {seo.formula && <section className="calculation-guide" aria-label="Berechnungsweg">
+          <span className="calculation-guide-icon" aria-hidden="true">i</span>
+          <div><strong>So wird gerechnet</strong><p>{seo.formula}{seo.example ? ` · ${seo.example}` : ""}</p></div>
+        </section>}
+
         <section className="content-grid">
           <article>
             <p className="eyebrow"><span /> Anleitung</p>
