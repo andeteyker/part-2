@@ -39,10 +39,36 @@ test("renders one consistent production canonical and no preview marker", async 
   );
   const html = await response.text();
   assert.match(html, /<html[^>]+lang=["']de["']/i);
-  assert.match(html, /<title>Kostenlose Online-Rechner &amp; Tools \| SofortTools<\/title>/i);
+  assert.match(html, /<title>SofortTools – Kostenlose Rechner &amp; Online-Tools<\/title>/i);
+  assert.match(html, /rel=["']icon["'][^>]+href=["'][^"']*favicon\.svg/i);
+  assert.match(html, /Organization/i);
+  assert.match(html, /Sofort-Tools/i);
   assert.match(html, /<link[^>]+rel=["']canonical["'][^>]+href=["']https:\/\/www\.sofort-tools\.de[\/"]?/i);
   assert.doesNotMatch(html, /soforttools\.mielerik\.chatgpt\.site/i);
   assert.doesNotMatch(html, /codex-preview/i);
+});
+
+test("brand and category artwork replace starter icons, abbreviations and emoji", async () => {
+  const worker = await createWorker();
+  const [home, category, guideIndex, localTool, favicon, homeSource, categorySource, toolPageSource] = await Promise.all([
+    fetchFromWorker(worker, "/").then((response) => response.text()),
+    fetchFromWorker(worker, "/nischen/immobilien").then((response) => response.text()),
+    fetchFromWorker(worker, "/ratgeber").then((response) => response.text()),
+    fetchFromWorker(worker, "/tools/zeichen-zaehlen").then((response) => response.text()),
+    readFile(new URL("../public/favicon.svg", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/HomeClient.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/nischen/[slug]/page.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/tools/[slug]/page.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(favicon, /#B8EF2C/i);
+  assert.match(favicon, /#071A31/i);
+  assert.doesNotMatch(favicon, /#2E9EFF|#0C79D8/i);
+  assert.match(home, /<svg[^>]+viewBox="0 0 24 24"/i);
+  assert.match(category, /<svg[^>]+viewBox="0 0 24 24"/i);
+  assert.match(guideIndex, /<svg[^>]+viewBox="0 0 24 24"/i);
+  assert.doesNotMatch(`${home}\n${category}\n${guideIndex}\n${localTool}`, /🎂|⏱|⛽|🏠|🌙|🔒/u);
+  assert.doesNotMatch(`${homeSource}\n${categorySource}\n${toolPageSource}`, /\{(?:tool|item|category|group\.details)\.icon\}/);
 });
 
 test("tool pages expose canonical, FAQ schema and unique help content", async () => {

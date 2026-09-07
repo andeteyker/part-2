@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { categories, categoryDetails, tools, type ToolCategory } from "../data/tool-registry";
+import { CategoryIcon } from "./CategoryIcon";
 
 export function HomeClient() {
   const [query, setQuery] = useState("");
@@ -16,12 +17,12 @@ export function HomeClient() {
     });
   }, [query, category]);
   const groups = categories.map((name) => ({ name, details: categoryDetails[name], items: visible.filter((tool) => tool.category === name) })).filter((group) => group.items.length);
-  const featuredCategories: { name: string; category: ToolCategory; icon: string; subtitle: string }[] = [
-    { name: "Handwerker & Renovierung", category: "Handwerker & Renovierung", icon: "Werk", subtitle: "Sanierung, Ausbau und Angebote" },
-    { name: "Immobilien & Finanzierung", category: "Immobilien", icon: "Immo", subtitle: "Kauf, Kredit und Vermietung" },
-    { name: "Lohn & Gehalt", category: "Geld & Beruf", icon: "Lohn", subtitle: "Arbeitszeit, Gehalt und Zuschläge" },
-    { name: "Steuern & Finanzen", category: "Finanzen & Steuern", icon: "€", subtitle: "Abgaben, Vorsorge und Sparen" },
-    { name: "Energie & Verbrauch", category: "Energie & Umwelt", icon: "kWh", subtitle: "Strom, Heizung, Gas und Solar" },
+  const featuredCategories: { name: string; category: ToolCategory; subtitle: string }[] = [
+    { name: "Handwerker & Renovierung", category: "Handwerker & Renovierung", subtitle: "Sanierung, Ausbau und Angebote" },
+    { name: "Immobilien & Finanzierung", category: "Immobilien", subtitle: "Kauf, Kredit und Vermietung" },
+    { name: "Lohn & Gehalt", category: "Geld & Beruf", subtitle: "Arbeitszeit, Gehalt und Zuschläge" },
+    { name: "Steuern & Finanzen", category: "Finanzen & Steuern", subtitle: "Abgaben, Vorsorge und Sparen" },
+    { name: "Energie & Verbrauch", category: "Energie & Umwelt", subtitle: "Strom, Heizung, Gas und Solar" },
   ];
 
   return (
@@ -43,7 +44,7 @@ export function HomeClient() {
           {featuredCategories.map((categoryItem, index) => (
             <Link href={`/nischen/${categoryDetails[categoryItem.category].slug}`} key={categoryItem.name}>
               <span className="rank">0{index + 1}</span>
-              <span className="mini-icon">{categoryItem.icon}</span>
+              <span className="mini-icon"><CategoryIcon category={categoryItem.category} /></span>
               <span><strong>{categoryItem.name}</strong><small>{categoryItem.subtitle} · {tools.filter((tool) => tool.category === categoryItem.category).length} Rechner</small></span>
               <b>→</b>
             </Link>
@@ -66,14 +67,14 @@ export function HomeClient() {
             {groups.map((group) => (
               <section className="category-cluster" key={group.name}>
                 <header className="cluster-head">
-                  <span className="cluster-icon">{group.details.icon}</span>
+                  <span className="cluster-icon"><CategoryIcon category={group.name} /></span>
                   <div><p>{group.details.kicker}</p><h3><Link href={`/nischen/${group.details.slug}`}>{group.name}</Link></h3><span>{group.details.description}</span></div>
                   <Link className="cluster-more" href={`/nischen/${group.details.slug}`}>{group.items.length} Tools →</Link>
                 </header>
                 <div className="tool-grid">
                   {group.items.map((tool) => (
                     <Link href={`/tools/${tool.slug}`} className="tool-card" key={tool.slug}>
-                      <div className="card-top"><span className="tool-icon">{tool.icon}</span><span className="tool-arrow">↗</span></div>
+                      <div className="card-top"><span className="tool-icon"><CategoryIcon category={tool.category} /></span><span className="tool-arrow">↗</span></div>
                       <p>{tool.eyebrow}</p><h3>{tool.title}</h3><span>{tool.short}</span>
                     </Link>
                   ))}
