@@ -15,7 +15,7 @@ import { Recommendation } from "../../components/ToolUI";
 import { getToolSeo } from "../../data/tool-seo";
 import { absoluteUrl } from "../../lib/site";
 import { getToolEditorial, getUsefulFaq } from "../../data/tool-editorial";
-import { CategoryIcon } from "../../components/CategoryIcon";
+import { ToolIcon } from "../../components/ToolIcon";
 
 export function generateStaticParams() {
   return tools.map((tool) => ({ slug: tool.slug }));
@@ -166,7 +166,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           </div>
           <div className="tool-grid compact">
             {related.map((item) => item && <Link href={`/tools/${item.slug}`} className="tool-card" key={item.slug}>
-              <div className="card-top"><span className="tool-icon"><CategoryIcon category={item.category} /></span><span className="tool-arrow">↗</span></div>
+              <div className="card-top"><span className="tool-icon"><ToolIcon slug={item.slug} /></span><span className="tool-arrow">↗</span></div>
               <p>{item.eyebrow}</p><h3>{item.title}</h3><span>{item.short}</span>
             </Link>)}
           </div>

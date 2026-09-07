@@ -67,6 +67,13 @@ test("brand and category artwork replace starter icons, abbreviations and emoji"
   assert.match(home, /<svg[^>]+viewBox="0 0 48 48"/i);
   assert.match(category, /<svg[^>]+viewBox="0 0 48 48"/i);
   assert.match(guideIndex, /<svg[^>]+viewBox="0 0 48 48"/i);
+  const toolIconSlugs = [...home.matchAll(/data-tool-icon="([^"]+)"/g)].map((match) => match[1]);
+  assert.equal(toolIconSlugs.length, 55);
+  assert.equal(new Set(toolIconSlugs).size, 55);
+  assert.match(home, /data-tool-icon="prozentrechner"/);
+  assert.match(home, /data-tool-icon="mehrwertsteuerrechner"/);
+  assert.match(home, /data-tool-icon="stundenlohnrechner"/);
+  assert.match(home, /data-tool-icon="spritkostenrechner"/);
   assert.doesNotMatch(`${home}\n${category}\n${guideIndex}\n${localTool}`, /🎂|⏱|⛽|🏠|🌙|🔒/u);
   assert.doesNotMatch(`${homeSource}\n${categorySource}\n${toolPageSource}`, /\{(?:tool|item|category|group\.details)\.icon\}/);
 });

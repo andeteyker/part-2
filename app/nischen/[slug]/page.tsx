@@ -7,6 +7,7 @@ import { SiteHeader } from "../../components/SiteHeader";
 import { categories, categoryDetails, getCategoryBySlug } from "../../data/tool-registry";
 import { absoluteUrl } from "../../lib/site";
 import { CategoryIcon } from "../../components/CategoryIcon";
+import { ToolIcon } from "../../components/ToolIcon";
 
 export function generateStaticParams() {
   return categories.map((category) => ({ slug: categoryDetails[category].slug }));
@@ -95,7 +96,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </div>
           <div className="tool-grid">
             {category.tools.map((tool) => <Link href={`/tools/${tool.slug}`} className="tool-card" key={tool.slug}>
-              <div className="card-top"><span className="tool-icon"><CategoryIcon category={tool.category} /></span><span className="tool-arrow">↗</span></div>
+              <div className="card-top"><span className="tool-icon"><ToolIcon slug={tool.slug} /></span><span className="tool-arrow">↗</span></div>
               <p>{tool.eyebrow}</p><h3>{tool.title}</h3><span>{tool.short}</span>
             </Link>)}
           </div>
