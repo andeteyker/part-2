@@ -59,3 +59,22 @@ export function SelectField({ label, value, onChange, options }: SelectFieldProp
 export function Result({ label, value, detail }: { label: string; value: string; detail?: string }) {
   return <div className="result-box"><span>{label}</span><strong>{value}</strong>{detail && <small>{detail}</small>}</div>;
 }
+
+/** Weiterleitung, die erst nach einem Result ausgegeben und klar als Anzeige gekennzeichnet ist. */
+export function Recommendation({ rec }: { rec: { tag: string; headline: string; network: string; product: string; text: string; url: string } }) {
+  if (!rec) return null;
+  return (
+    <aside className="recommendation" aria-label="Werbung">
+      <div className="rec-head">
+        <span className="rec-tag">{rec.tag}</span>
+        <span className="rec-network">{rec.network}</span>
+      </div>
+      <h3>{rec.headline}</h3>
+      <p className="rec-text">{rec.text}</p>
+      <a className="rec-link" href={rec.url} target="_blank" rel="sponsored nofollow noopener">
+        {rec.product} ansehen
+      </a>
+      <small className="rec-disclosure">Anzeige. Über diesen Link entstehen dir keine Mehrkosten. Wir können eine Provision erhalten.</small>
+    </aside>
+  );
+}

@@ -9,6 +9,9 @@ import { PropertyToolRunner } from "../../components/PropertyToolRunner";
 import { ShiftToolRunner } from "../../components/ShiftToolRunner";
 import { HandwerkerToolRunner } from "../../components/HandwerkerToolRunner";
 import { categoryDetails, getTool, tools } from "../../data/tool-registry";
+import { getRecommendation } from "../../data/affiliate";
+import { getGuideByTool } from "../../data/guides";
+import { Recommendation } from "../../components/ToolUI";
 import { getToolSeo } from "../../data/tool-seo";
 import { absoluteUrl } from "../../lib/site";
 
@@ -48,6 +51,8 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const configuredRelated = (seo.relatedSlugs ?? []).map((relatedSlug) => getTool(relatedSlug)).filter(Boolean);
   const fallbackRelated = tools.filter((item) => item.category === tool.category && item.slug !== tool.slug && !configuredRelated.some((related) => related?.slug === item.slug));
   const related = [...configuredRelated, ...fallbackRelated].slice(0, 4);
+  const recommendation = getRecommendation(tool.slug);
+  const guide = getGuideByTool(tool.slug);
 
   const runner = {
     core: <ToolRunner slug={tool.slug} />,
@@ -101,6 +106,8 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
 
         {runner}
 
+        {recommendation && <Recommendation rec={recommendation} />}
+
         <section className="content-grid">
           <article>
             <p className="eyebrow"><span /> Anleitung</p>
@@ -112,6 +119,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
               {seo.formula && <p><strong>Formel:</strong> {seo.formula}</p>}
               {seo.example && <p><strong>Beispiel:</strong> {seo.example}</p>}
             </div>}
+            {guide && <Link href={`/ratgeber/${guide.slug}`} className="guide-inline-link">Ausführlicher Ratgeber: {guide.title} →</Link>}
           </article>
           <aside>
             <h2>Häufige Fragen</h2>
