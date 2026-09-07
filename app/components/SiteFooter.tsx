@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ConsentSettingsButton } from "./ConsentSettingsButton";
 
 export function SiteFooter() {
   return (
@@ -12,6 +13,7 @@ export function SiteFooter() {
           <strong>Navigation</strong>
           <Link href="/#tools">Alle Tools</Link>
           <Link href="/datenschutz">Datenschutz</Link>
+          <ConsentSettingsButton />
           <Link href="/impressum">Impressum</Link>
         </div>
         <p className="footer-note">© {new Date().getFullYear()} Sofort-Tools</p>

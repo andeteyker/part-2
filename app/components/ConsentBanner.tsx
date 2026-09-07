@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useSyncExternalStore } from "react";
 
 /**
- * Leichtgewichtige Consent-Management-Lösung (DSGVO / TTDSG Opt-in).
+ * Leichtgewichtige Consent-Management-Lösung (DSGVO / TDDDG Opt-in).
  *
  * - Setzt KEINE Tracking-Cookies, solange der Nutzer nicht zugestimmt hat.
  * - Speichert die Entscheidung in localStorage unter "st-consent".
@@ -17,6 +17,7 @@ declare global {
   interface Window {
     __consentRead?: () => "accepted" | "denied" | null;
     __consentGrant?: (value: "accepted" | "denied", persist?: boolean) => boolean;
+    __consentChoice?: "accepted" | "denied" | null;
   }
 }
 
@@ -25,6 +26,7 @@ const KEY = "st-consent";
 
 function readStored(): Choice {
   if (typeof window === "undefined") return null;
+  if (window.__consentChoice !== undefined) return window.__consentChoice;
   try {
     const raw = window.localStorage.getItem(KEY);
     if (raw === "accepted" || raw === "denied") return raw;
@@ -35,22 +37,24 @@ function readStored(): Choice {
 }
 
 export default function ConsentBanner() {
-  const [choice, setChoice] = useState<Choice>(null);
+  const subscribe = useCallback((notify: () => void) => {
+    window.addEventListener("st:consent", notify);
+    return () => window.removeEventListener("st:consent", notify);
+  }, []);
+  const choice = useSyncExternalStore(subscribe, readStored, () => null);
 
-  // Nach dem Mount aus localStorage lesen und globale Helfer registrieren.
+  // Nach dem Mount globale Helfer für optionale zukünftige Dienste registrieren.
   useEffect(() => {
-    const initial = readStored();
-    setChoice(initial);
-
     window.__consentRead = () => readStored();
 
-    window.__consentGrant = (value) => {
-      setChoice(value);
-      try {
-        window.localStorage.setItem(KEY, value);
-      } catch {
-        setChoice(value);
+    window.__consentGrant = (value, persist = true) => {
+      window.__consentChoice = value;
+      if (persist) {
+        try {
+          window.localStorage.setItem(KEY, value);
+        } catch { /* localStorage nicht verfügbar */ }
       }
+      window.dispatchEvent(new CustomEvent("st:consent", { detail: { value } }));
       return true;
     };
   }, []);
@@ -59,7 +63,7 @@ export default function ConsentBanner() {
   if (choice !== null) return null;
 
   function grant(value: Exclude<Choice, null>) {
-    setChoice(value);
+    window.__consentChoice = value;
     try {
       window.localStorage.setItem(KEY, value);
     } catch {
@@ -79,8 +83,8 @@ export default function ConsentBanner() {
         <p>
           <strong>Deine Privatsphäre</strong>
           <span>
-            Wir setzen nur dann Tracking-Cookies (z. B. für Werbung und Reichweitenmessung),
-            wenn du zustimmst. Deine Entscheidung kannst du jederzeit ändern. Weitere Details
+            SofortTools nutzt aktuell kein Tracking. Sollten optionale Analyse- oder Marketingdienste
+            hinzukommen, werden sie nur nach deiner Zustimmung geladen. Deine Entscheidung kannst du jederzeit ändern. Weitere Details
             in der <a href="/datenschutz">Datenschutzerklärung</a>.
           </span>
         </p>
