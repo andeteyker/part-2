@@ -70,22 +70,54 @@ test("robots and sitemap point only to the preferred www domain", async () => {
   assert.match(robotsText, /Sitemap: https:\/\/www\.sofort-tools\.de\/sitemap\.xml/i);
   assert.match(sitemapText, /https:\/\/www\.sofort-tools\.de\/tools\/mietrendite-rechner/i);
   assert.doesNotMatch(`${robotsText}\n${sitemapText}`, /mielerik\.chatgpt\.site/i);
-  assert.equal((sitemapText.match(/<url>/g) ?? []).length, 63);
+  assert.equal((sitemapText.match(/<url>/g) ?? []).length, 103);
 });
 
 test("every published tool has dedicated SEO guidance", async () => {
-  const [baseSource, registrySource, seoSource] = await Promise.all([
+  const [baseSource, registrySource, seoSource, growthIndex, growthFiles] = await Promise.all([
     readFile(new URL("../app/data/tools.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/data/tool-registry.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/data/tool-seo.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/data/growth/index.ts", import.meta.url), "utf8"),
+    Promise.all([
+      "netto-gehalt-rechner", "einkommensteuer-rechner", "pendlerpauschale-rechner", "rentenrechner", "abfindungs-rechner", "bauspar-rechner",
+      "stromkosten-rechner", "heizkosten-rechner", "gasverbrauch-rechner", "solar-ertrag-rechner", "bmi-rechner", "kalorienbedarf-rechner",
+      "koerperfett-anteil-rechner", "idealgewicht-rechner", "elterngeld-rechner", "kindergeld-rechner", "schwangerschafts-terminrechner",
+      "urlaubsanspruch-rechner", "angebots-kalkulation", "umzugskosten-rechner",
+    ].map((slug) => readFile(new URL(`../app/data/growth/${slug}.ts`, import.meta.url), "utf8"))),
   ]);
   const baseToolSection = baseSource.split("export const categories")[0];
   const extendedToolSection = registrySource.split("const register")[0];
-  const publishedSlugs = [...baseToolSection.matchAll(/slug: "([^"]+)"/g), ...extendedToolSection.matchAll(/slug: "([^"]+)"/g)].map((match) => match[1]);
+  const publishedSlugs = [...baseToolSection.matchAll(/slug: "([^"]+)"/g), ...extendedToolSection.matchAll(/slug: "([^"]+)"/g), ...growthFiles.flatMap((source) => [...source.matchAll(/slug: "([^"]+)"/g)].slice(0, 1))].map((match) => match[1]);
   const optimizedSlugs = new Set([...seoSource.matchAll(/^  "([^"]+)": \{/gm)].map((match) => match[1]));
+  const growthSeoSlugs = new Set([...growthIndex.matchAll(/import \{ \w+ \} from "\.\/(.+)";/g)].map((match) => match[1]));
 
-  assert.equal(publishedSlugs.length, 35);
-  assert.deepEqual(publishedSlugs.filter((slug) => !optimizedSlugs.has(slug)), []);
+  assert.equal(publishedSlugs.length, 55);
+  assert.deepEqual(publishedSlugs.filter((slug) => !optimizedSlugs.has(slug) && !growthSeoSlugs.has(slug)), []);
+});
+
+test("all 20 growth calculators render FAQ, guidance and concise descriptions", async () => {
+  const worker = await createWorker();
+  const slugs = [
+    "netto-gehalt-rechner", "einkommensteuer-rechner", "pendlerpauschale-rechner", "rentenrechner", "abfindungs-rechner", "bauspar-rechner",
+    "stromkosten-rechner", "heizkosten-rechner", "gasverbrauch-rechner", "solar-ertrag-rechner", "bmi-rechner", "kalorienbedarf-rechner",
+    "koerperfett-anteil-rechner", "idealgewicht-rechner", "elterngeld-rechner", "kindergeld-rechner", "schwangerschafts-terminrechner",
+    "urlaubsanspruch-rechner", "angebots-kalkulation", "umzugskosten-rechner",
+  ];
+
+  for (const slug of slugs) {
+    const [response, source] = await Promise.all([
+      fetchFromWorker(worker, `/tools/${slug}`),
+      readFile(new URL(`../app/data/growth/${slug}.ts`, import.meta.url), "utf8"),
+    ]);
+    const html = await response.text();
+    const description = source.match(/description: "([^"]+)"/)?.[1] ?? "";
+    assert.equal(response.status, 200, slug);
+    assert.match(html, /FAQPage/i, slug);
+    assert.match(html, /So wird gerechnet/i, slug);
+    assert.match(html, /Ausführlicher Ratgeber/i, slug);
+    assert.ok(description.length >= 140 && description.length <= 160, `${slug}: ${description.length} Zeichen`);
+  }
 });
 
 test("calculator pages explain technical terms and the calculation close to the form", async () => {
@@ -114,12 +146,13 @@ test("imprint identifies the operator with a complete service address", async ()
 });
 
 test("all calculator families use reusable URL state while upload tools stay local", async () => {
-  const [hook, core, property, shift, handwerker] = await Promise.all([
+  const [hook, core, property, shift, handwerker, growth] = await Promise.all([
     readFile(new URL("../app/hooks/useUrlState.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/components/ToolRunner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/components/PropertyToolRunner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/components/ShiftToolRunner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/components/HandwerkerToolRunner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/GrowthToolRunner.tsx", import.meta.url), "utf8"),
   ]);
 
   assert.match(hook, /history\.replaceState/);
@@ -127,10 +160,11 @@ test("all calculator families use reusable URL state while upload tools stay loc
   assert.match(property, /useUrlState\("kaufpreis"/);
   assert.match(shift, /useUrlState\("nachtstunden"/);
   assert.match(handwerker, /useUrlState\("dachflaeche"/);
+  assert.match(growth, /useUrlState\(field\.key, field\.defaultValue\)/);
   assert.match(core, /const \[file, setFile\] = useState<File \| null>/);
 });
 
-test("content pyramid renders five clusters and 15 substantial linked guides", async () => {
+test("content pyramid renders ten clusters and 30 substantial linked guides", async () => {
   const worker = await createWorker();
   const guideSlugs = [
     "immobilie-kaufen-finanzieren-plan", "mietrendite-berechnen", "kaufnebenkosten-immobilie",
@@ -138,6 +172,11 @@ test("content pyramid renders five clusters and 15 substantial linked guides", a
     "renovierungskosten-planen", "dachsanierung-kosten-planen", "boden-verlegen-kosten",
     "geld-rechner-alltag", "mehrwertsteuer-netto-brutto", "stundenlohn-monatsgehalt",
     "texte-schreiben-seo-pruefen", "dreisatz-einfach-erklaert", "wortzahl-lesezeit",
+    "finanzen-steuern-planen", "einkommensteuer-pendlerpauschale", "rente-abfindung-bausparen",
+    "energiekosten-senken", "heizkosten-gasverbrauch", "photovoltaik-ertrag-amortisation",
+    "koerperwerte-einordnen", "kalorienbedarf-grundumsatz", "koerperfett-idealgewicht",
+    "familienleistungen-termine", "kindergeld-bezugsdauer", "geburtstermin-schwangerschaftswoche",
+    "arbeit-projekte-kalkulieren", "urlaubsanspruch-teilzeit", "umzugskosten-budget",
   ];
 
   for (const slug of guideSlugs) {
