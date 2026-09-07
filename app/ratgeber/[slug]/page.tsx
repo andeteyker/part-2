@@ -58,7 +58,8 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const guide = getGuide(slug);
   if (!guide) notFound();
 
-  const tool = getTool(guide.toolSlug);
+  const guideTools = (guide.toolSlugs ?? [guide.toolSlug]).map(getTool).filter((item) => item !== undefined);
+  const tool = guideTools[0];
   const canonical = absoluteUrl(`/ratgeber/${guide.slug}`);
   const toolHref = tool ? `/tools/${tool.slug}` : null;
   const relatedGuides = getRelatedGuides(guide);
@@ -135,8 +136,8 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
           {tool && toolHref && (
             <section className="guide-rechner-cta">
               <h2>Jetzt selbst berechnen</h2>
-              <p>{tool.title} – kostenlos und ohne Anmeldung.</p>
-              <Link href={toolHref} className="recommendation-link">Zum Rechner</Link>
+              <p>{guideTools.map((item) => item.title).join(", ")} – kostenlos und ohne Anmeldung.</p>
+              {guideTools.map((item) => <Link href={`/tools/${item.slug}`} className="recommendation-link" key={item.slug}>Zum {item.title}</Link>)}
             </section>
           )}
 
