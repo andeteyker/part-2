@@ -1,44 +1,83 @@
 /**
- * Zentrale Affiliate-/Empfehlungs-Konfiguration.
+ * Zentrale Affiliate-/Empfehlungs-Konfiguration für SofortTools.
  *
- * Jede Empfehlung wird pro Tool-Slug hinterlegt und nach dem Ergebnis angezeigt
- * (kontextuelles Matching). Rechtskonform:
+ * Rechtskonform:
  *  - sichtbare Kennzeichnung als "Anzeige" / "Partnerlink"
  *  - rel="sponsored nofollow" auf allen Affiliate-Links
- *  - transparente Provision-Hinweise
+ *  - transparente Provisions-Hinweise
  *
- * HINWEIS ZUR PFLEGE:
- *  - <TRACKING_ID> Platzhalter müssen durch die echten Partner-IDs ersetzt
- *    werden, sobald die Programme (Amazon PartnerNet, Awin, Digistore24)
- *    freigeschaltet sind.
- *  - Keine Klick-Tracking-Cookies werden gesetzt: Die Links sind reine
- *    Weiterleitungen. Sobald ein Programm Cookie-Tracking verlangt, muss das
- *    hinter dem Consent-Banner (window.__consentRead) freigeschaltet werden.
+ * KEINE Klick-Tracking-Cookies: Diese Links sind reine Weiterleitungen.
+ * Sobald ein Programm Cookie-/Klick-Tracking verlangt, muss das hinter dem
+ * Consent-Banner (window.__consentRead/__consentGrant) freigeschaltet werden.
  */
 
+/* =====================================================================
+ * 1) PARTNER-IDS (hier die echten Werte eintragen)
+ * ===================================================================== */
+export const IDS = {
+  /** Amazon PartnerNet Store-ID (tag-Parameter). */
+  amazonStoreId: "soforttools-21",
+
+  /** Awin Publisher (Affiliate)-ID. */
+  awinPublisherId: "3078955",
+
+  /**
+   * Awin Merchant (Advertiser)-IDs pro Programm.
+   * JEDES Programm hat eine eigene awinmid. Diese holst du im Awin-Dashboard
+   * unter dem jeweiligen Programm (Link-Tools / generierter Track-Link).
+   * Solange leer, greift der Fallback-Link.
+   */
+  awinMerchantIds: {
+    myhammer: "", // z. B. "12345"
+    verivox: "", // z. B. "12345"
+    interhyp: "", // z. B. "12345"
+  },
+
+  /** Digistore24 Affiliate-ID (für affidcheck in Produkt-Links). */
+  digistore24AffId: "", // z. B. "123456"
+};
+
+/* =====================================================================
+ * 2) URL-HELFER
+ * ===================================================================== */
+
+/** Amazon-Partnerlink (DE). Die ASIN ist die konkrete Produkt-ASIN. */
+export const amazonLink = (asin: string) =>
+  `https://www.amazon.de/dp/${asin}?tag=${IDS.amazonStoreId}`;
+
+/**
+ * Awin-Track-Link. braucht pro Programm die Merchant-ID (awinmid).
+ * `awid` ist deine Publisher-ID, `submitid` eine optionale eigene Kennung.
+ */
+export const awinLink = (merchantKey: keyof typeof IDS.awinMerchantIds, url: string, submitid = "soforttools") => {
+  const mid = IDS.awinMerchantIds[merchantKey];
+  if (!mid) return url; // noch keine Merchant-ID eingerichtet -> direkter Link
+  const enc = encodeURIComponent(url);
+  return `https://www.awin1.com/cread.php?awinmid=${mid}&awid=${IDS.awinPublisherId}&p=${enc}&submitid=${submitid}`;
+};
+
+/** Digistore24-Produktlink mit Affiliate-ID. */
+export const digistoreLink = (productId: string) =>
+  IDS.digistore24AffId
+    ? `https://www.digistore24.com/product/${productId}?affidcheck=${IDS.digistore24AffId}`
+    : `https://www.digistore24.com/product/${productId}`;
+
+/* =====================================================================
+ * 3) EMPFEHLUNGEN
+ * ===================================================================== */
+
 export type Recommendation = {
-  /** Etikett, das den Charakter der Empfehlung betont. */
   tag: string;
-  /** Überschrift der Empfehlungsbox. */
   headline: string;
-  /** Katalog (z. B. "Amazon PartnerNet", "Awin", "Digistore24"). */
   network: string;
-  /** Produkt- oder Dienstname. */
   product: string;
-  /** Kurzbeschreibung der Empfehlung. */
   text: string;
-  /** Ziel-URL des Affiliate-Links. */
   url: string;
 };
 
-/** Kontextuelles Textbaustein-Vorwort, das vor dem Angebot steht. */
 export const recommendationLead = (title: string) =>
   `Passend zu deiner Berechnung im Rechner „${title}" haben wir eine unabhängige Lösung für den nächsten Schritt gefunden.`;
 
-/**
- * Ermittelt die passende Empfehlung für einen Tool-Slug.
- * Bevorzugt einen Slug-Eintrag, fällt auf die Kategorie-Gruppe zurück.
- */
 export function getRecommendation(slug: string): Recommendation | undefined {
   return recommendations[slug] ?? getRecommendationByGroup(slug);
 }
@@ -51,7 +90,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "Verivox / Awin",
     product: "Baufinanzierungs-Vergleich",
     text: "Du hast deine Kreditrate selbst überschlagen. Vergleiche jetzt reale Zinssätze und finde eine zu deiner Rate passende Finanzierung.",
-    url: "https://www.awin1.com/cread.php?awinmid=<TRACKING_ID>&p=https://www.verivox.de/baufinanzierung/",
+    url: awinLink("verivox", "https://www.verivox.de/baufinanzierung/"),
   },
   "haus-leisten-rechner": {
     tag: "Anzeige",
@@ -59,7 +98,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "Interhyp / Awin",
     product: "Unverbindliche Finanzierungsanfrage",
     text: "Dein Ergebnis ist eine erste Orientierung. Lass dir von einem unabhängigen Finanzierungsexperten ein konkretes Angebot für dein Budget erstellen.",
-    url: "https://www.awin1.com/cread.php?awinmid=<TRACKING_ID>&p=https://www.interhyp.de/",
+    url: awinLink("interhyp", "https://www.interhyp.de/"),
   },
   "mietrendite-rechner": {
     tag: "Anzeige",
@@ -67,7 +106,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "Amazon PartnerNet",
     product: "Immobilieninvestment-Ratgeber",
     text: "Nach der Renditeberechnung fehlt oft die passende Wissensbasis. Ein aktueller Ratgeber hilft dir, Kennzahlen richtig einzuordnen.",
-    url: "https://www.amazon.de/dp/<ASIN>?tag=<TRACKING_ID>",
+    url: amazonLink("B0??????"), // ASIN des konkreten Buches ersetzen
   },
   "kaufnebenkosten-rechner": {
     tag: "Anzeige",
@@ -75,7 +114,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "Awin",
     product: "Immobilien-Fachliteratur",
     text: "Neben deiner Nebenkosten-Berechnung hilft dir ein praxisnaher Ratgeber, keine versteckten Kosten beim Immobilienkauf zu übersehen.",
-    url: "https://www.awin1.com/cread.php?awinmid=<TRACKING_ID>&p=<URL>",
+    url: awinLink("interhyp", "https://www.interhyp.de/"),
   },
 
   // ---- Handwerker & Renovierung ----
@@ -85,7 +124,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "MyHammer / Awin",
     product: "Kostenlose Handwerker-Anfrage",
     text: "Deine Dachkosten-Rechnung ist ein Rahmen. Hole jetzt kostenlose Angebote von geprüften Dachdecker-Betrieben in deiner Nähe ein.",
-    url: "https://www.awin1.com/cread.php?awinmid=<TRACKING_ID>&p=https://www.myhammer.de/",
+    url: awinLink("myhammer", "https://www.myhammer.de/"),
   },
   "badrenovierung-rechner": {
     tag: "Anzeige",
@@ -93,7 +132,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "MyHammer / Awin",
     product: "Bad-Sanierung anfragen",
     text: "Ein Sanitärbetrieb aus deiner Region kann deine Kalkulation mit einem verbindlichen Angebot untermauern. Jetzt unverbindlich anfragen.",
-    url: "https://www.awin1.com/cread.php?awinmid=<TRACKING_ID>&p=https://www.myhammer.de/",
+    url: awinLink("myhammer", "https://www.myhammer.de/"),
   },
   "fensterkosten-rechner": {
     tag: "Anzeige",
@@ -101,7 +140,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "Awin",
     product: "Fenster-Angebot anfragen",
     text: "Nutze deine Fensterkosten-Berechnung, um konkrete Angebote von regionalen Fensterbauern anzufordern.",
-    url: "https://www.awin1.com/cread.php?awinmid=<TRACKING_ID>&p=<URL>",
+    url: awinLink("myhammer", "https://www.myhammer.de/"),
   },
   "malerkosten-rechner": {
     tag: "Anzeige",
@@ -109,7 +148,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "MyHammer / Awin",
     product: "Maler-Angebot anfragen",
     text: "Deine Kalkulation kannst du direkt mit echten Angeboten von Malerbetrieben vor Ort abgleichen.",
-    url: "https://www.awin1.com/cread.php?awinmid=<TRACKING_ID>&p=https://www.myhammer.de/",
+    url: awinLink("myhammer", "https://www.myhammer.de/"),
   },
   "bodenverlegung-kosten-rechner": {
     tag: "Anzeige",
@@ -117,7 +156,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "MyHammer / Awin",
     product: "Bodenverlegung anfragen",
     text: "Vergleiche deine Bodenkosten mit Angeboten von Bodenleger-Betrieben, die direkt zu deiner Fläche passen.",
-    url: "https://www.awin1.com/cread.php?awinmid=<TRACKING_ID>&p=https://www.myhammer.de/",
+    url: awinLink("myhammer", "https://www.myhammer.de/"),
   },
 
   // ---- Schicht & Zuschläge ----
@@ -127,7 +166,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "Digistore24",
     product: "Ratgeber & Vorlagen für Schichtarbeit",
     text: "Für deinen Schichtlohn-Überblick helfen dir aktuelle Ratgeber und Vorlagen, Zuschläge und Vertragsbedingungen korrekt einzuordnen.",
-    url: "https://www.digistore24.com/product/<PRODUCT_ID>",
+    url: digistoreLink("<PRODUCT_ID>"), // Produkt wählen (bereits erledigt: Digistore24-Dashboard)
   },
   "ueberstunden-rechner": {
     tag: "Anzeige",
@@ -135,7 +174,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "Digistore24",
     product: "Arbeitszeit-Tracker",
     text: "Ein digitaler Arbeitszeit-Tracker hilft dir, Überstunden und Zuschläge zuverlässig zu erfassen.",
-    url: "https://www.digistore24.com/product/<PRODUCT_ID>",
+    url: digistoreLink("<PRODUCT_ID>"),
   },
 
   // ---- Medien / Bilder ----
@@ -145,14 +184,11 @@ const recommendations: Record<string, Recommendation> = {
     network: "Digistore24",
     product: "Bildbearbeitungs-Software",
     text: "Für große Bildmengen oder zusätzliche Formate lohnt sich ein leistungsfähiges Konvertierungs-Tool.",
-    url: "https://www.digistore24.com/product/<PRODUCT_ID>",
+    url: digistoreLink("<PRODUCT_ID>"),
   },
 };
 
-/**
- * Fallback-Empfehlungen nach ToolRunner-Gruppe, falls für einen Slug noch
- * kein eigener Eintrag existiert.
- */
+/** Fallback-Empfehlungen nach ToolRunner-Gruppe. */
 const fallback: Record<string, Recommendation> = {
   property: {
     tag: "Anzeige",
@@ -160,7 +196,7 @@ const fallback: Record<string, Recommendation> = {
     network: "Interhyp / Awin",
     product: "Kostenloses Beratungsgespräch",
     text: "Deine Berechnung ist der erste Schritt. Ein unabhängiger Berater hilft dir, das passende Finanzierungspaket zu finden.",
-    url: "https://www.awin1.com/cread.php?awinmid=<TRACKING_ID>&p=https://www.interhyp.de/",
+    url: awinLink("interhyp", "https://www.interhyp.de/"),
   },
   handwerker: {
     tag: "Anzeige",
@@ -168,7 +204,7 @@ const fallback: Record<string, Recommendation> = {
     network: "MyHammer / Awin",
     product: "Handwerker-Anfragen vergleichen",
     text: "Reale Angebote von Fachbetrieben helfen dir, deine eigene Kostenkalkulation zu verifizieren.",
-    url: "https://www.awin1.com/cread.php?awinmid=<TRACKING_ID>&p=https://www.myhammer.de/",
+    url: awinLink("myhammer", "https://www.myhammer.de/"),
   },
   shift: {
     tag: "Anzeige",
@@ -176,7 +212,7 @@ const fallback: Record<string, Recommendation> = {
     network: "Digistore24",
     product: "Aktuelle Ratgeber",
     text: "Informiere dich über rechtliche Grundlagen zu Zuschlägen und Arbeitszeit.",
-    url: "https://www.digistore24.com/product/<PRODUCT_ID>",
+    url: digistoreLink("<PRODUCT_ID>"),
   },
   core: {
     tag: "Anzeige",
@@ -184,7 +220,7 @@ const fallback: Record<string, Recommendation> = {
     network: "Awin",
     product: "Nützliches Produkt",
     text: "Für dein Ergebnis gibt es eine passende Lösung, die den nächsten Schritt vereinfacht.",
-    url: "https://www.awin1.com/cread.php?awinmid=<TRACKING_ID>&p=<URL>",
+    url: awinLink("myhammer", "https://www.myhammer.de/"),
   },
 };
 
