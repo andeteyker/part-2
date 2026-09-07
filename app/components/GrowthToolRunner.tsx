@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { getGrowthConfig } from "../data/growth";
+import { getGrowthFieldHelp, getGrowthResultHelp } from "../data/growth/help";
 import type { GrowthField } from "../data/growth/types";
 import { useUrlState } from "../hooks/useUrlState";
 import { Field, Result, SelectField, fmt, money, number, useCalculationResult } from "./ToolUI";
@@ -12,8 +13,9 @@ type Output = { label: string; value: string; detail?: string; stats?: { label: 
 function ConnectedField({ field, onValue }: { field: GrowthField; onValue: (key: string, value: string) => void }) {
   const [value, setValue] = useUrlState(field.key, field.defaultValue);
   useEffect(() => onValue(field.key, value), [field.key, onValue, value]);
-  if (field.options) return <SelectField label={field.label} value={value} onChange={setValue} options={field.options} />;
-  return <Field label={field.label} value={value} onChange={setValue} suffix={field.suffix} type={field.type} min={field.min} max={field.max} step={field.step} />;
+  const help = getGrowthFieldHelp(field.label);
+  if (field.options) return <SelectField label={field.label} help={help} value={value} onChange={setValue} options={field.options} />;
+  return <Field label={field.label} help={help} value={value} onChange={setValue} suffix={field.suffix} type={field.type} min={field.min} max={field.max} step={field.step} />;
 }
 
 function incomeTax(zveValue: number, year: string) {
@@ -69,7 +71,7 @@ export function GrowthToolRunner({ slug }: { slug: string }) {
   return <div className="tool-surface">
     <div className="field-grid two">{config.fields.map((field) => <ConnectedField field={field} onValue={updateValue} key={field.key} />)}</div>
     {output.stats && <div className={`stats-grid ${output.stats.length === 3 ? "three" : ""}`}>{output.stats.map((stat) => <div key={stat.label}><strong>{stat.value}</strong><span>{stat.label}</span></div>)}</div>}
-    <Result label={output.label} value={output.value} detail={output.detail} />
+    <Result label={output.label} value={output.value} detail={output.detail} help={getGrowthResultHelp(slug)} />
     <p className="form-hint">{config.notice}</p>
   </div>;
 }

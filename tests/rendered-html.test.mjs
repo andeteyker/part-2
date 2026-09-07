@@ -112,11 +112,14 @@ test("all 20 growth calculators render FAQ, guidance and concise descriptions", 
     ]);
     const html = await response.text();
     const description = source.match(/description: "([^"]+)"/)?.[1] ?? "";
+    const fieldCount = (source.match(/{ key:/g) ?? []).length;
+    const infoButtonCount = (html.match(/aria-label="[^"]+ erklären"/g) ?? []).length;
     assert.equal(response.status, 200, slug);
     assert.match(html, /FAQPage/i, slug);
     assert.match(html, /So wird gerechnet/i, slug);
     assert.match(html, /Ausführlicher Ratgeber/i, slug);
     assert.ok(description.length >= 140 && description.length <= 160, `${slug}: ${description.length} Zeichen`);
+    assert.ok(infoButtonCount >= fieldCount + 1, `${slug}: Info-Buttons fehlen an Feldern oder Ergebnis`);
   }
 });
 
