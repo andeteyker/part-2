@@ -28,13 +28,13 @@ export const IDS = {
    * Solange leer, greift der Fallback-Link.
    */
   awinMerchantIds: {
-    myhammer: "", // z. B. "12345"
-    verivox: "", // z. B. "12345"
-    interhyp: "", // z. B. "12345"
+    myhammer: "", // TODO: Awin awinmid aus dem MyHammer-Programm eintragen.
+    verivox: "", // TODO: Awin awinmid aus dem Verivox-Programm eintragen.
+    interhyp: "", // TODO: Awin awinmid aus dem Interhyp-Programm eintragen.
   },
 
   /** Digistore24 Affiliate-ID (für affidcheck in Produkt-Links). */
-  digistore24AffId: "", // z. B. "123456"
+  digistore24AffId: "", // TODO: echte Digistore24 Affiliate-ID eintragen.
 };
 
 /* =====================================================================
@@ -76,10 +76,13 @@ export type Recommendation = {
 };
 
 export const recommendationLead = (title: string) =>
-  `Passend zu deiner Berechnung im Rechner „${title}" haben wir eine unabhängige Lösung für den nächsten Schritt gefunden.`;
+  `Passend zu deiner Berechnung mit „${title}“:`;
 
-export function getRecommendation(slug: string): Recommendation | undefined {
-  return recommendations[slug] ?? getRecommendationByGroup(slug);
+export function getRecommendation(slug: string, title?: string): Recommendation | undefined {
+  const recommendation = recommendations[slug] ?? getRecommendationByGroup(slug);
+  return recommendation && title
+    ? { ...recommendation, text: `${recommendationLead(title)} ${recommendation.text}` }
+    : recommendation;
 }
 
 const recommendations: Record<string, Recommendation> = {
@@ -106,7 +109,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "Amazon PartnerNet",
     product: "Immobilieninvestment-Ratgeber",
     text: "Nach der Renditeberechnung fehlt oft die passende Wissensbasis. Ein aktueller Ratgeber hilft dir, Kennzahlen richtig einzuordnen.",
-    url: amazonLink("B0??????"), // ASIN des konkreten Buches ersetzen
+    url: amazonLink("B0??????"), // TODO: echte Amazon-ASIN des ausgewählten Buches eintragen.
   },
   "kaufnebenkosten-rechner": {
     tag: "Anzeige",
@@ -166,7 +169,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "Digistore24",
     product: "Ratgeber & Vorlagen für Schichtarbeit",
     text: "Für deinen Schichtlohn-Überblick helfen dir aktuelle Ratgeber und Vorlagen, Zuschläge und Vertragsbedingungen korrekt einzuordnen.",
-    url: digistoreLink("<PRODUCT_ID>"), // Produkt wählen (bereits erledigt: Digistore24-Dashboard)
+    url: digistoreLink("<PRODUCT_ID>"), // TODO: echte Digistore24-Produkt-ID eintragen.
   },
   "ueberstunden-rechner": {
     tag: "Anzeige",
@@ -174,7 +177,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "Digistore24",
     product: "Arbeitszeit-Tracker",
     text: "Ein digitaler Arbeitszeit-Tracker hilft dir, Überstunden und Zuschläge zuverlässig zu erfassen.",
-    url: digistoreLink("<PRODUCT_ID>"),
+    url: digistoreLink("<PRODUCT_ID>"), // TODO: echte Digistore24-Produkt-ID eintragen.
   },
 
   // ---- Medien / Bilder ----
@@ -184,7 +187,7 @@ const recommendations: Record<string, Recommendation> = {
     network: "Digistore24",
     product: "Bildbearbeitungs-Software",
     text: "Für große Bildmengen oder zusätzliche Formate lohnt sich ein leistungsfähiges Konvertierungs-Tool.",
-    url: digistoreLink("<PRODUCT_ID>"),
+    url: digistoreLink("<PRODUCT_ID>"), // TODO: echte Digistore24-Produkt-ID eintragen.
   },
 };
 
@@ -212,15 +215,7 @@ const fallback: Record<string, Recommendation> = {
     network: "Digistore24",
     product: "Aktuelle Ratgeber",
     text: "Informiere dich über rechtliche Grundlagen zu Zuschlägen und Arbeitszeit.",
-    url: digistoreLink("<PRODUCT_ID>"),
-  },
-  core: {
-    tag: "Anzeige",
-    headline: "Sinnvolle Zusatz-Lösung",
-    network: "Awin",
-    product: "Nützliches Produkt",
-    text: "Für dein Ergebnis gibt es eine passende Lösung, die den nächsten Schritt vereinfacht.",
-    url: awinLink("myhammer", "https://www.myhammer.de/"),
+    url: digistoreLink("<PRODUCT_ID>"), // TODO: echte Digistore24-Produkt-ID eintragen.
   },
 };
 

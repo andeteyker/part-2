@@ -4,15 +4,16 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import QRCode from "qrcode";
 import { Field, Result, SelectField, fmt, money, number } from "./ToolUI";
+import { useUrlState } from "../hooks/useUrlState";
 
 function Percentage() {
-  const [base, setBase] = useState("250"); const [rate, setRate] = useState("19");
+  const [base, setBase] = useUrlState("grundwert", "250"); const [rate, setRate] = useUrlState("prozentsatz", "19");
   const result = number(base) * number(rate) / 100;
   return <><div className="field-grid"><Field label="Grundwert" value={base} onChange={setBase} /><Field label="Prozentsatz" value={rate} onChange={setRate} suffix="%" /></div><Result label={`${fmt(number(rate))} % von ${fmt(number(base))} sind`} value={fmt(result)} detail={`${fmt(number(base))} × ${fmt(number(rate))} ÷ 100`} /></>;
 }
 
 function RuleOfThree() {
-  const [a, setA] = useState("3"); const [b, setB] = useState("12"); const [c, setC] = useState("5");
+  const [a, setA] = useUrlState("a", "3"); const [b, setB] = useUrlState("b", "12"); const [c, setC] = useUrlState("c", "5");
   const result = number(a) ? number(b) * number(c) / number(a) : 0;
   return <><p className="form-hint">Wenn <b>{a || "A"}</b> Einheiten <b>{b || "B"}</b> entsprechen, wie viel entsprechen <b>{c || "C"}</b> Einheiten?</p><div className="field-grid three"><Field label="Wert A" value={a} onChange={setA} /><Field label="entspricht B" value={b} onChange={setB} /><Field label="gesucht für C" value={c} onChange={setC} /></div><Result label="Ergebnis" value={fmt(result)} detail={`${fmt(number(b))} × ${fmt(number(c))} ÷ ${fmt(number(a))}`} /></>;
 }
@@ -89,39 +90,39 @@ function PingTool() {
 }
 
 function AgeTool() {
-  const today = new Date().toISOString().slice(0, 10); const [birth, setBirth] = useState("1995-01-01"); const [target, setTarget] = useState(today);
+  const today = new Date().toISOString().slice(0, 10); const [birth, setBirth] = useUrlState("geburtsdatum", "1995-01-01"); const [target, setTarget] = useUrlState("stichtag", today);
   const b = new Date(`${birth}T12:00:00`), t = new Date(`${target}T12:00:00`); let years = t.getFullYear() - b.getFullYear(); let months = t.getMonth() - b.getMonth(); let days = t.getDate() - b.getDate(); if (days < 0) { months--; days += new Date(t.getFullYear(), t.getMonth(), 0).getDate(); } if (months < 0) { years--; months += 12; }
   return <><div className="field-grid"><Field label="Geburtsdatum" value={birth} onChange={setBirth} type="date" /><Field label="Alter am" value={target} onChange={setTarget} type="date" /></div><Result label="Genaues Alter" value={`${years} Jahre, ${months} Monate, ${days} Tage`} /></>;
 }
 
 function DurationTool() {
-  const [start, setStart] = useState("08:00"); const [end, setEnd] = useState("16:30"); const [pause, setPause] = useState("30");
+  const [start, setStart] = useUrlState("start", "08:00"); const [end, setEnd] = useUrlState("ende", "16:30"); const [pause, setPause] = useUrlState("pause", "30");
   const mins = (v: string) => { const [h, m] = v.split(":").map(Number); return h * 60 + m; }; let diff = mins(end) - mins(start); if (diff < 0) diff += 1440; diff = Math.max(0, diff - number(pause));
   return <><div className="field-grid three"><Field label="Startzeit" value={start} onChange={setStart} type="time" /><Field label="Endzeit" value={end} onChange={setEnd} type="time" /><Field label="Pause" value={pause} onChange={setPause} suffix="Min." /></div><Result label="Zeitdauer ohne Pause" value={`${Math.floor(diff / 60)} Std. ${diff % 60} Min.`} detail={`${fmt(diff / 60)} Dezimalstunden`} /></>;
 }
 
 function VatTool() {
-  const [amount, setAmount] = useState("100"); const [rate, setRate] = useState("19"); const [direction, setDirection] = useState("net"); const a = number(amount), r = number(rate) / 100; const net = direction === "net" ? a : a / (1 + r); const gross = direction === "net" ? a * (1 + r) : a;
+  const [amount, setAmount] = useUrlState("betrag", "100"); const [rate, setRate] = useUrlState("steuersatz", "19"); const [direction, setDirection] = useUrlState("richtung", "net"); const a = number(amount), r = number(rate) / 100; const net = direction === "net" ? a : a / (1 + r); const gross = direction === "net" ? a * (1 + r) : a;
   return <><div className="segmented"><button className={direction === "net" ? "active" : ""} onClick={() => setDirection("net")}>Netto → Brutto</button><button className={direction === "gross" ? "active" : ""} onClick={() => setDirection("gross")}>Brutto → Netto</button></div><div className="field-grid"><Field label={direction === "net" ? "Nettobetrag" : "Bruttobetrag"} value={amount} onChange={setAmount} suffix="€" /><SelectField label="Mehrwertsteuersatz" value={rate} onChange={setRate} options={[{ value: "19", label: "19 %" }, { value: "7", label: "7 %" }, { value: "0", label: "0 %" }]} /></div><div className="stats-grid three"><div><strong>{money(net)}</strong><span>Netto</span></div><div><strong>{money(gross - net)}</strong><span>MwSt.</span></div><div><strong>{money(gross)}</strong><span>Brutto</span></div></div></>;
 }
 
 function HourlyTool() {
-  const [salary, setSalary] = useState("3500"); const [hours, setHours] = useState("40"); const monthlyHours = number(hours) * 4.348; const hourly = number(salary) / monthlyHours;
+  const [salary, setSalary] = useUrlState("monatsgehalt", "3500"); const [hours, setHours] = useUrlState("wochenstunden", "40"); const monthlyHours = number(hours) * 4.348; const hourly = number(salary) / monthlyHours;
   return <><div className="field-grid"><Field label="Monatsgehalt" value={salary} onChange={setSalary} suffix="€" /><Field label="Wochenstunden" value={hours} onChange={setHours} suffix="Std." /></div><Result label="Stundenlohn" value={`${money(hourly)} / Stunde`} detail={`${fmt(monthlyHours, 1)} Arbeitsstunden pro Monat`} /></>;
 }
 
 function FuelTool() {
-  const [distance, setDistance] = useState("120"); const [consumption, setConsumption] = useState("7.2"); const [price, setPrice] = useState("1.75"); const [people, setPeople] = useState("1"); const [round, setRound] = useState(false); const km = number(distance) * (round ? 2 : 1); const liters = km / 100 * number(consumption); const cost = liters * number(price);
-  return <><div className="field-grid two"><Field label="Strecke" value={distance} onChange={setDistance} suffix="km" /><Field label="Verbrauch" value={consumption} onChange={setConsumption} suffix="l/100 km" /><Field label="Kraftstoffpreis" value={price} onChange={setPrice} suffix="€/l" step="0.01" /><Field label="Personen" value={people} onChange={setPeople} min={1} /></div><label className="check-row"><input type="checkbox" checked={round} onChange={(e) => setRound(e.target.checked)} /> Hin- und Rückfahrt berechnen</label><div className="stats-grid three"><div><strong>{fmt(liters, 1)} l</strong><span>Verbrauch</span></div><div><strong>{money(cost)}</strong><span>Gesamtkosten</span></div><div><strong>{money(cost / Math.max(1, number(people)))}</strong><span>Pro Person</span></div></div></>;
+  const [distance, setDistance] = useUrlState("strecke", "120"); const [consumption, setConsumption] = useUrlState("verbrauch", "7.2"); const [price, setPrice] = useUrlState("preis", "1.75"); const [people, setPeople] = useUrlState("personen", "1"); const [roundValue, setRound] = useUrlState("hin-rueckfahrt", "nein"); const round = roundValue === "ja"; const km = number(distance) * (round ? 2 : 1); const liters = km / 100 * number(consumption); const cost = liters * number(price);
+  return <><div className="field-grid two"><Field label="Strecke" value={distance} onChange={setDistance} suffix="km" /><Field label="Verbrauch" value={consumption} onChange={setConsumption} suffix="l/100 km" /><Field label="Kraftstoffpreis" value={price} onChange={setPrice} suffix="€/l" step="0.01" /><Field label="Personen" value={people} onChange={setPeople} min={1} /></div><label className="check-row"><input type="checkbox" checked={round} onChange={(e) => setRound(e.target.checked ? "ja" : "nein")} /> Hin- und Rückfahrt berechnen</label><div className="stats-grid three"><div><strong>{fmt(liters, 1)} l</strong><span>Verbrauch</span></div><div><strong>{money(cost)}</strong><span>Gesamtkosten</span></div><div><strong>{money(cost / Math.max(1, number(people)))}</strong><span>Pro Person</span></div></div></>;
 }
 
 function WeekTool() {
-  const [value, setValue] = useState(new Date().toISOString().slice(0, 10)); const date = new Date(`${value}T12:00:00`); const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())); const day = d.getUTCDay() || 7; d.setUTCDate(d.getUTCDate() + 4 - day); const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1)); const week = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7); const monday = new Date(date); monday.setDate(date.getDate() - ((date.getDay() || 7) - 1)); const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6); const dateFmt = (x: Date) => x.toLocaleDateString("de-DE");
+  const defaultDate = new Date().toISOString().slice(0, 10); const [value, setValue] = useUrlState("datum", defaultDate); const date = new Date(`${value}T12:00:00`); const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate())); const day = d.getUTCDay() || 7; d.setUTCDate(d.getUTCDate() + 4 - day); const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1)); const week = Math.ceil((((d.getTime() - yearStart.getTime()) / 86400000) + 1) / 7); const monday = new Date(date); monday.setDate(date.getDate() - ((date.getDay() || 7) - 1)); const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6); const dateFmt = (x: Date) => x.toLocaleDateString("de-DE");
   return <><Field label="Datum" value={value} onChange={setValue} type="date" /><Result label="ISO-Kalenderwoche" value={`KW ${week} / ${d.getUTCFullYear()}`} detail={`Montag, ${dateFmt(monday)} bis Sonntag, ${dateFmt(sunday)}`} /></>;
 }
 
 function RandomTool() {
-  const [min, setMin] = useState("1"); const [max, setMax] = useState("100"); const [items, setItems] = useState(""); const [result, setResult] = useState("–");
+  const [min, setMin] = useUrlState("minimum", "1"); const [max, setMax] = useUrlState("maximum", "100"); const [items, setItems] = useState(""); const [result, setResult] = useState("–");
   const draw = () => { const list = items.split(/\n|,/).map((x) => x.trim()).filter(Boolean); if (list.length) return setResult(list[Math.floor(Math.random() * list.length)]); const lo = Math.ceil(number(min)), hi = Math.floor(number(max)); setResult(String(Math.floor(Math.random() * (hi - lo + 1)) + lo)); };
   return <><div className="field-grid"><Field label="Minimum" value={min} onChange={setMin} /><Field label="Maximum" value={max} onChange={setMax} /></div><label className="field"><span>Optional: Einträge auslosen (durch Komma oder neue Zeile trennen)</span><textarea rows={4} value={items} onChange={(e) => setItems(e.target.value)} placeholder="Anna, Ben, Cem" /></label><button className="primary-button" onClick={draw}>Zufall erzeugen</button><Result label="Ergebnis" value={result} /></>;
 }

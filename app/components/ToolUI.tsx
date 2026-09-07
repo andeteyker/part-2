@@ -1,10 +1,16 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type InputHTMLAttributes } from "react";
+import { useCallback, useEffect, useId, useRef, useState, useSyncExternalStore, type InputHTMLAttributes } from "react";
 
 export const number = (value: string) => Number(String(value).replace(",", ".")) || 0;
 export const fmt = (value: number, digits = 2) => new Intl.NumberFormat("de-DE", { maximumFractionDigits: digits }).format(value);
 export const money = (value: number) => new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(value || 0);
+
+declare global {
+  interface Window {
+    __calculationResults?: Record<string, string>;
+  }
+}
 
 type FieldProps = {
   label: string;
@@ -168,8 +174,23 @@ export function Result({ label, value, detail, help }: { label: string; value: s
   return <div className="result-box"><span className="result-label"><span>{label}</span>{explanation && <InfoTip text={explanation} label={`${label} erklären`} />}</span><strong>{value}</strong>{detail && <small>{detail}</small>}</div>;
 }
 
+/** Stellt der Empfehlung das aktuelle, lokal berechnete Ergebnis zur Verfügung. */
+export function useCalculationResult(slug: string, summary: string) {
+  useEffect(() => {
+    window.__calculationResults = { ...(window.__calculationResults ?? {}), [slug]: summary };
+    window.dispatchEvent(new CustomEvent("st:calculation-result", { detail: { slug, summary } }));
+  }, [slug, summary]);
+}
+
 /** Weiterleitung, die erst nach einem Result ausgegeben und klar als Anzeige gekennzeichnet ist. */
-export function Recommendation({ rec }: { rec: { tag: string; headline: string; network: string; product: string; text: string; url: string } }) {
+export function Recommendation({ rec, slug }: { rec: { tag: string; headline: string; network: string; product: string; text: string; url: string }; slug?: string }) {
+  const subscribe = useCallback((notify: () => void) => {
+    window.addEventListener("st:calculation-result", notify);
+    return () => window.removeEventListener("st:calculation-result", notify);
+  }, []);
+  const getSnapshot = useCallback(() => slug ? window.__calculationResults?.[slug] ?? "" : "", [slug]);
+  const resultContext = useSyncExternalStore(subscribe, getSnapshot, () => "");
+
   if (!rec) return null;
   return (
     <aside className="recommendation" aria-label="Werbung">
@@ -178,7 +199,7 @@ export function Recommendation({ rec }: { rec: { tag: string; headline: string; 
         <span className="rec-network">{rec.network}</span>
       </div>
       <h3>{rec.headline}</h3>
-      <p className="rec-text">{rec.text}</p>
+      <p className="rec-text">{resultContext && <strong>Dein aktuelles Ergebnis: {resultContext}. </strong>}{rec.text}</p>
       <a className="rec-link" href={rec.url} target="_blank" rel="sponsored nofollow noopener">
         {rec.product} ansehen
       </a>
