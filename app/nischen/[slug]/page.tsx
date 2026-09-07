@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return {
     title: `${category.name}: Rechner & Online-Tools`,
     description: `${category.description} Kostenlose Rechner und Werkzeuge ohne Anmeldung, direkt im Browser nutzbar.`,
-    alternates: { canonical },
+    alternates: { canonical, languages: { "de-DE": canonical, "x-default": canonical } },
     openGraph: {
       title: `${category.name}: kostenlose Rechner & Tools`,
       description: category.description,

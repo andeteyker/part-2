@@ -21,14 +21,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const tool = getTool(slug);
   if (!tool) return {};
 
+  const canonical = `/tools/${tool.slug}`;
   return {
     title: tool.title,
     description: tool.description,
-    alternates: { canonical: `/tools/${tool.slug}` },
+    alternates: { canonical, languages: { "de-DE": canonical, "x-default": canonical } },
     openGraph: {
       title: `${tool.title} – kostenlos online`,
       description: tool.description,
-      url: `/tools/${tool.slug}`,
+      url: canonical,
     },
     twitter: {
       title: `${tool.title} – kostenlos online`,
@@ -79,6 +80,14 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           { "@type": "ListItem", position: 2, name: tool.category, item: absoluteUrl(categoryHref) },
           { "@type": "ListItem", position: 3, name: tool.title, item: canonical },
         ],
+      },
+      {
+        "@type": "FAQPage",
+        mainEntity: tool.faq.map((item) => ({
+          "@type": "Question",
+          name: item.question,
+          acceptedAnswer: { "@type": "Answer", text: item.answer },
+        })),
       },
     ],
   };

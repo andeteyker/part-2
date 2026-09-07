@@ -67,7 +67,7 @@ function ImageTool({ kind }: { kind: "heic" | "webp" | "compress" }) {
 }
 
 function QrTool() {
-  const [value, setValue] = useState("https://soforttools.de"); const [dataUrl, setDataUrl] = useState("");
+  const [value, setValue] = useState("https://www.sofort-tools.de"); const [dataUrl, setDataUrl] = useState("");
   useEffect(() => { const timer = setTimeout(() => QRCode.toDataURL(value || " ", { width: 420, margin: 2, color: { dark: "#071a31", light: "#ffffff" } }).then(setDataUrl), 120); return () => clearTimeout(timer); }, [value]);
   return <div className="qr-layout"><div><label className="field"><span>Link oder Text</span><textarea rows={5} value={value} onChange={(e) => setValue(e.target.value)} /></label><p className="privacy-note">Der QR-Code wird lokal erstellt und läuft nicht ab.</p></div><div className="qr-preview">{dataUrl && <Image unoptimized width={220} height={220} src={dataUrl} alt="Generierter QR-Code" />}<a className="primary-button" href={dataUrl} download="qr-code.png">QR-Code herunterladen</a></div></div>;
 }
