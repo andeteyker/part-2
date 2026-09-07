@@ -40,7 +40,7 @@ test("renders one consistent production canonical and no preview marker", async 
   const html = await response.text();
   assert.match(html, /<html[^>]+lang=["']de["']/i);
   assert.match(html, /<title>Kostenlose Online-Rechner &amp; Tools \| SofortTools<\/title>/i);
-  assert.match(html, /<link[^>]+rel=["']canonical["'][^>]+href=["']https:\/\/sofort-tools\.de[\/"]?/i);
+  assert.match(html, /<link[^>]+rel=["']canonical["'][^>]+href=["']https:\/\/www\.sofort-tools\.de[\/"]?/i);
   assert.doesNotMatch(html, /soforttools\.mielerik\.chatgpt\.site/i);
   assert.doesNotMatch(html, /codex-preview/i);
 });
@@ -51,12 +51,12 @@ test("tool pages expose canonical, FAQ schema and unique help content", async ()
 
   assert.equal(response.status, 200);
   const html = await response.text();
-  assert.match(html, /https:\/\/sofort-tools\.de\/tools\/nachtzuschlag-rechner/i);
+  assert.match(html, /https:\/\/www\.sofort-tools\.de\/tools\/nachtzuschlag-rechner/i);
   assert.match(html, /FAQPage/i);
   assert.match(html, /125 oder 150 Prozent prüfen|Zuschlagssatz auswählen/i);
 });
 
-test("robots and sitemap point only to the preferred apex domain", async () => {
+test("robots and sitemap point only to the preferred www domain", async () => {
   const worker = await createWorker();
   const [robots, sitemap] = await Promise.all([
     fetchFromWorker(worker, "/robots.txt"),
@@ -67,8 +67,8 @@ test("robots and sitemap point only to the preferred apex domain", async () => {
   assert.equal(sitemap.status, 200);
   const robotsText = await robots.text();
   const sitemapText = await sitemap.text();
-  assert.match(robotsText, /Sitemap: https:\/\/sofort-tools\.de\/sitemap\.xml/i);
-  assert.match(sitemapText, /https:\/\/sofort-tools\.de\/tools\/mietrendite-rechner/i);
+  assert.match(robotsText, /Sitemap: https:\/\/www\.sofort-tools\.de\/sitemap\.xml/i);
+  assert.match(sitemapText, /https:\/\/www\.sofort-tools\.de\/tools\/mietrendite-rechner/i);
   assert.doesNotMatch(`${robotsText}\n${sitemapText}`, /mielerik\.chatgpt\.site/i);
   assert.equal((sitemapText.match(/<url>/g) ?? []).length, 45);
 });
