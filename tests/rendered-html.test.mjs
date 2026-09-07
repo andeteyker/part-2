@@ -70,7 +70,7 @@ test("robots and sitemap point only to the preferred www domain", async () => {
   assert.match(robotsText, /Sitemap: https:\/\/www\.sofort-tools\.de\/sitemap\.xml/i);
   assert.match(sitemapText, /https:\/\/www\.sofort-tools\.de\/tools\/mietrendite-rechner/i);
   assert.doesNotMatch(`${robotsText}\n${sitemapText}`, /mielerik\.chatgpt\.site/i);
-  assert.equal((sitemapText.match(/<url>/g) ?? []).length, 45);
+  assert.equal((sitemapText.match(/<url>/g) ?? []).length, 63);
 });
 
 test("every published tool has dedicated SEO guidance", async () => {
@@ -99,7 +99,7 @@ test("calculator pages explain technical terms and the calculation close to the 
   assert.match(html, /Bruttomietrendite = Jahreskaltmiete/i);
 });
 
-test("imprint identifies the operator and keeps missing address visible", async () => {
+test("imprint identifies the operator with a complete service address", async () => {
   const worker = await createWorker();
   const response = await fetchFromWorker(worker, "/impressum");
   const html = await response.text();
@@ -107,6 +107,64 @@ test("imprint identifies the operator and keeps missing address visible", async 
   assert.equal(response.status, 200);
   assert.match(html, /Easysites/i);
   assert.match(html, /Erik Miel/i);
-  assert.match(html, /kontakt@sofort-tools\.de/i);
-  assert.match(html, /Ladungsfähige Anschrift muss noch ergänzt werden/i);
+  assert.match(html, /Habichtweg 4/i);
+  assert.match(html, /26835 Hesel/i);
+  assert.match(html, /mielerik@gmail\.com/i);
+  assert.doesNotMatch(html, /muss noch ergänzt werden/i);
+});
+
+test("all calculator families use reusable URL state while upload tools stay local", async () => {
+  const [hook, core, property, shift, handwerker] = await Promise.all([
+    readFile(new URL("../app/hooks/useUrlState.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/ToolRunner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/PropertyToolRunner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/ShiftToolRunner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/HandwerkerToolRunner.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(hook, /history\.replaceState/);
+  assert.match(core, /useUrlState\("grundwert"/);
+  assert.match(property, /useUrlState\("kaufpreis"/);
+  assert.match(shift, /useUrlState\("nachtstunden"/);
+  assert.match(handwerker, /useUrlState\("dachflaeche"/);
+  assert.match(core, /const \[file, setFile\] = useState<File \| null>/);
+});
+
+test("content pyramid renders five clusters and 15 substantial linked guides", async () => {
+  const worker = await createWorker();
+  const guideSlugs = [
+    "immobilie-kaufen-finanzieren-plan", "mietrendite-berechnen", "kaufnebenkosten-immobilie",
+    "schichtarbeit-zuschlaege-ueberblick", "nachtzuschlag-steuerfrei", "ueberstunden-auszahlen-freizeit",
+    "renovierungskosten-planen", "dachsanierung-kosten-planen", "boden-verlegen-kosten",
+    "geld-rechner-alltag", "mehrwertsteuer-netto-brutto", "stundenlohn-monatsgehalt",
+    "texte-schreiben-seo-pruefen", "dreisatz-einfach-erklaert", "wortzahl-lesezeit",
+  ];
+
+  for (const slug of guideSlugs) {
+    const response = await fetchFromWorker(worker, `/ratgeber/${slug}`);
+    const html = await response.text();
+    assert.equal(response.status, 200, slug);
+    const body = html.match(/<article class="guide-body">([\s\S]*?)<\/article>/)?.[1] ?? "";
+    const words = body.replace(/<[^>]+>/g, " ").replace(/&[^;]+;/g, " ").trim().split(/\s+/).filter(Boolean);
+    assert.ok(words.length >= 500, `${slug} enthält nur ${words.length} Wörter`);
+    assert.match(html, /Zum passenden Rechner|Jetzt selbst berechnen/);
+    assert.match(html, /Passende Ratgeber/);
+  }
+});
+
+test("consent is global, reversible and does not include tracking SDKs", async () => {
+  const [layout, banner, footer, appSources] = await Promise.all([
+    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/ConsentBanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/SiteFooter.tsx", import.meta.url), "utf8"),
+    Promise.all([
+      readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+      readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
+    ]).then((parts) => parts.join("\n")),
+  ]);
+
+  assert.match(layout, /<ConsentBanner \/>/);
+  assert.match(banner, /localStorage\.setItem\(KEY, value\)/);
+  assert.match(footer, /ConsentSettingsButton/);
+  assert.doesNotMatch(appSources, /gtag\(|google-analytics|analytics\.js|document\.cookie/i);
 });
