@@ -16,7 +16,13 @@ export function HomeClient() {
     });
   }, [query, category]);
   const groups = categories.map((name) => ({ name, details: categoryDetails[name], items: visible.filter((tool) => tool.category === name) })).filter((group) => group.items.length);
-  const popular = ["zeitdauer-berechnen", "woerter-aus-buchstaben", "heic-zu-jpg", "haus-leisten-rechner", "dachkosten-rechner"].map((slug) => tools.find((tool) => tool.slug === slug)!).filter(Boolean);
+  const featuredCategories: { name: string; category: ToolCategory; icon: string; subtitle: string }[] = [
+    { name: "Handwerker & Renovierung", category: "Handwerker & Renovierung", icon: "Werk", subtitle: "Sanierung, Ausbau und Angebote" },
+    { name: "Immobilien & Finanzierung", category: "Immobilien", icon: "Immo", subtitle: "Kauf, Kredit und Vermietung" },
+    { name: "Lohn & Gehalt", category: "Geld & Beruf", icon: "Lohn", subtitle: "Arbeitszeit, Gehalt und Zuschläge" },
+    { name: "Steuern & Finanzen", category: "Finanzen & Steuern", icon: "€", subtitle: "Abgaben, Vorsorge und Sparen" },
+    { name: "Energie & Verbrauch", category: "Energie & Umwelt", icon: "kWh", subtitle: "Strom, Heizung, Gas und Solar" },
+  ];
 
   return (
     <>
@@ -32,13 +38,13 @@ export function HomeClient() {
           </label>
           <div className="trust-row"><span>✓ Keine Registrierung</span><span>✓ Viele Tools arbeiten lokal</span><span>✓ Mobil optimiert</span></div>
         </div>
-        <aside className="hero-panel" aria-label="Empfohlene Werkzeuge">
-          <p>Direkt starten</p>
-          {popular.map((tool, index) => (
-            <Link href={`/tools/${tool.slug}`} key={tool.slug}>
+        <aside className="hero-panel" aria-label="Wichtige Kategorien">
+          <p>Wichtige Themenbereiche</p>
+          {featuredCategories.map((categoryItem, index) => (
+            <Link href={`/nischen/${categoryDetails[categoryItem.category].slug}`} key={categoryItem.name}>
               <span className="rank">0{index + 1}</span>
-              <span className="mini-icon">{tool.icon}</span>
-              <span><strong>{tool.title}</strong><small>{tool.category}</small></span>
+              <span className="mini-icon">{categoryItem.icon}</span>
+              <span><strong>{categoryItem.name}</strong><small>{categoryItem.subtitle} · {tools.filter((tool) => tool.category === categoryItem.category).length} Rechner</small></span>
               <b>→</b>
             </Link>
           ))}
