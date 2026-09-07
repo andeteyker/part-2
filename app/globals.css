@@ -132,6 +132,15 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .result-box strong { color: var(--lime); font-size: clamp(25px, 4vw, 36px); letter-spacing: -.03em; overflow-wrap: anywhere; }
 .result-box small { color: #9eb0c3; }
 .form-hint { margin: 0 0 20px; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.tool-editorial { max-width: 920px; margin: -34px 0 32px; padding: clamp(24px, 4vw, 38px); border: 1px solid var(--line); border-radius: 18px; background: linear-gradient(145deg, #fff 0%, #f8faee 100%); }
+.tool-editorial h2 { max-width: 760px; margin: 12px 0 20px; color: var(--navy); font-size: clamp(25px, 4vw, 34px); line-height: 1.12; letter-spacing: -.035em; }
+.tool-editorial-copy { max-width: 790px; }
+.tool-editorial-copy p { margin: 0 0 14px; color: #526174; font-size: 16px; line-height: 1.72; }
+.tool-editorial-checks { margin-top: 23px; padding-top: 20px; border-top: 1px solid #dfe6cf; }
+.tool-editorial-checks strong { color: var(--navy); font-size: 14px; }
+.tool-editorial-checks ul { margin: 12px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 9px; list-style: none; }
+.tool-editorial-checks li { padding: 8px 11px; border-radius: 8px; background: white; color: #526174; font-size: 13px; font-weight: 700; box-shadow: 0 1px 0 rgba(7,26,49,.06); }
+.tool-editorial-checks li::before { content: "✓"; margin-right: 7px; color: var(--lime-dark); font-weight: 900; }
 .calculation-guide { max-width: 920px; margin: 0 0 70px; padding: 16px 18px; display: flex; gap: 12px; align-items: flex-start; border: 1px solid #dbe9b6; border-radius: 12px; background: #f5fadf; }
 .calculation-guide-icon { flex: 0 0 auto; margin-top: 1px; border-color: var(--lime-dark); color: var(--navy); background: var(--lime); cursor: default; }
 .calculation-guide strong { color: var(--navy); font-size: 13px; }
@@ -286,6 +295,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .tool-page { padding-top: 22px; }
   .tool-hero { padding-top: 42px; }
   .tool-surface { margin-bottom: 58px; }
+  .tool-editorial { margin-top: -18px; }
   .tool-surface:has(+ .calculation-guide) { margin-bottom: 18px; }
   .calculation-guide { margin-bottom: 52px; }
   .info-popover { position: fixed; z-index: 80; left: 14px; right: 14px; top: auto; bottom: 18px; width: auto; font-size: 14px; }

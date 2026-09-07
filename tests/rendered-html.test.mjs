@@ -96,6 +96,37 @@ test("every published tool has dedicated SEO guidance", async () => {
   assert.deepEqual(publishedSlugs.filter((slug) => !optimizedSlugs.has(slug) && !growthSeoSlugs.has(slug)), []);
 });
 
+test("every tool page adds human guidance and useful topic-specific questions", async () => {
+  const worker = await createWorker();
+  const [baseSource, registrySource, growthFiles] = await Promise.all([
+    readFile(new URL("../app/data/tools.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/data/tool-registry.ts", import.meta.url), "utf8"),
+    Promise.all([
+      "netto-gehalt-rechner", "einkommensteuer-rechner", "pendlerpauschale-rechner", "rentenrechner", "abfindungs-rechner", "bauspar-rechner",
+      "stromkosten-rechner", "heizkosten-rechner", "gasverbrauch-rechner", "solar-ertrag-rechner", "bmi-rechner", "kalorienbedarf-rechner",
+      "koerperfett-anteil-rechner", "idealgewicht-rechner", "elterngeld-rechner", "kindergeld-rechner", "schwangerschafts-terminrechner",
+      "urlaubsanspruch-rechner", "angebots-kalkulation", "umzugskosten-rechner",
+    ].map((slug) => readFile(new URL(`../app/data/growth/${slug}.ts`, import.meta.url), "utf8"))),
+  ]);
+  const baseToolSection = baseSource.split("export const categories")[0];
+  const registryToolSection = registrySource.split("const register")[0];
+  const slugs = [...baseToolSection.matchAll(/slug: "([^"]+)"/g), ...registryToolSection.matchAll(/slug: "([^"]+)"/g), ...growthFiles.flatMap((source) => [...source.matchAll(/slug: "([^"]+)"/g)].slice(0, 1))]
+    .map((match) => match[1]);
+  const uniqueSlugs = [...new Set(slugs)];
+
+  assert.equal(uniqueSlugs.length, 55);
+  for (const slug of uniqueSlugs) {
+    const response = await fetchFromWorker(worker, `/tools/${slug}`);
+    const html = await response.text();
+    const faqCount = (html.match(/<details/g) ?? []).length;
+    assert.equal(response.status, 200, slug);
+    assert.match(html, /Einordnung aus der Praxis/i, slug);
+    assert.match(html, /Darauf solltest du achten/i, slug);
+    assert.ok(faqCount >= 3, `${slug}: nur ${faqCount} thematische Fragen`);
+    assert.doesNotMatch(html, /Ist der (Rechner|Generator) kostenlos/i, slug);
+  }
+});
+
 test("all 20 growth calculators render FAQ, guidance and concise descriptions", async () => {
   const worker = await createWorker();
   const slugs = [

@@ -14,6 +14,7 @@ import { getGuidesByTool } from "../../data/guides";
 import { Recommendation } from "../../components/ToolUI";
 import { getToolSeo } from "../../data/tool-seo";
 import { absoluteUrl } from "../../lib/site";
+import { getToolEditorial, getUsefulFaq } from "../../data/tool-editorial";
 
 export function generateStaticParams() {
   return tools.map((tool) => ({ slug: tool.slug }));
@@ -54,6 +55,8 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const related = [...configuredRelated, ...fallbackRelated].slice(0, 4);
   const recommendation = getRecommendation(tool.slug, tool.title);
   const guides = getGuidesByTool(tool.slug);
+  const editorial = getToolEditorial(tool, seo, guides[0]?.excerpt);
+  const usefulFaq = getUsefulFaq(tool, seo);
 
   const runner = {
     core: <ToolRunner slug={tool.slug} />,
@@ -88,7 +91,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       },
       {
         "@type": "FAQPage",
-        mainEntity: tool.faq.map((item) => ({
+        mainEntity: usefulFaq.map((item) => ({
           "@type": "Question",
           name: item.question,
           acceptedAnswer: { "@type": "Answer", text: item.answer },
@@ -115,6 +118,19 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
 
         {runner}
 
+        <section className="tool-editorial" aria-labelledby={`editorial-${tool.slug}`}>
+          <p className="eyebrow"><span /> Einordnung aus der Praxis</p>
+          <h2 id={`editorial-${tool.slug}`}>{editorial.heading}</h2>
+          <div className="tool-editorial-copy">
+            <p>{editorial.lead}</p>
+            <p>{editorial.method}</p>
+          </div>
+          <div className="tool-editorial-checks">
+            <strong>Darauf solltest du achten</strong>
+            <ul>{editorial.checks.map((check) => <li key={check}>{check}</li>)}</ul>
+          </div>
+        </section>
+
         {recommendation && <Recommendation rec={recommendation} slug={tool.slug} />}
         {seo.formula && <section className="calculation-guide" aria-label="Berechnungsweg">
           <span className="calculation-guide-icon" aria-hidden="true">i</span>
@@ -138,7 +154,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
           </article>
           <aside>
             <h2>Häufige Fragen</h2>
-            {tool.faq.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}
+            {usefulFaq.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}
           </aside>
         </section>
 
