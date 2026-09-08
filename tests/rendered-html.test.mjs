@@ -39,8 +39,10 @@ test("renders one consistent production canonical and no preview marker", async 
   );
   const html = await response.text();
   assert.match(html, /<html[^>]+lang=["']de["']/i);
-  assert.match(html, /<title>SofortTools – Kostenlose Rechner &amp; Online-Tools<\/title>/i);
-  assert.match(html, /rel=["']icon["'][^>]+href=["'][^"']*favicon\.svg/i);
+  assert.match(html, /<title>Kostenlose Online-Rechner für Alltag &amp; Finanzen \| SofortTools<\/title>/i);
+  assert.match(html, /55 kostenlose Online-Rechner für Gehalt, Steuern, Immobilien, Energie, Gesundheit und Alltag/i);
+  assert.match(html, /rel=["']icon["'][^>]+href=["'][^"']*icon-48\.png/i);
+  assert.match(html, /rel=["']shortcut icon["'][^>]+href=["'][^"']*favicon\.ico/i);
   assert.match(html, /Organization/i);
   assert.match(html, /Sofort-Tools/i);
   assert.match(html, /<link[^>]+rel=["']canonical["'][^>]+href=["']https:\/\/www\.sofort-tools\.de[\/"]?/i);
@@ -76,6 +78,7 @@ test("brand and category artwork replace starter icons, abbreviations and emoji"
   assert.match(home, /data-tool-icon="spritkostenrechner"/);
   assert.doesNotMatch(`${home}\n${category}\n${guideIndex}\n${localTool}`, /🎂|⏱|⛽|🏠|🌙|🔒/u);
   assert.doesNotMatch(`${homeSource}\n${categorySource}\n${toolPageSource}`, /\{(?:tool|item|category|group\.details)\.icon\}/);
+  assert.match(home, /SofortTools bietet 55 kostenlose Online-Rechner/i);
 });
 
 test("category tools stay in one horizontally scrollable row", async () => {

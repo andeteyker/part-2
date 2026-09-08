@@ -2,7 +2,6 @@ import Script from "next/script";
 import { HomeClient } from "./components/HomeClient";
 import { SiteFooter } from "./components/SiteFooter";
 import { SiteHeader } from "./components/SiteHeader";
-import { tools } from "./data/tool-registry";
 import { absoluteUrl, SITE_NAME } from "./lib/site";
 
 export default function Home() {
@@ -13,29 +12,28 @@ export default function Home() {
         "@type": "Organization",
         "@id": `${absoluteUrl("/")}#organization`,
         name: SITE_NAME,
-        alternateName: "Sofort-Tools",
+        alternateName: "Sofort Tools",
         url: absoluteUrl("/"),
-        logo: { "@type": "ImageObject", url: absoluteUrl("/favicon.svg"), width: 64, height: 64 },
+        logo: { "@type": "ImageObject", url: absoluteUrl("/icon-512.png"), width: 512, height: 512 },
       },
       {
         "@type": "WebSite",
         "@id": `${absoluteUrl("/")}#website`,
         name: SITE_NAME,
-        alternateName: ["Sofort-Tools", "sofort-tools.de"],
+        alternateName: "Sofort Tools",
         url: absoluteUrl("/"),
         inLanguage: "de-DE",
         publisher: { "@id": `${absoluteUrl("/")}#organization` },
-        description: "Kostenlose Online-Rechner und verständliche Werkzeuge für Finanzen, Immobilien, Arbeit, Energie, Gesundheit und Alltag.",
-        hasPart: tools.map((tool) => ({ "@type": "WebApplication", name: tool.title, url: absoluteUrl(`/tools/${tool.slug}`) })),
+        description: "55 kostenlose Online-Rechner für Gehalt, Steuern, Immobilien, Energie, Gesundheit und Alltag – verständlich erklärt und ohne Anmeldung.",
       },
       {
         "@type": "WebPage",
         "@id": `${absoluteUrl("/")}#webpage`,
-        name: `${SITE_NAME} – Kostenlose Rechner & Online-Tools`,
+        name: `Kostenlose Online-Rechner für Alltag & Finanzen | ${SITE_NAME}`,
         url: absoluteUrl("/"),
         isPartOf: { "@id": `${absoluteUrl("/")}#website` },
         about: { "@id": `${absoluteUrl("/")}#organization` },
-        description: "Verständliche Online-Rechner mit Erklärungen, Rechenwegen und thematischen Ratgebern.",
+        description: "55 kostenlose Online-Rechner für Gehalt, Steuern, Immobilien, Energie, Gesundheit und Alltag – sofort nutzbar, verständlich erklärt, ohne Anmeldung.",
       },
     ],
   };

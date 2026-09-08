@@ -6,8 +6,8 @@ import ConsentBanner from "./components/ConsentBanner";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: { default: `${SITE_NAME} – Kostenlose Rechner & Online-Tools`, template: `%s | ${SITE_NAME}` },
-  description: "Kostenlose Online-Rechner für Gehalt, Steuern, Immobilien, Energie, Gesundheit und Alltag. Mit verständlichen Ergebnissen, Erklärungen und Ratgebern.",
+  title: { default: `Kostenlose Online-Rechner für Alltag & Finanzen | ${SITE_NAME}`, template: `%s | ${SITE_NAME}` },
+  description: "55 kostenlose Online-Rechner für Gehalt, Steuern, Immobilien, Energie, Gesundheit und Alltag – sofort nutzbar, verständlich erklärt, ohne Anmeldung.",
   applicationName: SITE_NAME,
   category: "Online-Rechner und digitale Werkzeuge",
   authors: [{ name: SITE_NAME }],
@@ -15,9 +15,17 @@ export const metadata: Metadata = {
   publisher: SITE_NAME,
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
   alternates: { canonical: "/", languages: { "de-DE": "/", "x-default": "/" } },
-  openGraph: { type: "website", locale: "de_DE", siteName: SITE_NAME, title: `${SITE_NAME} – Kostenlose Rechner & Online-Tools`, description: "Verständliche Rechner und praktische Werkzeuge für Finanzen, Immobilien, Arbeit, Energie, Gesundheit und Alltag.", url: "/", images: [{ url: "/og.png", width: 1731, height: 909, alt: `${SITE_NAME} – Kostenlose Online-Rechner und Tools` }] },
-  twitter: { card: "summary_large_image", title: `${SITE_NAME} – Kostenlose Rechner & Online-Tools`, description: "Verständliche Rechner und praktische Werkzeuge für wichtige Fragen im Alltag.", images: ["/og.png"] },
-  icons: { icon: [{ url: "/favicon.svg", type: "image/svg+xml", sizes: "any" }], shortcut: "/favicon.svg" },
+  openGraph: { type: "website", locale: "de_DE", siteName: SITE_NAME, title: `Kostenlose Online-Rechner für Alltag & Finanzen | ${SITE_NAME}`, description: "55 verständlich erklärte Rechner für Gehalt, Steuern, Immobilien, Energie, Gesundheit und Alltag – kostenlos und ohne Anmeldung.", url: "/", images: [{ url: "/og.png", width: 1731, height: 909, alt: `${SITE_NAME} – Kostenlose Online-Rechner und Tools` }] },
+  twitter: { card: "summary_large_image", title: `Kostenlose Online-Rechner | ${SITE_NAME}`, description: "55 verständlich erklärte Rechner für Finanzen, Immobilien, Arbeit, Energie, Gesundheit und Alltag.", images: ["/og.png"] },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "48x48" },
+      { url: "/icon-48.png", type: "image/png", sizes: "48x48" },
+      { url: "/favicon.svg", type: "image/svg+xml", sizes: "any" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   manifest: "/manifest.webmanifest",
 };
 
