@@ -12,6 +12,7 @@ export function SiteHeader() {
         <nav aria-label="Hauptnavigation">
           <Link href="/#tools">Alle Tools</Link>
           <Link href="/#kategorien">Kategorien</Link>
+          <Link className="nav-ratgeber" href="/ratgeber">Ratgeber</Link>
           <Link href="/datenschutz">Datenschutz</Link>
         </nav>
       </div>
