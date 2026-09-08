@@ -221,6 +221,23 @@ test("calculator pages explain technical terms and the calculation close to the 
   assert.doesNotMatch(html, /So funktioniert der Mietrendite-Rechner/i);
 });
 
+test("practice guidance is tool-specific and calculator sections share one width", async () => {
+  const worker = await createWorker();
+  const [ruleOfThree, css] = await Promise.all([
+    fetchFromWorker(worker, "/tools/dreisatzrechner").then((response) => response.text()),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(ruleOfThree, /Der direkte Dreisatz funktioniert bei proportionalen Zusammenhängen/i);
+  assert.match(ruleOfThree, /Bei umgekehrt proportionalen Aufgaben/i);
+  assert.match(ruleOfThree, /Schreibe die Einheiten neben die Werte/i);
+  assert.doesNotMatch(ruleOfThree, /Wortzahl und Zeichenlänge/i);
+  for (const selector of ["tool-surface", "calculation-guide", "tool-editorial", "faq-section"]) {
+    assert.match(css, new RegExp(`\\.${selector}[^}]*max-width:\\s*920px`));
+  }
+  assert.match(css, /\.calculation-guide[^}]*background:\s*#f8fafb/);
+});
+
 test("imprint identifies the operator with a complete service address", async () => {
   const worker = await createWorker();
   const response = await fetchFromWorker(worker, "/impressum");
