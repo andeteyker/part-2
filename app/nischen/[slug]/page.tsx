@@ -7,6 +7,7 @@ import { SiteHeader } from "../../components/SiteHeader";
 import { categories, categoryDetails, getCategoryBySlug } from "../../data/tool-registry";
 import { absoluteUrl } from "../../lib/site";
 import { CategoryIcon } from "../../components/CategoryIcon";
+import { ToolCarousel } from "../../components/ToolCarousel";
 import { ToolIcon } from "../../components/ToolIcon";
 
 export function generateStaticParams() {
@@ -94,12 +95,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           <div className="section-head">
             <div><p className="eyebrow"><span /> Spezialisierte Werkzeuge</p><h2>{category.tools.length} Rechner für konkrete Aufgaben</h2></div>
           </div>
-          <div className="tool-grid">
+          <ToolCarousel label={category.name}>
             {category.tools.map((tool) => <Link href={`/tools/${tool.slug}`} className="tool-card" key={tool.slug}>
               <div className="card-top"><span className="tool-icon"><ToolIcon slug={tool.slug} /></span><span className="tool-arrow">↗</span></div>
               <p>{tool.eyebrow}</p><h3>{tool.title}</h3><span>{tool.short}</span>
             </Link>)}
-          </div>
+          </ToolCarousel>
         </section>
 
         <section className="category-copy">

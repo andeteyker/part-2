@@ -78,6 +78,24 @@ test("brand and category artwork replace starter icons, abbreviations and emoji"
   assert.doesNotMatch(`${homeSource}\n${categorySource}\n${toolPageSource}`, /\{(?:tool|item|category|group\.details)\.icon\}/);
 });
 
+test("category tools stay in one horizontally scrollable row", async () => {
+  const worker = await createWorker();
+  const [home, category, component, css] = await Promise.all([
+    fetchFromWorker(worker, "/").then((response) => response.text()),
+    fetchFromWorker(worker, "/nischen/schicht-zuschlaege").then((response) => response.text()),
+    readFile(new URL("../app/components/ToolCarousel.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(home, /tool-carousel-track/);
+  assert.match(category, /tool-carousel-track/);
+  assert.match(component, /scrollBy\(/);
+  assert.match(component, /Weitere Rechner in/);
+  assert.match(css, /grid-auto-flow:\s*column/);
+  assert.match(css, /overflow-x:\s*auto/);
+  assert.match(css, /scroll-snap-type:\s*inline mandatory/);
+});
+
 test("tool pages expose canonical, FAQ schema and unique help content", async () => {
   const worker = await createWorker();
   const response = await fetchFromWorker(worker, "/tools/nachtzuschlag-rechner");

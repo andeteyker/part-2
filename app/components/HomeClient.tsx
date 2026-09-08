@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { categories, categoryDetails, tools, type ToolCategory } from "../data/tool-registry";
 import { CategoryIcon } from "./CategoryIcon";
+import { ToolCarousel } from "./ToolCarousel";
 import { ToolIcon } from "./ToolIcon";
 
 export function HomeClient() {
@@ -72,14 +73,14 @@ export function HomeClient() {
                   <div><p>{group.details.kicker}</p><h3><Link href={`/nischen/${group.details.slug}`}>{group.name}</Link></h3><span>{group.details.description}</span></div>
                   <Link className="cluster-more" href={`/nischen/${group.details.slug}`}>{group.items.length} Tools →</Link>
                 </header>
-                <div className="tool-grid">
+                <ToolCarousel label={group.name}>
                   {group.items.map((tool) => (
                     <Link href={`/tools/${tool.slug}`} className="tool-card" key={tool.slug}>
                       <div className="card-top"><span className="tool-icon"><ToolIcon slug={tool.slug} /></span><span className="tool-arrow">↗</span></div>
                       <p>{tool.eyebrow}</p><h3>{tool.title}</h3><span>{tool.short}</span>
                     </Link>
                   ))}
-                </div>
+                </ToolCarousel>
               </section>
             ))}
           </div>
