@@ -16,6 +16,8 @@ import { getToolSeo } from "../../data/tool-seo";
 import { absoluteUrl } from "../../lib/site";
 import { getToolEditorial, getUsefulFaq } from "../../data/tool-editorial";
 import { ToolIcon } from "../../components/ToolIcon";
+import { ToolResultActions } from "../../components/ToolResultActions";
+import { getToolSources } from "../../data/tool-sources";
 
 export function generateStaticParams() {
   return tools.map((tool) => ({ slug: tool.slug }));
@@ -58,6 +60,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const guides = getGuidesByTool(tool.slug);
   const editorial = getToolEditorial(tool, seo, guides[0]?.excerpt);
   const usefulFaq = getUsefulFaq(tool, seo);
+  const sources = getToolSources(tool.slug);
 
   const runner = {
     core: <ToolRunner slug={tool.slug} />,
@@ -118,6 +121,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         </section>
 
         {runner}
+        <ToolResultActions title={tool.title} />
 
         <section className="calculation-guide" aria-labelledby={`calculation-${tool.slug}`}>
           <header className="calculation-guide-head">
@@ -155,6 +159,11 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
             <strong>Darauf solltest du achten</strong>
             <ul>{editorial.checks.map((check) => <li key={check}>{check}</li>)}</ul>
           </div>
+          {sources.length > 0 && <div className="official-sources">
+            <strong>Offizielle Grundlagen</strong>
+            <p>Tarife und Regeln können sich ändern. Diese Originalquellen helfen dir beim Gegenprüfen:</p>
+            <ul>{sources.map((source) => <li key={source.href}><a href={source.href} target="_blank" rel="noopener noreferrer">{source.label}</a><span>{source.publisher}</span></li>)}</ul>
+          </div>}
           {guides.length > 0 && <div className="guide-inline-links" aria-label="Passende Ratgeber">
             {guides.map((guide) => <Link href={`/ratgeber/${guide.slug}`} className="guide-inline-link" key={guide.slug}>Mehr dazu: {guide.title} →</Link>)}
           </div>}

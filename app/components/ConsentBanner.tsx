@@ -83,14 +83,13 @@ export default function ConsentBanner() {
         <p>
           <strong>Deine Privatsphäre</strong>
           <span>
-            SofortTools nutzt aktuell kein Tracking. Sollten optionale Analyse- oder Marketingdienste
-            hinzukommen, werden sie nur nach deiner Zustimmung geladen. Deine Entscheidung kannst du jederzeit ändern. Weitere Details
-            in der <a href="/datenschutz">Datenschutzerklärung</a>.
+            Aktuell nutzt SofortTools kein Tracking. Optionale Dienste würden erst nach deiner Zustimmung geladen.
+            Mehr in der <a href="/datenschutz">Datenschutzerklärung</a>.
           </span>
         </p>
         <div className="consent-actions">
           <button onClick={() => grant("denied")} className="consent-deny">
-            Nur technisch notwendig
+            Nur notwendig
           </button>
           <button onClick={() => grant("accepted")} className="consent-accept">
             Alle akzeptieren

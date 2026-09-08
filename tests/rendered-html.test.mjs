@@ -124,7 +124,8 @@ test("robots and sitemap point only to the preferred www domain", async () => {
   assert.match(robotsText, /Sitemap: https:\/\/www\.sofort-tools\.de\/sitemap\.xml/i);
   assert.match(sitemapText, /https:\/\/www\.sofort-tools\.de\/tools\/mietrendite-rechner/i);
   assert.doesNotMatch(`${robotsText}\n${sitemapText}`, /mielerik\.chatgpt\.site/i);
-  assert.equal((sitemapText.match(/<url>/g) ?? []).length, 103);
+  assert.match(sitemapText, /https:\/\/www\.sofort-tools\.de\/ueber-uns/i);
+  assert.equal((sitemapText.match(/<url>/g) ?? []).length, 104);
 });
 
 test("every published tool has dedicated SEO guidance", async () => {
@@ -222,6 +223,27 @@ test("calculator pages explain technical terms and the calculation close to the 
   assert.match(html, /Variablen und Rechenschritte/i);
   assert.match(html, /Bruttomietrendite = Jahreskaltmiete/i);
   assert.doesNotMatch(html, /So funktioniert der Mietrendite-Rechner/i);
+});
+
+test("tool pages offer accessible result actions and official sources", async () => {
+  const worker = await createWorker();
+  const [taxPage, bmiPage, aboutPage] = await Promise.all([
+    fetchFromWorker(worker, "/tools/einkommensteuer-rechner").then((response) => response.text()),
+    fetchFromWorker(worker, "/tools/bmi-rechner").then((response) => response.text()),
+    fetchFromWorker(worker, "/ueber-uns").then((response) => response.text()),
+  ]);
+
+  assert.match(taxPage, /Ergebnis verwenden/i);
+  assert.match(taxPage, /Kopieren<\/button>/i);
+  assert.match(taxPage, /Teilen<\/button>/i);
+  assert.match(taxPage, /Drucken<\/button>/i);
+  assert.match(taxPage, /aria-live="polite"/i);
+  assert.match(taxPage, /Einkommensteuer-Rechner 2024–2026/i);
+  assert.match(taxPage, /value="2026"/i);
+  assert.match(taxPage, /§ 32a EStG – Einkommensteuertarif/i);
+  assert.match(bmiPage, /Weltgesundheitsorganisation/i);
+  assert.match(aboutPage, /Rechnen soll verständlich bleiben/i);
+  assert.match(aboutPage, /Korrekturen und Hinweise/i);
 });
 
 test("practice guidance is tool-specific and calculator sections share one width", async () => {

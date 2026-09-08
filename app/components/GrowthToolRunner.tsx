@@ -20,18 +20,25 @@ function ConnectedField({ field, onValue }: { field: GrowthField; onValue: (key:
 
 function incomeTax(zveValue: number, year: string) {
   const x = Math.max(0, Math.floor(zveValue));
+  if (year === "2026") {
+    if (x <= 12348) return 0;
+    if (x <= 17799) { const y = (x - 12348) / 10000; return Math.floor((914.51 * y + 1400) * y); }
+    if (x <= 69878) { const z = (x - 17799) / 10000; return Math.floor((173.10 * z + 2397) * z + 1034.87); }
+    if (x <= 277825) return Math.floor(0.42 * x - 11135.63);
+    return Math.floor(0.45 * x - 19470.38);
+  }
   if (year === "2024") {
     if (x <= 11604) return 0;
-    if (x <= 17005) { const y = (x - 11604) / 10000; return (922.98 * y + 1400) * y; }
-    if (x <= 66760) { const z = (x - 17005) / 10000; return (181.19 * z + 2397) * z + 1025.38; }
-    if (x <= 277825) return 0.42 * x - 10602.13;
-    return 0.45 * x - 18936.88;
+    if (x <= 17005) { const y = (x - 11604) / 10000; return Math.floor((922.98 * y + 1400) * y); }
+    if (x <= 66760) { const z = (x - 17005) / 10000; return Math.floor((181.19 * z + 2397) * z + 1025.38); }
+    if (x <= 277825) return Math.floor(0.42 * x - 10602.13);
+    return Math.floor(0.45 * x - 18936.88);
   }
   if (x <= 12096) return 0;
-  if (x <= 17443) { const y = (x - 12096) / 10000; return (932.30 * y + 1400) * y; }
-  if (x <= 68480) { const z = (x - 17443) / 10000; return (176.64 * z + 2397) * z + 1015.13; }
-  if (x <= 277825) return 0.42 * x - 10911.92;
-  return 0.45 * x - 19246.67;
+  if (x <= 17443) { const y = (x - 12096) / 10000; return Math.floor((932.30 * y + 1400) * y); }
+  if (x <= 68480) { const z = (x - 17443) / 10000; return Math.floor((176.64 * z + 2397) * z + 1015.13); }
+  if (x <= 277825) return Math.floor(0.42 * x - 10911.92);
+  return Math.floor(0.45 * x - 19246.67);
 }
 
 function calculate(slug: string, values: Values): Output {

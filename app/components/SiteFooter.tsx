@@ -15,6 +15,7 @@ export function SiteFooter() {
           <Link href="/#tools">Alle Tools</Link>
           <Link href="/datenschutz">Datenschutz</Link>
           <ConsentSettingsButton />
+          <Link href="/ueber-uns">Über SofortTools</Link>
           <Link href="/impressum">Impressum</Link>
         </div>
         <p className="footer-note">© {new Date().getFullYear()} Sofort-Tools</p>
