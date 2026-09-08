@@ -296,7 +296,7 @@ test("all calculator families use reusable URL state while upload tools stay loc
   assert.match(core, /const \[file, setFile\] = useState<File \| null>/);
 });
 
-test("content pyramid renders ten clusters and 30 substantial linked guides", async () => {
+test("content plan renders 30 focused guides with examples and calculator links", async () => {
   const worker = await createWorker();
   const guideSlugs = [
     "immobilie-kaufen-finanzieren-plan", "mietrendite-berechnen", "kaufnebenkosten-immobilie",
@@ -317,10 +317,18 @@ test("content pyramid renders ten clusters and 30 substantial linked guides", as
     assert.equal(response.status, 200, slug);
     const body = html.match(/<article class="guide-body">([\s\S]*?)<\/article>/)?.[1] ?? "";
     const words = body.replace(/<[^>]+>/g, " ").replace(/&[^;]+;/g, " ").trim().split(/\s+/).filter(Boolean);
-    assert.ok(words.length >= 500, `${slug} enthält nur ${words.length} Wörter`);
-    assert.match(html, /Zum passenden Rechner|Jetzt selbst berechnen/);
+    assert.ok(words.length >= 150, `${slug} enthält nur ${words.length} Wörter`);
+    assert.match(html, /Ein konkretes Beispiel/);
+    assert.match(html, /Mit deinen eigenen Zahlen weiterrechnen/);
     assert.match(html, /Passende Ratgeber/);
+    assert.doesNotMatch(html, /Eine belastbare Orientierung entsteht nicht durch einen einzelnen Richtwert/);
   }
+
+  const index = await fetchFromWorker(worker, "/ratgeber").then((response) => response.text());
+  assert.match(index, /Themen, die wir wirklich erklären/);
+  assert.match(index, /Passende Rechner/);
+  assert.match(index, /Kreditraten-Rechner für Immobilien/);
+  assert.match(index, /Angebote richtig kalkulieren: Selbstkosten, Gewinn und Umsatzsteuer/);
 });
 
 test("consent is global, reversible and does not include tracking SDKs", async () => {

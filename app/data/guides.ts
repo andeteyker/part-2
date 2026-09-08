@@ -30,6 +30,7 @@ type GuideSeed = Omit<Guide, "sections"> & {
   intro: string;
   method: string;
   essentials: string[];
+  tableHead?: [string, string, string];
   table: string[][];
   pitfalls: string[];
   example: string;
@@ -40,63 +41,34 @@ function buildGuide(seed: GuideSeed): Guide {
     ...seed,
     sections: [
       {
-        h2: `${seed.topic}: die richtige Einordnung`,
+        h2: `Worum es bei ${seed.topic} wirklich geht`,
         blocks: [
           { type: "p", text: seed.intro },
-          { type: "p", text: `Eine belastbare Orientierung entsteht nicht durch einen einzelnen Richtwert, sondern durch nachvollziehbare Annahmen. Beim Thema ${seed.topic} solltest du deshalb Ausgangswerte, Zeitraum und mögliche Zusatzkosten getrennt betrachten. So erkennst du, welcher Wert sicher bekannt ist, wo du schätzen musst und welche Abweichung dein Ergebnis am stärksten verändert. Der passende SofortTools-Rechner übernimmt die Mathematik; die Entscheidung über realistische Eingaben bleibt bewusst bei dir.` },
-          { type: "p", text: `Dieser Ratgeber führt dich von der groben Einschätzung zu einer prüfbaren Rechnung. Notiere möglichst die Quelle jedes Werts, etwa Vertrag, Angebot, Abrechnung oder eigene Messung. Rechne anschließend mindestens ein realistisches, ein günstiges und ein vorsichtiges Szenario. Diese Bandbreite ist für Planung und Vergleich meist hilfreicher als eine scheinbar exakte Einzelzahl.` },
         ],
       },
       {
-        h2: "Welche Angaben du benötigst",
+        h2: "Diese Angaben brauchst du",
         blocks: [
-          { type: "p", text: `Für ${seed.topic} reichen oft wenige Kernangaben. Entscheidend ist, dass alle Werte dieselbe Einheit und denselben Zeitraum verwenden. Monatliche Beträge dürfen zum Beispiel nicht ungeprüft mit jährlichen Kosten vermischt werden. Prozentwerte werden als Anteil des jeweiligen Grundwerts berechnet und sollten nicht einfach addiert werden, wenn ihre Bezugsgrößen unterschiedlich sind.` },
           { type: "ul", items: seed.essentials },
-          { type: "tip", text: "Nutze dokumentierte Werte, wenn sie vorliegen. Eine Rechnung mit echten Angebots-, Vertrags- oder Abrechnungsdaten ist aussagekräftiger als ein pauschaler Internet-Richtwert." },
         ],
       },
       {
-        h2: "Schritt für Schritt rechnen",
+        h2: "So gehst du bei der Rechnung vor",
         blocks: [
           { type: "p", text: seed.method },
-          { type: "ol", items: [
-            "Trage zunächst nur Werte ein, die du sicher kennst, und kontrolliere Einheit sowie Zeitraum.",
-            "Ergänze variable Annahmen einzeln. Ändere nicht mehrere unsichere Werte gleichzeitig, damit ihre Wirkung erkennbar bleibt.",
-            "Lies Ergebnis, Teilbeträge und Rechenweg gemeinsam. Ein Endwert ohne Zusammensetzung lässt sich später kaum prüfen.",
-            "Speichere eine sinnvolle Variante über die URL. Die Rechnerwerte stehen im Query-String und können ohne Konto geteilt oder erneut geöffnet werden.",
-            "Vergleiche mindestens zwei Szenarien und dokumentiere, welche Annahme den größten Unterschied verursacht.",
-          ] },
-          { type: "p", text: `Der Rechner arbeitet mit den eingegebenen Werten und ersetzt keine fehlenden Informationen durch versteckte Annahmen. Das macht die Kalkulation transparent: Wenn sich ein Preis, Satz oder Zeitraum ändert, kannst du genau diesen Wert anpassen und die Auswirkung sofort sehen. Für verbindliche Entscheidungen solltest du das Ergebnis mit Originalunterlagen oder einem fachlichen Angebot abgleichen.` },
         ],
       },
       {
-        h2: "Beispiel und Vergleichswerte",
+        h2: "Ein konkretes Beispiel",
         blocks: [
           { type: "p", text: seed.example },
-          { type: "table", head: ["Prüfpunkt", "Vorsichtige Annahme", "Realistische Annahme"], rows: seed.table },
-          { type: "p", text: "Die Tabelle ist keine Preis- oder Rechtsauskunft. Sie zeigt, wie du Annahmen nebeneinanderstellst. Ein vorsichtiges Szenario plant Reserven ein; ein realistisches Szenario orientiert sich an den aktuell vorliegenden Daten. Liegen beide Ergebnisse nah beieinander, ist die Planung robuster. Liegen sie weit auseinander, lohnt sich zuerst die Klärung des unsichersten Eingabewerts." },
+          { type: "table", head: seed.tableHead ?? ["Prüfpunkt", "Ansatz oder Rechenweg", "Ergebnis oder Grundlage"], rows: seed.table },
         ],
       },
       {
-        h2: "Häufige Fehler vermeiden",
+        h2: "Diese Fehler verfälschen das Ergebnis",
         blocks: [
           { type: "ul", items: seed.pitfalls },
-          { type: "p", text: `Ein weiterer häufiger Fehler ist falsche Genauigkeit. Ein Ergebnis mit Centbeträgen wirkt präzise, obwohl einzelne Eingaben nur grob geschätzt wurden. Runde deshalb für Entscheidungen sinnvoll und behalte eine Reserve. Prüfe außerdem, ob Steuern, Gebühren, Ausfallzeiten, Nebenarbeiten oder individuelle Vertragsregeln außerhalb des Rechnermodells liegen. Der Hinweisbereich am Rechner nennt die wichtigsten Grenzen.` },
-          { type: "p", text: "Auch alte Berechnungen sollten nicht ungeprüft übernommen werden. Preise, Zinssätze, Arbeitszeiten und persönliche Rahmenbedingungen verändern sich. Öffne den gespeicherten Deep-Link, aktualisiere die variablen Eingaben und vergleiche das neue Ergebnis mit der früheren Variante. So wird aus einer einmaligen Überschlagsrechnung ein wiederverwendbares Planungswerkzeug." },
-        ],
-      },
-      {
-        h2: "Ergebnis prüfen und nächsten Schritt wählen",
-        blocks: [
-          { type: "p", text: `Betrachte das Ergebnis zu ${seed.topic} als Entscheidungsgrundlage, nicht als Garantie. Frage zuerst, ob die Größenordnung plausibel ist. Prüfe danach die größten Einzelpositionen und schließlich die Annahmen mit dem höchsten Risiko. Bei kleinen privaten Entscheidungen reicht häufig diese strukturierte Kontrolle. Bei Verträgen, Finanzierungen, steuerlichen Fragen oder größeren Aufträgen sollte zusätzlich fachlicher Rat eingeholt werden.` },
-          { type: "ul", items: [
-            "Passt das Ergebnis zu deinen Originalunterlagen und zum betrachteten Zeitraum?",
-            "Sind alle Pflichtkosten enthalten und Doppelzählungen ausgeschlossen?",
-            "Bleibt die Entscheidung auch im vorsichtigen Szenario tragbar?",
-            "Kann eine zweite Person die Rechnung anhand des Deep-Links nachvollziehen?",
-            "Welche konkrete Information musst du vor einer verbindlichen Entscheidung noch beschaffen?",
-          ] },
-          { type: "tip", text: "Der beste nächste Schritt ist meist nicht eine weitere Schätzung, sondern die gezielte Klärung der Eingabe, die dein Ergebnis am stärksten beeinflusst." },
         ],
       },
     ],
@@ -117,6 +89,7 @@ const seeds: GuideSeed[] = [
     essentials: ["Nachhaltig verfügbare Monatsrate statt kurzfristigem Maximalbetrag", "Eigenkapital abzüglich Notfallreserve", "Kaufpreis und bundeslandspezifische Nebenkosten", "Sollzins, Tilgung und Dauer der Zinsbindung", "Laufende Eigentümer- und Instandhaltungskosten", "Bei Vermietung: realistische Kaltmiete und Leerstandsreserve"],
     table: [["Monatsrate", "Mit Sicherheitspuffer", "Dauerhaft verfügbarer Betrag"], ["Nebenkosten", "Oberen Prozentsatz ansetzen", "Konkrete Steuern und Angebote"], ["Zins", "Leicht höher rechnen", "Aktuelles Finanzierungsangebot"]],
     pitfalls: ["Eigenkapital vollständig einsetzen und keine Liquiditätsreserve behalten", "Kaufnebenkosten aus dem Kreditbudget statt zusätzlich berücksichtigen", "Nur die heutige Rate, nicht die Restschuld nach der Zinsbindung betrachten", "Mietrendite ohne laufende Kosten und Leerstand bewerten"],
+    example: "Angenommen, ein Haushalt kann dauerhaft 1.400 Euro monatlich für Zins und Tilgung aufbringen und besitzt 60.000 Euro Eigenkapital. Davon sollten Kaufnebenkosten und eine Reserve zuerst abgezogen werden. Erst der verbleibende Betrag gehört in die Finanzierungsrechnung. So fällt das realistische Kaufpreislimit meist niedriger aus als ein Budget, das einfach die gesamte Rücklage als Eigenkapital behandelt.",
   },
   {
     slug: "mietrendite-berechnen", title: "Mietrendite berechnen: Brutto, Netto und Cashflow", description: "Brutto- und Nettomietrendite richtig berechnen, laufende Kosten einordnen und Immobilien vergleichbar machen.", keywords: ["Mietrendite berechnen", "Bruttomietrendite", "Nettomietrendite", "Immobilien Cashflow"], toolSlug: "mietrendite-rechner", excerpt: "Formeln, Kosten und Prüfschritte für eine realistische Renditeberechnung.", updated: "2026-09", kind: "supporting", cluster: "Immobilien", relatedGuideSlugs: ["immobilie-kaufen-finanzieren-plan", "kaufnebenkosten-immobilie"], topic: "Mietrendite",
@@ -251,12 +224,29 @@ type GrowthGuideInput = Pick<GuideSeed, "slug" | "title" | "description" | "keyw
   pitfalls: [string, string, string];
 };
 
+const growthGuideTables: Record<string, string[][]> = {
+  "finanzen-steuern-planen": [["Monatsbudget", "Netto und feste Ausgaben trennen", "Kontoauszüge und Abrechnungen"], ["Steuerwerte", "Brutto, Netto und zvE nicht verwechseln", "Lohnsteuerbescheinigung oder Bescheid"], ["Vorsorge", "Kaufkraft und langen Zeitraum bedenken", "Renteninformation und Verträge"]],
+  "einkommensteuer-pendlerpauschale": [["Tarifsteuer", "Passendes Steuerjahr wählen", "Steuerbescheid"], ["Entfernung", "Nur einfache Strecke ansetzen", "Routenplaner und Arbeitsvertrag"], ["Arbeitstage", "Urlaub, Krankheit und Homeoffice abziehen", "Kalender oder Zeiterfassung"]],
+  "rente-abfindung-bausparen": [["Rente", "Entgeltpunkte statt Gehalt verwenden", "Renteninformation"], ["Abfindung", "Faktor ist Verhandlung, kein Anspruch", "Arbeitsvertrag und Angebot"], ["Bausparen", "Tarifbedingungen entscheiden über Zuteilung", "Bausparvertrag"]],
+  "energiekosten-senken": [["Verbrauch", "Ein vollständiges Jahr vergleichen", "Jahresabrechnung"], ["Tarif", "Arbeits- und Grundpreis addieren", "Preisblatt des Versorgers"], ["Solarstrom", "Eigenverbrauch und Einspeisung trennen", "Lastprofil und Anlagenangebot"]],
+  "heizkosten-gasverbrauch": [["Gasmenge", "Zählerdifferenz statt Abschlag nutzen", "Zählerstände"], ["Umrechnung", "Brennwert und Zustandszahl multiplizieren", "Gasabrechnung"], ["Kosten", "Grundpreis zusätzlich berücksichtigen", "Tarifblatt"]],
+  "photovoltaik-ertrag-amortisation": [["Jahresertrag", "Ausrichtung und Verschattung berücksichtigen", "Ertragsprognose"], ["Eigenverbrauch", "Nur zeitgleich nutzbaren Strom ansetzen", "Haushaltsverbrauch"], ["Investition", "Wartung und mögliche Reparaturen ergänzen", "Vollständiges Angebot"]],
+  "koerperwerte-einordnen": [["BMI", "Nur als grobe Verhältniszahl lesen", "Größe und Gewicht"], ["Körperfett", "Immer dieselbe Messmethode nutzen", "Wiederholte Umfangsmessung"], ["Kalorienbedarf", "Über mehrere Wochen überprüfen", "Gewichts- und Aktivitätsverlauf"]],
+  "kalorienbedarf-grundumsatz": [["Grundumsatz", "Formelwert ist eine Schätzung", "Aktuelle Körperdaten"], ["Aktivität", "Typische Woche statt Spitzentag wählen", "Wochenprotokoll"], ["Plausibilität", "Trend über mehrere Wochen beobachten", "Gewichts- und Leistungsentwicklung"]],
+  "koerperfett-idealgewicht": [["Umfänge", "Gleiche Stelle und Bandspannung", "Mehrere Messungen"], ["Gewichtsbereich", "Muskelmasse und Statur mitdenken", "Langfristiger Verlauf"], ["Vergleich", "Methoden nicht miteinander vermischen", "Messwerte derselben Methode"]],
+  "familienleistungen-termine": [["Geburtstermin", "Als Zeitfenster, nicht Garantie planen", "Ärztliche Datierung"], ["Elterngeld", "Bemessungszeitraum und Varianten prüfen", "Familienportal und Elterngeldstelle"], ["Kindergeld", "Aktuellen Betrag und Anspruchsdauer nutzen", "Familienkasse"]],
+  "kindergeld-bezugsdauer": [["Kinderzahl", "Nur anspruchsberechtigte Kinder zählen", "Bescheide"], ["Monatsbetrag", "Wert des jeweiligen Jahres verwenden", "Familienkasse"], ["Laufzeit", "Unterschiedliche Enddaten getrennt rechnen", "Ausbildungs- und Geburtsdaten"]],
+  "geburtstermin-schwangerschaftswoche": [["Startdatum", "Ersten Tag der letzten Periode wählen", "Zykluskalender"], ["Zykluslänge", "Persönlichen Durchschnitt statt Einzelzyklus nutzen", "Mehrmonatige Aufzeichnung"], ["Datierung", "Ultraschall kann die Schätzung verändern", "Ärztliche Untersuchung"]],
+  "arbeit-projekte-kalkulieren": [["Selbstkosten", "Material, Zeit und Gemeinkosten erfassen", "Belege und Stundensatz"], ["Gewinn", "Aufschlag und Marge unterscheiden", "Eigene Kalkulation"], ["Umsatzsteuer", "Erst nach dem Nettoangebot ergänzen", "Steuerliche Einordnung"]],
+  "urlaubsanspruch-teilzeit": [["Wochenmodell", "Arbeitstage statt Wochenstunden vergleichen", "Arbeitsvertrag"], ["Jahresurlaub", "Vertraglichen Wert und Mindesturlaub trennen", "Tarif- oder Arbeitsvertrag"], ["Teiljahr", "Wartezeit und Austrittsdatum prüfen", "Bundesurlaubsgesetz"]],
+  "umzugskosten-budget": [["Eigenumzug", "Fahrten, Material und Helfer vollständig zählen", "Miet- und Kaufangebote"], ["Umzugsfirma", "Identischen Leistungsumfang vergleichen", "Schriftliches Angebot"], ["Reserve", "Renovierung und Unvorhergesehenes ergänzen", "Wohnungsübergabe und Besichtigung"]],
+};
+
 const growthGuide = (input: GrowthGuideInput): GuideSeed => ({
   ...input,
   updated: "2026-09",
-  essentials: [...input.essentials, "Einheit und Zeitraum aller Eingaben", "Mindestens ein Vergleichsszenario", "Originalunterlagen für die abschließende Prüfung"],
-  table: [["Ausgangswert", "Mit Reserve ansetzen", "Dokumentierten Wert nutzen"], ["Veränderliche Größe", "Ungünstiges Szenario", "Realistische Annahme"], ["Ergebnis", "Als Bandbreite lesen", "Mit Unterlagen abgleichen"]],
-  pitfalls: [...input.pitfalls, "Zwischenergebnisse zu früh runden und dadurch Abweichungen verstärken"],
+  tableHead: ["Punkt", "Darauf achten", "Gute Datenquelle"],
+  table: growthGuideTables[input.slug],
 });
 
 const growthGuideSeeds: GuideSeed[] = [
@@ -272,12 +262,32 @@ const growthGuideSeeds: GuideSeed[] = [
   growthGuide({ slug: "familienleistungen-termine", title: "Familienleistungen und wichtige Termine gemeinsam planen", description: "Elterngeld, Kindergeld und voraussichtlichen Geburtstermin mit transparenten Annahmen für die Familienplanung überschlagen.", keywords: ["Familienleistungen planen", "Elterngeld", "Kindergeld", "Geburtstermin"], toolSlug: "elterngeld-rechner", toolSlugs: ["elterngeld-rechner", "kindergeld-rechner", "schwangerschafts-terminrechner"], excerpt: "Der zentrale Familien-Leitfaden für Leistungen, Zeiträume und Schwangerschaftstermine.", kind: "pillar", cluster: "Familie & Leben", relatedGuideSlugs: ["kindergeld-bezugsdauer", "geburtstermin-schwangerschaftswoche"], topic: "Familienleistungen und Schwangerschaftstermine", intro: "Rund um eine Geburt treffen finanzielle Leistungen und medizinisch geschätzte Termine aufeinander. Elterngeld hängt von persönlichen Einkommens- und Bezugsmerkmalen ab, Kindergeld von gesetzlichen Voraussetzungen und der Geburtstermin von biologischen Annahmen. Ein gemeinsamer Zeitplan erleichtert Anträge, Budget und Betreuung.", method: "Schätze zunächst den voraussichtlichen Geburtstermin und markiere ihn ausdrücklich als Korridor. Ermittle danach den möglichen Einkommensverlust und einen plausiblen Elterngeldsatz. Rechne Kindergeld mit dem aktuellen Monatsbetrag und einer realistischen Bezugsdauer. Prüfe alle Ergebnisse anschließend bei den zuständigen Stellen und aktualisiere gesetzliche Beträge.", essentials: ["Voraussichtlicher Termin oder letzter Zyklusbeginn", "Einkommen vor und nach der Geburt", "Kinderzahl, Monatsbetrag und Bezugszeit"], pitfalls: ["Geburtstermin als garantiertes Datum behandeln", "Elterngeld nur aus einem Monatsnetto ableiten", "Gesetzliche Leistungsbeträge ungeprüft fortschreiben"], example: "Ein errechneter Geburtstermin strukturiert die Planung, kann aber um Tage oder Wochen abweichen. Ein Elterngeldwert zeigt eine mögliche Größenordnung für den Einkommensverlust. Kindergeld lässt sich separat als Monats- und Gesamtbetrag in den Haushaltsplan aufnehmen." }),
   growthGuide({ slug: "kindergeld-bezugsdauer", title: "Kindergeld nach Kinderzahl und Bezugsdauer berechnen", description: "Monatlichen Kindergeldbetrag und Gesamtsumme für mehrere Kinder und einen frei gewählten Zeitraum transparent überschlagen.", keywords: ["Kindergeld berechnen", "Kindergeld Höhe", "Kindergeld Bezugsdauer", "Familienkasse"], toolSlug: "kindergeld-rechner", toolSlugs: ["kindergeld-rechner", "elterngeld-rechner"], excerpt: "Monatsbetrag und Laufzeit ohne Vermischung mit Anspruchsvoraussetzungen planen.", kind: "supporting", cluster: "Familie & Leben", relatedGuideSlugs: ["familienleistungen-termine", "geburtstermin-schwangerschaftswoche"], topic: "Kindergeldbetrag und Bezugsdauer", intro: "Die reine Multiplikation aus Kinderzahl, Monatsbetrag und Monaten ist einfach. Anspruch, Beginn, Ende und gesetzliche Höhe können jedoch vom Einzelfall und vom betrachteten Jahr abhängen. Der Rechner eignet sich für Budgetvarianten, entscheidet aber nicht über einen Antrag.", method: "Prüfe zuerst den aktuell geltenden Betrag je Kind. Trage nur Kinder ein, für die im betrachteten Zeitraum voraussichtlich Anspruch besteht. Wähle die Monate passend zum Haushaltsplan und berechne Monats- sowie Gesamtsumme. Bei unterschiedlichen Anspruchszeiträumen rechnest du die Kinder besser separat.", essentials: ["Zahl der berücksichtigten Kinder", "Aktueller Betrag je Kind", "Individuelle Bezugsmonate"], pitfalls: ["Betrag eines anderen Kalenderjahrs übernehmen", "Volljährige Kinder ohne Anspruchsprüfung einrechnen", "Gesamtsumme mit garantiertem Anspruch gleichsetzen"], example: "Bei zwei Kindern und 259 Euro je Kind ergibt die reine Budgetrechnung 518 Euro pro Monat. Über zwölf Monate sind das 6.216 Euro. Ob für alle Monate Anspruch besteht, muss anhand der persönlichen Voraussetzungen geprüft werden." }),
   growthGuide({ slug: "geburtstermin-schwangerschaftswoche", title: "Geburtstermin und Schwangerschaftswoche aus dem Zyklus schätzen", description: "Den voraussichtlichen Entbindungstermin aus letzter Periode und Zykluslänge berechnen und medizinisch richtig als Schätzung verstehen.", keywords: ["Geburtstermin berechnen", "Schwangerschaftswoche", "letzte Periode", "ET Rechner"], toolSlug: "schwangerschafts-terminrechner", toolSlugs: ["schwangerschafts-terminrechner", "elterngeld-rechner"], excerpt: "Naegele-Regel, Zykluskorrektur und Grenzen des errechneten Termins.", kind: "supporting", cluster: "Familie & Leben", relatedGuideSlugs: ["familienleistungen-termine", "kindergeld-bezugsdauer"], topic: "Geburtstermin und Schwangerschaftswoche", intro: "Der klassische Geburtstermin wird aus dem ersten Tag der letzten Periode und einer durchschnittlichen Schwangerschaftsdauer von 280 Tagen geschätzt. Weicht die Zykluslänge von 28 Tagen ab, kann eine einfache Korrektur vorgenommen werden. Eisprung, Befruchtung und Entwicklung sind dennoch individuell.", method: "Wähle den ersten Tag der letzten Regelblutung und trage die typische Zykluslänge ein. Der Rechner addiert 280 Tage und korrigiert um die Abweichung zu 28 Tagen. Nutze das Datum als Planungshilfe. Ultraschallbefunde und die medizinische Datierung durch Fachpersonal sind für die Versorgung maßgeblich.", essentials: ["Erster Tag der letzten Periode", "Übliche Zykluslänge", "Medizinische Bestätigung im Verlauf"], pitfalls: ["Letzten statt ersten Blutungstag eingeben", "Unregelmäßigen Zyklus als exakt behandeln", "Rechnertermin über ärztliche Datierung stellen"], example: "Bei einem Zyklus von 30 Tagen werden zur üblichen 280-Tage-Schätzung zwei Tage ergänzt. Das Ergebnis markiert den voraussichtlichen Termin, nicht den tatsächlichen Geburtstag. Viele Geburten liegen in einem Zeitraum rund um diesen Wert." }),
-  growthGuide({ slug: "arbeit-projekte-kalkulieren", title: "Arbeit und Projekte kalkulieren: Urlaub, Angebot und Umzug", description: "Arbeitsanspruch, Angebotspreis und Projektbudget mit klaren Bezugsgrößen, Reserven und nachvollziehbaren Einzelposten planen.", keywords: ["Projekt kalkulieren", "Urlaubsanspruch", "Angebot kalkulieren", "Umzugskosten"], toolSlug: "angebots-kalkulation", toolSlugs: ["urlaubsanspruch-rechner", "angebots-kalkulation", "umzugskosten-rechner"], excerpt: "Der zentrale Business-Leitfaden für Zeitansprüche, Preise und Projektbudgets.", kind: "pillar", cluster: "Arbeitgeber & Business", relatedGuideSlugs: ["urlaubsanspruch-teilzeit", "umzugskosten-budget"], topic: "Arbeits- und Projektkalkulation", intro: "Urlaubsanspruch, Angebotspreis und Umzugskosten wirken zunächst unverbunden. In allen drei Fällen müssen jedoch Zeit, Umfang und Bezugsgröße sauber festgelegt werden. Gesetzliche Mindestwerte, betriebliche Vereinbarungen, Selbstkosten, Gewinn und Risikopuffer dürfen nicht miteinander vermischt werden.", method: "Beim Urlaub rechnest du den Vollzeitanspruch auf tatsächliche Arbeitstage pro Woche und gegebenenfalls Monate um. Beim Angebot addierst du Material, Arbeitszeit und Gemeinkosten, bevor Gewinn und Umsatzsteuer folgen. Beim Umzug vergleichst du Eigenleistung und Firmenangebot mit identischem Leistungsumfang und ausreichender Reserve.", essentials: ["Vertragliche oder gesetzliche Ausgangswerte", "Vollständige Einzelkosten und Arbeitszeit", "Vergleichbarer Leistungsumfang"], pitfalls: ["Mindesturlaub und Vertragsurlaub vermischen", "Gewinnaufschlag mit Marge gleichsetzen", "Eigenleistung ohne Zeit- und Risikokosten vergleichen"], example: "Ein Angebot wird aus 2.000 Euro Selbstkosten plus Gewinnaufschlag und anschließender Umsatzsteuer aufgebaut. Ein Umzugsvergleich benötigt dagegen Fahrzeug, Helfer, Material, Entfernung und Reserven. Beide Rechnungen werden erst transparent, wenn jede Position sichtbar bleibt." }),
+  growthGuide({ slug: "arbeit-projekte-kalkulieren", title: "Angebote richtig kalkulieren: Selbstkosten, Gewinn und Umsatzsteuer", description: "Material, Arbeitszeit und Gemeinkosten vollständig erfassen, einen tragfähigen Gewinn kalkulieren und daraus einen nachvollziehbaren Angebotspreis bilden.", keywords: ["Angebot kalkulieren", "Selbstkosten berechnen", "Gewinnaufschlag", "Angebotspreis"], toolSlug: "angebots-kalkulation", toolSlugs: ["angebots-kalkulation", "stundenlohnrechner", "mehrwertsteuerrechner"], excerpt: "Vom tatsächlichen Aufwand zu einem Angebot, das Kosten deckt und verständlich bleibt.", kind: "pillar", cluster: "Arbeitgeber & Business", relatedGuideSlugs: ["urlaubsanspruch-teilzeit", "umzugskosten-budget"], topic: "Angebotskalkulation", intro: "Ein Angebot ist nur dann tragfähig, wenn es mehr als Material und sichtbare Arbeitsstunden enthält. Auch Fahrtzeit, Vorbereitung, Werkzeug, Büroarbeit, Versicherung und andere Gemeinkosten müssen über Aufträge finanziert werden. Erst auf vollständige Selbstkosten folgt der Gewinn. Die Umsatzsteuer wird anschließend auf den Nettoverkaufspreis gerechnet und ist kein eigener Ertrag.", method: "Ermittle zuerst Materialkosten und produktive Arbeitsstunden. Bewerte die Zeit mit einem Stundensatz, der Lohnnebenkosten und betriebliche Gemeinkosten berücksichtigt. Addiere weitere auftragsbezogene Kosten. Auf diese Selbstkosten rechnest du den gewünschten Gewinnaufschlag; anschließend folgt die Umsatzsteuer. Prüfe am Ende, ob Leistungsumfang, Mengen, Zahlungsbedingungen und mögliche Zusatzarbeiten im Angebot eindeutig beschrieben sind.", essentials: ["Materialmenge und realistische Einkaufspreise", "Arbeitsstunden einschließlich Vorbereitung und Fahrt", "Betrieblicher Stundensatz statt bloßem Stundenlohn"], pitfalls: ["Nur Lohn und Material als Kosten ansetzen", "Gewinnaufschlag und Gewinnmarge gleich behandeln", "Umsatzsteuer als Teil des Gewinns betrachten"], example: "Betragen Material, Arbeitszeit und Gemeinkosten zusammen 2.000 Euro, führen 20 Prozent Gewinnaufschlag zu 2.400 Euro netto. Bei 19 Prozent Umsatzsteuer liegt das Angebot bei 2.856 Euro brutto. Eine Marge von 20 Prozent würde anders gerechnet und einen höheren Nettoverkaufspreis ergeben." }),
   growthGuide({ slug: "urlaubsanspruch-teilzeit", title: "Urlaubsanspruch bei Teilzeit, Eintritt und Austritt berechnen", description: "Vertraglichen Jahresurlaub auf Arbeitstage pro Woche und Beschäftigungsmonate umrechnen und den gesetzlichen Mindestwert prüfen.", keywords: ["Urlaubsanspruch Teilzeit", "Urlaub Eintritt", "Urlaubstage berechnen", "BUrlG"], toolSlug: "urlaubsanspruch-rechner", toolSlugs: ["urlaubsanspruch-rechner"], excerpt: "Urlaubstage anhand der Arbeitstage statt bloßer Wochenstunden umrechnen.", kind: "supporting", cluster: "Arbeitgeber & Business", relatedGuideSlugs: ["arbeit-projekte-kalkulieren", "umzugskosten-budget"], topic: "Urlaubsanspruch bei abweichenden Arbeitstagen", intro: "Für die Umrechnung von Urlaub zählt regelmäßig, an wie vielen Tagen pro Woche gearbeitet wird, nicht allein die Zahl der Wochenstunden. Das Bundesurlaubsgesetz nennt 24 Werktage bei einer Sechs-Tage-Woche, entsprechend vier Wochen Mindesturlaub. Verträge oder Tarifregeln können darüber hinausgehen.", method: "Teile den Vollzeit-Jahresurlaub durch die Arbeitstage des Vollzeitmodells und multipliziere mit deinen regelmäßigen Arbeitstagen. Für einen zeitanteiligen Überblick multiplizierst du mit den berücksichtigten Beschäftigungsmonaten und teilst durch zwölf. Wartezeit, Teilurlaub, Rundung und besondere Vertragsregeln müssen separat geprüft werden.", essentials: ["Jahresurlaub im Vergleichsmodell", "Arbeitstage beider Wochenmodelle", "Beschäftigungsmonate und Vertragsregeln"], pitfalls: ["Wochenstunden statt Arbeitstage verwenden", "Zeitanteil ohne Prüfung der Wartezeit anwenden", "Rechnerwert als verbindliche arbeitsrechtliche Auskunft behandeln"], example: "30 Tage Urlaub in einer Fünf-Tage-Woche entsprechen bei drei regelmäßigen Arbeitstagen rechnerisch 18 Tagen pro vollem Jahr. Für Eintritt oder Austritt zeigt eine Monatsquote nur eine Orientierung; gesetzliche und vertragliche Sonderregeln können abweichen." }),
   growthGuide({ slug: "umzugskosten-budget", title: "Umzugskosten realistisch planen und Angebote vergleichen", description: "Fahrzeug, Helfer, Material, Strecke, Renovierung und Reserve zu einem vollständigen Umzugsbudget zusammenführen.", keywords: ["Umzugskosten berechnen", "Umzug Budget", "Umzugsfirma Kosten", "Umzug selber machen"], toolSlug: "umzugskosten-rechner", toolSlugs: ["umzugskosten-rechner", "angebots-kalkulation"], excerpt: "Eigenumzug und Firmenangebot mit demselben Leistungsumfang vergleichen.", kind: "supporting", cluster: "Arbeitgeber & Business", relatedGuideSlugs: ["arbeit-projekte-kalkulieren", "urlaubsanspruch-teilzeit"], topic: "Umzugskosten und Angebotsvergleich", intro: "Ein günstiger Eigenumzug kann durch zusätzliche Fahrten, Material, Helferverpflegung, Renovierung oder Schäden teurer werden als gedacht. Ein Firmenangebot kann wiederum Leistungen ausschließen. Ein fairer Vergleich setzt daher denselben Umfang und einen realistischen Risikopuffer voraus.", method: "Liste Fahrzeug, Kilometerkosten, Helfer, Verpackungsmaterial und Renovierung einzeln auf. Ergänze Gebühren, Halteverbotszone oder Zwischenlagerung, falls relevant. Schlage erst danach eine Reserve auf. Prüfe beim Firmenangebot, ob Packen, Demontage, Tragen, Versicherung und Mehrwertsteuer enthalten sind, bevor du die Differenz bewertest.", essentials: ["Strecke, Fahrten und Fahrzeugkosten", "Helfer, Material und Renovierung", "Vollständiges Firmenangebot"], pitfalls: ["Nur Mietwagen und Kraftstoff einrechnen", "Eigenen Zeitaufwand völlig ausblenden", "Brutto- und Nettoangebote vergleichen"], example: "1.200 Euro aus Fahrzeug, Helfern, Material, Strecke und Renovierung werden mit zehn Prozent Reserve zu 1.320 Euro. Liegt ein vollständiges Firmenangebot bei 1.700 Euro, beträgt die rechnerische Differenz 380 Euro. Der Leistungsumfang entscheidet, ob dieser Vergleich fair ist." }),
 ];
 
-export const allGuides = () => [...seeds, ...growthGuideSeeds].map(buildGuide);
+const additionalGuideTools: Record<string, string[]> = {
+  "immobilie-kaufen-finanzieren-plan": ["haus-leisten-rechner", "kreditraten-rechner", "kaufnebenkosten-rechner", "mietrendite-rechner", "immobilien-cashflow-rechner"],
+  "mietrendite-berechnen": ["mietrendite-rechner", "immobilien-cashflow-rechner", "kaufnebenkosten-rechner"],
+  "kaufnebenkosten-immobilie": ["kaufnebenkosten-rechner", "haus-leisten-rechner", "kreditraten-rechner"],
+  "schichtarbeit-zuschlaege-ueberblick": ["schichtlohn-rechner", "nachtzuschlag-rechner", "sonntagszuschlag-rechner", "feiertagszuschlag-rechner", "ueberstunden-rechner"],
+  "nachtzuschlag-steuerfrei": ["nachtzuschlag-rechner", "schichtlohn-rechner", "ueberstunden-rechner"],
+  "ueberstunden-auszahlen-freizeit": ["ueberstunden-rechner", "stundenlohnrechner", "schichtlohn-rechner"],
+  "renovierungskosten-planen": ["badrenovierung-rechner", "dachkosten-rechner", "fensterkosten-rechner", "malerkosten-rechner", "bodenverlegung-kosten-rechner"],
+  "dachsanierung-kosten-planen": ["dachkosten-rechner", "haus-leisten-rechner", "kreditraten-rechner"],
+  "boden-verlegen-kosten": ["bodenverlegung-kosten-rechner", "malerkosten-rechner", "angebots-kalkulation"],
+  "geld-rechner-alltag": ["prozentrechner", "mehrwertsteuerrechner", "stundenlohnrechner", "spritkostenrechner"],
+  "mehrwertsteuer-netto-brutto": ["mehrwertsteuerrechner", "prozentrechner", "angebots-kalkulation"],
+  "stundenlohn-monatsgehalt": ["stundenlohnrechner", "netto-gehalt-rechner", "ueberstunden-rechner"],
+  "texte-schreiben-seo-pruefen": ["zeichen-zaehlen", "woerter-zaehlen"],
+  "dreisatz-einfach-erklaert": ["dreisatzrechner", "prozentrechner"],
+  "wortzahl-lesezeit": ["woerter-zaehlen", "zeichen-zaehlen"],
+};
+
+export const allGuides = () => [...seeds, ...growthGuideSeeds]
+  .map((seed) => ({ ...seed, toolSlugs: seed.toolSlugs ?? additionalGuideTools[seed.slug] ?? [seed.toolSlug] }))
+  .map(buildGuide);
 export const getGuide = (slug: string) => allGuides().find((guide) => guide.slug === slug);
 export const getGuidesByTool = (toolSlug: string) => allGuides().filter((guide) => guide.toolSlug === toolSlug || guide.toolSlugs?.includes(toolSlug));
 export const getGuideByTool = (toolSlug: string) => getGuidesByTool(toolSlug)[0];

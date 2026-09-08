@@ -61,7 +61,6 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const guideTools = (guide.toolSlugs ?? [guide.toolSlug]).map(getTool).filter((item) => item !== undefined);
   const tool = guideTools[0];
   const canonical = absoluteUrl(`/ratgeber/${guide.slug}`);
-  const toolHref = tool ? `/tools/${tool.slug}` : null;
   const relatedGuides = getRelatedGuides(guide);
   const recommendation = getRecommendation(guide.toolSlug, tool?.title);
 
@@ -104,9 +103,9 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             <p className="eyebrow"><span /> {guide.kind === "pillar" ? "Leitfaden" : "Ratgeber"} · {guide.cluster}</p>
             <h1>{guide.title}</h1>
             <p>{guide.description}</p>
-            {tool && toolHref && (
-              <Link href={toolHref} className="guide-tool-cta">Zum passenden Rechner: {tool.title}</Link>
-            )}
+            {guideTools.length > 0 && <div className="guide-tool-links" aria-label="Passende Rechner zu diesem Thema">
+              {guideTools.map((item) => <Link href={`/tools/${item.slug}`} className="guide-tool-cta" key={item.slug}>{item.title}</Link>)}
+            </div>}
           </section>
 
           <article className="guide-body">
@@ -133,10 +132,10 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             </section>
           )}
 
-          {tool && toolHref && (
+          {guideTools.length > 0 && (
             <section className="guide-rechner-cta">
-              <h2>Jetzt selbst berechnen</h2>
-              <p>{guideTools.map((item) => item.title).join(", ")} – kostenlos und ohne Anmeldung.</p>
+              <h2>Mit deinen eigenen Zahlen weiterrechnen</h2>
+              <p>Wähle den Rechner, der zu deiner nächsten Frage passt. Die Eingaben bleiben veränderbar und das Ergebnis zeigt den Rechenweg.</p>
               {guideTools.map((item) => <Link href={`/tools/${item.slug}`} className="recommendation-link" key={item.slug}>Zum {item.title}</Link>)}
             </section>
           )}
