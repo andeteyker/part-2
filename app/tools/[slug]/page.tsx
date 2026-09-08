@@ -119,45 +119,55 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
 
         {runner}
 
+        <section className="calculation-guide" aria-labelledby={`calculation-${tool.slug}`}>
+          <header className="calculation-guide-head">
+            <span className="calculation-guide-icon" aria-hidden="true">1</span>
+            <div><p className="eyebrow"><span /> Rechenweg</p><h2 id={`calculation-${tool.slug}`}>So wird gerechnet</h2></div>
+          </header>
+          {seo.formula ? <div className="formula-panel">
+            <span>Die Formel</span>
+            <strong>{seo.formula}</strong>
+            {seo.example && <p><b>Einfaches Beispiel:</b> {seo.example}</p>}
+          </div> : <div className="formula-panel formula-panel-muted">
+            <span>Ablauf statt Formel</span>
+            <strong>Dieses Werkzeug wertet deine Eingaben Schritt für Schritt aus.</strong>
+          </div>}
+          <div className="calculation-steps" aria-label="Variablen und Rechenschritte">
+            {seo.steps.map((step, index) => <article key={step.title}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <div><strong>{step.title}</strong><p>{step.text}</p></div>
+            </article>)}
+          </div>
+        </section>
+
         <section className="tool-editorial" aria-labelledby={`editorial-${tool.slug}`}>
-          <p className="eyebrow"><span /> Einordnung aus der Praxis</p>
-          <h2 id={`editorial-${tool.slug}`}>{editorial.heading}</h2>
-          <div className="tool-editorial-copy">
-            <p>{editorial.lead}</p>
-            <p>{editorial.method}</p>
+          <header className="tool-editorial-head">
+            <span className="tool-editorial-number" aria-hidden="true">2</span>
+            <div><p className="eyebrow"><span /> Einordnung in die Praxis</p><h2 id={`editorial-${tool.slug}`}>{editorial.heading}</h2></div>
+          </header>
+          <p className="tool-editorial-lead">{editorial.lead}</p>
+          <div className="practice-grid">
+            <article><span>Hintergrund</span><p>{editorial.background}</p></article>
+            <article><span>Regeln und Grenzen</span><p>{editorial.rules}</p></article>
+            <article><span>Für deine Praxis</span><p>{editorial.practical}</p></article>
           </div>
           <div className="tool-editorial-checks">
             <strong>Darauf solltest du achten</strong>
             <ul>{editorial.checks.map((check) => <li key={check}>{check}</li>)}</ul>
           </div>
+          {guides.length > 0 && <div className="guide-inline-links" aria-label="Passende Ratgeber">
+            {guides.map((guide) => <Link href={`/ratgeber/${guide.slug}`} className="guide-inline-link" key={guide.slug}>Mehr dazu: {guide.title} →</Link>)}
+          </div>}
         </section>
 
-        {recommendation && <Recommendation rec={recommendation} slug={tool.slug} />}
-        {seo.formula && <section className="calculation-guide" aria-label="Berechnungsweg">
-          <span className="calculation-guide-icon" aria-hidden="true">i</span>
-          <div><strong>So wird gerechnet</strong><p>{seo.formula}{seo.example ? ` · ${seo.example}` : ""}</p></div>
+        {usefulFaq.length > 0 && <section className="faq-section" aria-labelledby={`faq-${tool.slug}`}>
+          <div className="faq-intro"><p className="eyebrow"><span /> Kurz beantwortet</p><h2 id={`faq-${tool.slug}`}>Fragen aus der Praxis</h2><p>Nur Fragen, die beim Rechnen oder Einordnen dieses Ergebnisses wirklich weiterhelfen.</p></div>
+          <div className="faq-list">
+            {usefulFaq.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}
+          </div>
         </section>}
 
-        <section className="content-grid">
-          <article>
-            <p className="eyebrow"><span /> Anleitung</p>
-            <h2>So funktioniert der {tool.title}</h2>
-            <ol>
-              {seo.steps.map((step) => <li key={step.title}><b>{step.title}</b><span>{step.text}</span></li>)}
-            </ol>
-            {(seo.formula || seo.example) && <div className="tool-explanation">
-              {seo.formula && <p><strong>Formel:</strong> {seo.formula}</p>}
-              {seo.example && <p><strong>Beispiel:</strong> {seo.example}</p>}
-            </div>}
-            {guides.length > 0 && <div className="guide-inline-links" aria-label="Passende Ratgeber">
-              {guides.map((guide) => <Link href={`/ratgeber/${guide.slug}`} className="guide-inline-link" key={guide.slug}>Ausführlicher Ratgeber: {guide.title} →</Link>)}
-            </div>}
-          </article>
-          <aside>
-            <h2>Häufige Fragen</h2>
-            {usefulFaq.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}
-          </aside>
-        </section>
+        {recommendation && <Recommendation rec={recommendation} slug={tool.slug} />}
 
         {related.length > 0 && <section className="related">
           <div className="section-head">

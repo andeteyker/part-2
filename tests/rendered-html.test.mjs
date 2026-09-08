@@ -147,7 +147,7 @@ test("every published tool has dedicated SEO guidance", async () => {
   assert.deepEqual(publishedSlugs.filter((slug) => !optimizedSlugs.has(slug) && !growthSeoSlugs.has(slug)), []);
 });
 
-test("every tool page adds human guidance and useful topic-specific questions", async () => {
+test("every tool page adds human guidance and only topic-specific questions", async () => {
   const worker = await createWorker();
   const [baseSource, registrySource, growthFiles] = await Promise.all([
     readFile(new URL("../app/data/tools.ts", import.meta.url), "utf8"),
@@ -171,10 +171,13 @@ test("every tool page adds human guidance and useful topic-specific questions", 
     const html = await response.text();
     const faqCount = (html.match(/<details/g) ?? []).length;
     assert.equal(response.status, 200, slug);
-    assert.match(html, /Einordnung aus der Praxis/i, slug);
+    assert.match(html, /Einordnung in die Praxis/i, slug);
+    assert.match(html, /Hintergrund/i, slug);
+    assert.match(html, /Regeln und Grenzen/i, slug);
     assert.match(html, /Darauf solltest du achten/i, slug);
-    assert.ok(faqCount >= 3, `${slug}: nur ${faqCount} thematische Fragen`);
+    assert.ok(faqCount >= 1, `${slug}: keine thematische Frage`);
     assert.doesNotMatch(html, /Ist der (Rechner|Generator) kostenlos/i, slug);
+    assert.doesNotMatch(html, /Was sollte ich bei „|Wie kann ich das Ergebnis zu „/i, slug);
   }
 });
 
@@ -199,7 +202,7 @@ test("all 20 growth calculators render FAQ, guidance and concise descriptions", 
     assert.equal(response.status, 200, slug);
     assert.match(html, /FAQPage/i, slug);
     assert.match(html, /So wird gerechnet/i, slug);
-    assert.match(html, /Ausführlicher Ratgeber/i, slug);
+    assert.match(html, /Mehr dazu:/i, slug);
     assert.ok(description.length >= 140 && description.length <= 160, `${slug}: ${description.length} Zeichen`);
     assert.ok(infoButtonCount >= fieldCount + 1, `${slug}: Info-Buttons fehlen an Feldern oder Ergebnis`);
   }
@@ -213,7 +216,9 @@ test("calculator pages explain technical terms and the calculation close to the 
   assert.equal(response.status, 200);
   assert.match(html, /Kaufnebenkosten erklären/i);
   assert.match(html, /So wird gerechnet/i);
+  assert.match(html, /Variablen und Rechenschritte/i);
   assert.match(html, /Bruttomietrendite = Jahreskaltmiete/i);
+  assert.doesNotMatch(html, /So funktioniert der Mietrendite-Rechner/i);
 });
 
 test("imprint identifies the operator with a complete service address", async () => {
