@@ -74,7 +74,8 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .card-top { display: flex; align-items: start; justify-content: space-between; }
 .tool-icon { min-width: 47px; height: 47px; display: grid; place-items: center; color: var(--lime-dark); }
 .tool-icon svg { width: 47px; height: 47px; }
-.tool-arrow { color: #8290a0; font-size: 18px; transition: .2s; }
+.tool-arrow { width: 22px; height: 22px; flex: 0 0 22px; display: grid; place-items: center; color: #8290a0; transition: .2s; }
+.tool-arrow svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .tool-card:hover .tool-arrow { color: var(--lime-dark); transform: translate(2px,-2px); }
 .tool-card > p { margin: 26px 0 6px; color: var(--lime-dark); font-size: 11px; letter-spacing: .11em; text-transform: uppercase; font-weight: 800; }
 .tool-card h3 { margin: 0 0 8px; color: var(--navy); font-size: 18px; letter-spacing: -.02em; }

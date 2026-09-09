@@ -77,6 +77,8 @@ test("brand and category artwork replace starter icons, abbreviations and emoji"
   assert.match(home, /data-tool-icon="stundenlohnrechner"/);
   assert.match(home, /data-tool-icon="spritkostenrechner"/);
   assert.doesNotMatch(`${home}\n${category}\n${guideIndex}\n${localTool}`, /🎂|⏱|⛽|🏠|🌙|🔒/u);
+  assert.doesNotMatch(`${home}\n${category}\n${guideIndex}`, /↗/u);
+  assert.match(home, /<span class="tool-arrow" aria-hidden="true"><svg[^>]+viewBox="0 0 20 20"/i);
   assert.doesNotMatch(`${homeSource}\n${categorySource}\n${toolPageSource}`, /\{(?:tool|item|category|group\.details)\.icon\}/);
   assert.match(home, /SofortTools bietet[\s\S]{0,40}85[\s\S]{0,40}kostenlose Online-Rechner und Werkzeuge/i);
 });

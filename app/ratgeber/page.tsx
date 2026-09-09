@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CategoryIcon } from "../components/CategoryIcon";
+import { CardArrow } from "../components/CardArrow";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { allGuides } from "../data/guides";
@@ -38,7 +39,7 @@ export default function RatgeberPage() {
                     const tool = guideTools[0];
                     return (
                       <Link href={`/ratgeber/${guide.slug}`} key={guide.slug} className={`guide-card ${guide.kind === "pillar" ? "guide-card-pillar" : ""}`}>
-                        <div className="card-top"><span className="tool-icon"><CategoryIcon category={tool?.category ?? ""} /></span><span className="tool-arrow">↗</span></div>
+                        <div className="card-top"><span className="tool-icon"><CategoryIcon category={tool?.category ?? ""} /></span><CardArrow /></div>
                         <p>{guide.kind === "pillar" ? "Leitfaden" : tool?.category ?? "Ratgeber"}</p>
                         <h3>{guide.title}</h3>
                         <span>{guide.excerpt}</span>

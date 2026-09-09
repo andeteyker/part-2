@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { categories, categoryDetails, tools, type ToolCategory } from "../data/tool-registry";
 import { CategoryIcon } from "./CategoryIcon";
+import { CardArrow } from "./CardArrow";
 import { ToolCarousel } from "./ToolCarousel";
 import { ToolIcon } from "./ToolIcon";
 
@@ -76,7 +77,7 @@ export function HomeClient() {
                 <ToolCarousel label={group.name}>
                   {group.items.map((tool) => (
                     <Link href={`/tools/${tool.slug}`} className="tool-card" key={tool.slug}>
-                      <div className="card-top"><span className="tool-icon"><ToolIcon slug={tool.slug} /></span><span className="tool-arrow">↗</span></div>
+                      <div className="card-top"><span className="tool-icon"><ToolIcon slug={tool.slug} /></span><CardArrow /></div>
                       <p>{tool.eyebrow}</p><h3>{tool.title}</h3><span>{tool.short}</span>
                     </Link>
                   ))}

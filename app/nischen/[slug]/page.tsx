@@ -7,6 +7,7 @@ import { SiteHeader } from "../../components/SiteHeader";
 import { categories, categoryDetails, getCategoryBySlug } from "../../data/tool-registry";
 import { absoluteUrl } from "../../lib/site";
 import { CategoryIcon } from "../../components/CategoryIcon";
+import { CardArrow } from "../../components/CardArrow";
 import { ToolCarousel } from "../../components/ToolCarousel";
 import { ToolIcon } from "../../components/ToolIcon";
 
@@ -98,7 +99,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </div>
           <ToolCarousel label={category.name}>
             {category.tools.map((tool) => <Link href={`/tools/${tool.slug}`} className="tool-card" key={tool.slug}>
-              <div className="card-top"><span className="tool-icon"><ToolIcon slug={tool.slug} /></span><span className="tool-arrow">↗</span></div>
+              <div className="card-top"><span className="tool-icon"><ToolIcon slug={tool.slug} /></span><CardArrow /></div>
               <p>{tool.eyebrow}</p><h3>{tool.title}</h3><span>{tool.short}</span>
             </Link>)}
           </ToolCarousel>
