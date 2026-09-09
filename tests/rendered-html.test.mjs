@@ -97,6 +97,8 @@ test("category tools stay in one horizontally scrollable row", async () => {
   assert.match(css, /grid-auto-flow:\s*column/);
   assert.match(css, /overflow-x:\s*auto/);
   assert.match(css, /scroll-snap-type:\s*inline mandatory/);
+  assert.match(css, /\.category-cluster\s*\{[^}]*min-width:\s*0[^}]*max-width:\s*100%/);
+  assert.match(css, /\.tool-carousel-track\s*\{[^}]*width:\s*100%[^}]*max-width:\s*100%/);
 });
 
 test("image category contains ten useful tools with real drag and drop", async () => {
