@@ -2,11 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import QRCode from "qrcode";
 import { Field, Result, SelectField, fmt, money, number } from "./ToolUI";
 import { useUrlState } from "../hooks/useUrlState";
 import { GrowthToolRunner } from "./GrowthToolRunner";
 import { ImageToolRunner, imageToolSlugs } from "./ImageToolRunner";
+import { learningTextSeoSlugs } from "../data/learning-text-seo-tools";
+
+const LearningTextSeoRunner = dynamic(() => import("./LearningTextSeoRunner").then((module) => module.LearningTextSeoRunner), { loading: () => <p className="form-hint">Werkzeug wird geladen …</p> });
 
 function Percentage() {
   const [base, setBase] = useUrlState("grundwert", "250"); const [rate, setRate] = useUrlState("prozentsatz", "19");
@@ -121,5 +125,6 @@ export function ToolRunner({ slug }: { slug: string }) {
     prozentrechner: <Percentage />, dreisatzrechner: <RuleOfThree />, "woerter-aus-buchstaben": <WordFinder />, "wordle-hilfe": <Wordle />, "zeichen-zaehlen": <TextStats mode="chars" />, "woerter-zaehlen": <TextStats mode="words" />, "qr-code-erstellen": <QrTool />, "meine-ip": <IpTool />, "ping-test": <PingTool />, altersrechner: <AgeTool />, "zeitdauer-berechnen": <DurationTool />, mehrwertsteuerrechner: <VatTool />, stundenlohnrechner: <HourlyTool />, spritkostenrechner: <FuelTool />, kalenderwoche: <WeekTool />, zufallsgenerator: <RandomTool />, passwortgenerator: <PasswordTool />,
   };
   if (imageToolSlugs.includes(slug)) return <div className="tool-surface"><ImageToolRunner slug={slug} /></div>;
+  if (learningTextSeoSlugs.includes(slug)) return <div className="tool-surface"><LearningTextSeoRunner slug={slug} /></div>;
   return content[slug] ? <div className="tool-surface">{content[slug]}</div> : <GrowthToolRunner slug={slug} />;
 }

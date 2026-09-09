@@ -1,4 +1,5 @@
 import { growthToolSeo } from "./growth";
+import { learningTextSeoContent } from "./learning-text-seo-tools";
 
 export type ToolSeoContent = {
   steps: { title: string; text: string }[];
@@ -9,6 +10,7 @@ export type ToolSeoContent = {
 
 const toolSeo: Record<string, ToolSeoContent> = {
   ...growthToolSeo,
+  ...learningTextSeoContent,
   "prozentrechner": {
     steps: [
       { title: "Grundwert und Prozentsatz eingeben", text: "Trage den Ausgangswert und den gewünschten Prozentsatz ein. Je nach Aufgabe kannst du Rabatt, Aufschlag oder Prozentwert berechnen." },

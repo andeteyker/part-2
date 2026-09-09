@@ -19,10 +19,20 @@ const categoryContext: Record<string, PracticeContext> = {
     rules: "Steuersätze, arbeitsvertragliche Regelungen und Abrechnungszeiträume können sich unterscheiden. Das Ergebnis ist deshalb eine nachvollziehbare Rechengröße, aber kein Ersatz für Lohnabrechnung, Vertrag oder Steuerbescheid.",
     practical: "Notiere die verwendete Bezugsgröße und den Zeitraum. So erkennst du später sofort, ob zwei Angebote oder Abrechnungen wirklich auf derselben Grundlage beruhen.",
   },
-  "Schule, Text & SEO": {
-    background: "Dreisatz, Wortzahl und Zeichenlänge gehören seit Langem zu den grundlegenden Werkzeugen für Lernen, Redaktion und Veröffentlichung. Sie übersetzen eine Aufgabe in eine messbare Größe.",
+  "Schule & Lernen": {
+    background: "Noten, Gleichungen und Lernpläne werden verlässlich, wenn Rechenweg und Annahmen sichtbar bleiben.",
+    rules: "Bewertungsschlüssel unterscheiden sich je nach Schule, Hochschule und Lehrkraft. Rechenergebnisse sind deshalb nur so verbindlich wie die eingetragenen Vorgaben.",
+    practical: "Vergleiche das Ergebnis mit der offiziellen Prüfungsordnung und plane zusätzlich Zeit für Wiederholung und unerwartete Ausfälle ein.",
+  },
+  "Text & Sprache": {
+    background: "Wortzahl, Lesbarkeit und sprachliche Muster machen bestimmte Eigenschaften eines Textes messbar, ohne seinen Inhalt automatisch zu bewerten.",
     rules: "Schulen, Plattformen und Suchmaschinen verwenden unterschiedliche Vorgaben. Ein Zahlenwert zeigt daher eine Grenze oder Struktur, bewertet aber nicht automatisch die Qualität des Inhalts.",
     practical: "Nutze den Wert als Kontrollpunkt und lies den Text danach noch einmal inhaltlich. Verständlichkeit und Aussage bleiben wichtiger als das bloße Erreichen einer Zahl.",
+  },
+  "SEO & Website": {
+    background: "Technische SEO-Angaben helfen Suchmaschinen und sozialen Plattformen, Inhalte korrekt zu verstehen und darzustellen.",
+    rules: "Valides Markup garantiert weder Ranking noch Rich Results. Sichtbarer Inhalt, technische Erreichbarkeit und Suchintention bleiben entscheidend.",
+    practical: "Prüfe erzeugten Code nach dem Einbau im tatsächlichen HTML und kontrolliere Crawling sowie Indexierung anschließend in der Search Console.",
   },
   "Wortspiele & Rätsel": {
     background: "Wortlisten und Buchstabenfilter bilden das systematische Gegenstück zum Ausprobieren. Sie grenzen Lösungen nach Länge, Position und verfügbaren Buchstaben ein.",

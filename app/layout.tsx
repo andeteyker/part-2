@@ -7,7 +7,7 @@ import ConsentBanner from "./components/ConsentBanner";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: `Kostenlose Online-Rechner für Alltag & Finanzen | ${SITE_NAME}`, template: `%s | ${SITE_NAME}` },
-  description: "62 kostenlose Online-Rechner und Werkzeuge für Gehalt, Steuern, Immobilien, Energie, Bilder und Alltag – sofort nutzbar, verständlich erklärt, ohne Anmeldung.",
+  description: "85 kostenlose Online-Rechner und Werkzeuge für Gehalt, Steuern, Lernen, Texte, SEO, Bilder und Alltag – sofort nutzbar, verständlich erklärt, ohne Anmeldung.",
   applicationName: SITE_NAME,
   category: "Online-Rechner und digitale Werkzeuge",
   authors: [{ name: SITE_NAME }],
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   publisher: SITE_NAME,
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
   alternates: { canonical: "/", languages: { "de-DE": "/", "x-default": "/" } },
-  openGraph: { type: "website", locale: "de_DE", siteName: SITE_NAME, title: `Kostenlose Online-Rechner für Alltag & Finanzen | ${SITE_NAME}`, description: "62 verständlich erklärte Rechner und Werkzeuge für Gehalt, Steuern, Immobilien, Energie, Bilder und Alltag – kostenlos und ohne Anmeldung.", url: "/", images: [{ url: "/og.png", width: 1731, height: 909, alt: `${SITE_NAME} – Kostenlose Online-Rechner und Tools` }] },
-  twitter: { card: "summary_large_image", title: `Kostenlose Online-Rechner | ${SITE_NAME}`, description: "62 verständlich erklärte Rechner und Werkzeuge für Finanzen, Immobilien, Arbeit, Energie, Bilder und Alltag.", images: ["/og.png"] },
+  openGraph: { type: "website", locale: "de_DE", siteName: SITE_NAME, title: `Kostenlose Online-Rechner für Alltag & Finanzen | ${SITE_NAME}`, description: "85 verständlich erklärte Rechner und Werkzeuge für Gehalt, Lernen, Texte, SEO, Bilder und Alltag – kostenlos und ohne Anmeldung.", url: "/", images: [{ url: "/og.png", width: 1731, height: 909, alt: `${SITE_NAME} – Kostenlose Online-Rechner und Tools` }] },
+  twitter: { card: "summary_large_image", title: `Kostenlose Online-Rechner | ${SITE_NAME}`, description: "85 verständlich erklärte Rechner und Werkzeuge für Finanzen, Lernen, Texte, SEO, Bilder und Alltag.", images: ["/og.png"] },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "48x48" },

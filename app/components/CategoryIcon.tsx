@@ -16,8 +16,12 @@ export function CategoryIcon({ category, className }: CategoryIconProps) {
   switch (category) {
     case "Geld & Beruf":
       return <IconFrame className={className}><path d="M10 15a5 5 0 0 1 5-5h21v7H15a2 2 0 0 0 0 4h23v17H14a6 6 0 0 1-6-6V16c0-4 3-7 7-7h18v3H15a4 4 0 0 0-4 4v16a3 3 0 0 0 3 3h21V24H15a5 5 0 0 1-5-9Zm20 12a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" /></IconFrame>;
-    case "Schule, Text & SEO":
+    case "Text & Sprache":
       return <IconFrame className={className}><path d="M13 8h16l8 8v24H13V8Zm14 3v8h8l-8-8ZM18 24h14v3H18v-3Zm0 7h11v3H18v-3Z" /><path d="m32 33 7 7-2 2-7-7 2-2Z" /></IconFrame>;
+    case "Schule & Lernen":
+      return <IconFrame className={className}><path d="M8 12 24 6l16 6-16 6-16-6Zm5 7 11 4 11-4v11c-7 5-15 5-22 0V19Zm27-5v15h-3V15l3-1Z" /></IconFrame>;
+    case "SEO & Website":
+      return <IconFrame className={className}><path d="M8 10h32v25H8V10Zm4 5v16h24V15H12Zm7 25h10M24 35v5" /><path d="m15 27 5-6 4 4 8-8 2 2-10 11-4-4-3 3-2-2Z" /></IconFrame>;
     case "Wortspiele & Rätsel":
       return <IconFrame className={className}><rect x="9" y="9" width="13" height="13" rx="3" /><rect x="26" y="9" width="13" height="13" rx="3" /><rect x="9" y="26" width="13" height="13" rx="3" /><path d="M31 27h4v4h4v4h-4v4h-4v-4h-4v-4h4v-4Z" /></IconFrame>;
     case "Bilder & Dateien":

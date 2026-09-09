@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Script from "next/script";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { SiteFooter } from "../../components/SiteFooter";
 import { SiteHeader } from "../../components/SiteHeader";
 import { categories, categoryDetails, getCategoryBySlug } from "../../data/tool-registry";
@@ -38,6 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  if (slug === "schule-text-seo") permanentRedirect("/nischen/text-sprache");
   const category = getCategoryBySlug(slug);
   if (!category) notFound();
 

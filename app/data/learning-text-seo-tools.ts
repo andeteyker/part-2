@@ -1,0 +1,54 @@
+import type { ToolDefinition, ToolCategory } from "./tools";
+import type { ToolSeoContent } from "./tool-seo";
+
+type Seed = [slug: string, title: string, eyebrow: string, description: string, category: ToolCategory, icon: string, question: string, answer: string];
+const seeds: Seed[] = [
+  ["notenrechner-gewichtung", "Notenrechner mit Gewichtung", "Durchschnitt und Zielnote berechnen", "Einzelnoten mit unterschiedlicher Gewichtung zusammenrechnen und die benötigte nächste Note für einen gewünschten Schnitt ermitteln.", "Schule & Lernen", "1,0", "Wie werden gewichtete Noten berechnet?", "Jede Note wird mit ihrer Gewichtung multipliziert; die Summe wird durch die Summe der Gewichtungen geteilt."],
+  ["notenschluessel-rechner", "Notenschlüssel-Rechner", "Punktegrenzen für Noten 1 bis 6", "Aus Gesamtpunktzahl und Bestehensgrenze einen transparenten linearen Notenschlüssel mit allen Punktgrenzen erstellen.", "Schule & Lernen", "1–6", "Ist der Notenschlüssel verbindlich?", "Nein. Das Tool erzeugt einen nachvollziehbaren Vorschlag; Schulen und Lehrkräfte können andere Verteilungen verwenden."],
+  ["punkte-in-note-rechner", "Punkte-in-Note-Rechner", "Erreichte Punkte verständlich einordnen", "Erreichte Punkte in Prozent und anhand einer einstellbaren Bestehensgrenze in eine Schulnote umrechnen.", "Schule & Lernen", "%→1", "Wie entsteht die Note?", "Zwischen 100 Prozent und der Bestehensgrenze werden die Noten 1 bis 4 linear verteilt; darunter folgen 5 und 6."],
+  ["bruchrechner", "Bruchrechner mit Rechenweg", "Brüche rechnen und vollständig kürzen", "Zwei Brüche addieren, subtrahieren, multiplizieren oder dividieren und den gekürzten Rechenweg nachvollziehen.", "Schule & Lernen", "½", "Wie werden Brüche addiert?", "Sie werden auf einen gemeinsamen Nenner gebracht, die Zähler werden addiert und das Ergebnis wird vollständig gekürzt."],
+  ["gleichungsrechner", "Lineare Gleichungen lösen", "ax + b = c Schritt für Schritt", "Lineare Gleichungen der Form ax + b = c lösen und jeden Umformungsschritt verständlich anzeigen.", "Schule & Lernen", "x=", "Welche Gleichungen werden unterstützt?", "Gleichungen der Form ax + b = c. Klammern, Potenzen und mehrere Variablen sind nicht enthalten."],
+  ["lernplan-rechner", "Lernplan-Rechner bis zur Prüfung", "Themen auf verfügbare Lernzeit verteilen", "Prüfungstermin, Wochenstunden und Themen eingeben und einen Wochenplan mit Wiederholungszeit erstellen.", "Schule & Lernen", "Plan", "Wie viel Wiederholungszeit ist eingeplant?", "Ungefähr 20 Prozent der verfügbaren Lernzeit werden für Wiederholung und Prüfungssimulation reserviert."],
+  ["karteikarten-generator", "Karteikarten-Generator zum Drucken", "Fragen und Antworten als Lernkarten", "Eigene Fragen und Antworten in übersichtliche Karteikarten umwandeln, mischen und direkt drucken.", "Schule & Lernen", "Karte", "Wie gebe ich Karten ein?", "Pro Zeile eine Frage und Antwort, getrennt durch einen senkrechten Strich: Frage | Antwort."],
+  ["lesbarkeitsanalyse", "Lesbarkeitsanalyse für deutsche Texte", "Flesch-Wert und schwere Sätze erkennen", "Deutsche Texte anhand von Satz- und Wortlänge bewerten und besonders lange oder schwer lesbare Sätze markieren.", "Text & Sprache", "Lesen", "Was bedeutet der Flesch-Wert?", "Ein höherer Wert steht für leichter lesbaren Text. Er ist ein sprachstatistischer Hinweis und keine Qualitätsnote."],
+  ["textvergleich", "Zwei Texte vergleichen", "Änderungen Wort für Wort hervorheben", "Zwei Textversionen lokal vergleichen und hinzugefügte sowie entfernte Wörter übersichtlich markieren.", "Text & Sprache", "Diff", "Wie genau ist der Vergleich?", "Das Tool vergleicht Wörter und Satzzeichen in ihrer Reihenfolge; reine Formatierung wird nicht vollständig bewertet."],
+  ["fuellwort-finder", "Füllwort- und Wiederholungsfinder", "Sprachliche Muster sichtbar machen", "Häufige deutsche Füllwörter, Wortwiederholungen und dominante Begriffe finden, ohne sie pauschal als Fehler zu bewerten.", "Text & Sprache", "Wdh", "Sind Füllwörter immer schlecht?", "Nein. Sie können Ton und Rhythmus unterstützen und werden erst bei starker Häufung auffällig."],
+  ["textbereiniger", "Textbereiniger für Leerzeichen & Umbrüche", "Kopierte Texte sauber formatieren", "Doppelte Leerzeichen, unnötige Leerzeilen und störende Zeilenumbrüche gezielt bereinigen.", "Text & Sprache", "Clean", "Bleiben Absätze erhalten?", "Ja, solange du das Zusammenführen von Zeilen nicht aktivierst. Jede Bereinigung ist einzeln wählbar."],
+  ["gross-kleinschreibung", "Groß- und Kleinschreibung ändern", "Text mit einem Klick umwandeln", "Text in Großbuchstaben, Kleinbuchstaben, Satzanfänge oder eine einfache Überschriftenschreibweise umwandeln.", "Text & Sprache", "Aa", "Ist die Überschriftenschreibweise grammatisch perfekt?", "Nein. Sie ist eine mechanische Formatierung und sollte im deutschen Kontext redaktionell geprüft werden."],
+  ["quellenangaben-generator", "Quellenangaben-Generator", "Buch, Website und Fachartikel zitieren", "Literaturangaben für Bücher, Websites und Zeitschriftenartikel nach APA, Harvard oder deutscher Fußnotenform erstellen.", "Text & Sprache", "Quelle", "Muss ich die Quellenangabe prüfen?", "Ja. Hochschulen und Verlage verwenden häufig eigene Varianten, besonders bei Reihenfolge und Zeichensetzung."],
+  ["google-snippet-vorschau", "Google-Snippet-Vorschau", "Title und Description auf Desktop und Mobil", "Prüfen, wie Seitentitel, URL und Meta-Description ungefähr in einem Google-Suchergebnis wirken.", "SEO & Website", "SERP", "Zeigt Google das Snippet genau so an?", "Nein. Google kann Titel und Beschreibung je nach Suchanfrage umschreiben."],
+  ["keyworddichte-analyse", "Keyworddichte-Analyse", "Begriffe und Wortkombinationen auswerten", "Häufigste Wörter, Zweiwortkombinationen und ihren Anteil am Text lokal bestimmen, inklusive Stopwort-Filter.", "SEO & Website", "KW", "Welche Keyworddichte ist ideal?", "Es gibt keinen allgemeingültigen Zielwert. Vollständigkeit und natürliche Sprache sind wichtiger."],
+  ["onpage-seo-pruefer", "Onpage-SEO-Prüfer für HTML", "Titel, Überschriften, Links und Bilder prüfen", "Eingefügtes HTML lokal auf Title, Description, H1, Überschriftenstruktur, Links und Alt-Texte prüfen.", "SEO & Website", "Check", "Ersetzt das einen vollständigen Crawl?", "Nein. Das Tool kennt weder Serverantworten noch die interne Struktur der gesamten Website."],
+  ["seo-slug-generator", "SEO-URL- und Slug-Generator", "Kurze, lesbare URLs erstellen", "Überschriften in kleingeschriebene, ASCII-kompatible URL-Slugs umwandeln und optionale Füllwörter entfernen.", "SEO & Website", "/url", "Wie werden Umlaute behandelt?", "Ä, ö und ü werden zu ae, oe und ue; ß wird zu ss."],
+  ["meta-tag-generator", "Meta-Tag-Generator", "Title, Description, Canonical und Robots", "Grundlegende HTML-Meta-Tags erstellen, Längen prüfen und als fertigen Codeblock kopieren.", "SEO & Website", "Meta", "Brauche ich Meta-Keywords?", "Nein. Google verwendet das Keywords-Meta-Tag nicht für das Ranking."],
+  ["faq-schema-generator", "FAQ-Schema-Generator", "Fragen und Antworten als JSON-LD", "Frage-Antwort-Paare in syntaktisch gültiges FAQPage-JSON-LD umwandeln und vor dem Kopieren prüfen.", "SEO & Website", "FAQ", "Garantiert Markup ein Rich Result?", "Nein. Gültiges Markup garantiert keine besondere Darstellung und muss den Richtlinien entsprechen."],
+  ["open-graph-generator", "Open-Graph-Generator", "Vorschau für soziale Netzwerke", "Open-Graph- und Twitter-Card-Metadaten für geteilte Links erstellen und die Kartenwirkung prüfen.", "SEO & Website", "OG", "Welche Bildgröße ist sinnvoll?", "1200 × 630 Pixel ist weit verbreitet; Plattformen können Bilder dennoch anders zuschneiden."],
+  ["robots-txt-generator", "robots.txt-Generator", "Crawler-Regeln verständlich konfigurieren", "Eine robots.txt mit User-Agent-Regeln, erlaubten oder gesperrten Pfaden und Sitemap-Verweis erstellen.", "SEO & Website", "Bot", "Schützt robots.txt geheime Seiten?", "Nein. Sie ist eine freiwillige Crawler-Anweisung und kein Zugriffsschutz."],
+  ["sitemap-generator", "XML-Sitemap-Generator", "URL-Liste prüfen und als XML ausgeben", "Absolute URLs prüfen, Duplikate entfernen und eine gültige XML-Sitemap mit optionalem Änderungsdatum erstellen.", "SEO & Website", "XML", "Wie viele URLs sind erlaubt?", "Eine Sitemap darf höchstens 50.000 URLs und unkomprimiert 50 MB enthalten."],
+  ["hreflang-generator", "Hreflang-Generator", "Sprach- und Länderversionen verbinden", "URLs mit Sprachcodes erfassen und gegenseitige hreflang-Link-Tags inklusive x-default erzeugen.", "SEO & Website", "Lang", "Müssen Verweise gegenseitig sein?", "Ja. Jede Version sollte auf sich selbst und alle Alternativen verweisen."],
+];
+
+export const learningTextSeoTools: ToolDefinition[] = seeds.map(([slug, title, eyebrow, description, category, icon, question, answer]) => ({
+  slug, title, eyebrow, description, short: description, category, icon,
+  keywords: [title, eyebrow, slug.replaceAll("-", " ")],
+  faq: [{ question, answer }, { question: "Werden meine Eingaben gespeichert?", answer: "Nein. Die Verarbeitung findet lokal in deinem Browser statt." }],
+}));
+
+export const learningTextSeoSlugs = learningTextSeoTools.map((tool) => tool.slug);
+
+export const learningTextSeoContent = Object.fromEntries(learningTextSeoTools.map((tool): [string, ToolSeoContent] => {
+  const steps = tool.category === "Schule & Lernen" ? [
+    { title: "Aufgabendaten vollständig eintragen", text: `Gib alle Werte ein, die der ${tool.title} für eine nachvollziehbare Berechnung benötigt.` },
+    { title: "Rechenweg kontrollieren", text: "Prüfe Zwischenschritte, Gewichtungen, Nenner oder Bewertungsgrenzen – nicht nur das Endergebnis." },
+    { title: "Vorgabe abgleichen", text: "Vergleiche das Resultat bei Prüfungen mit dem offiziellen Notenschlüssel oder der Aufgabenstellung." },
+  ] : tool.category === "Text & Sprache" ? [
+    { title: "Text vollständig einfügen", text: `Füge den relevanten Text in den ${tool.title} ein; die Auswertung bleibt lokal im Browser.` },
+    { title: "Muster statt Einzelwert betrachten", text: "Nutze Markierungen und Kennzahlen als Hinweise auf Stellen, die eine bewusste redaktionelle Entscheidung brauchen." },
+    { title: "Ergebnis im Zusammenhang lesen", text: "Prüfe den überarbeiteten Text laut und achte darauf, dass Aussage, Ton und Fachbegriffe erhalten bleiben." },
+  ] : [
+    { title: "Seitendaten eingeben", text: `Trage reale Inhalte und absolute URLs in den ${tool.title} ein.` },
+    { title: "Hinweise und Syntax prüfen", text: "Korrigiere unvollständige Angaben und prüfe Längen, Pfade, Sprachcodes oder HTML-Struktur." },
+    { title: "Im echten Quelltext validieren", text: "Kopiere das Ergebnis an die passende Stelle der Website und kontrolliere anschließend die ausgelieferte Seite." },
+  ];
+  return [tool.slug, { steps }];
+}));

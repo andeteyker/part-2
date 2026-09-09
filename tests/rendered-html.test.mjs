@@ -40,7 +40,7 @@ test("renders one consistent production canonical and no preview marker", async 
   const html = await response.text();
   assert.match(html, /<html[^>]+lang=["']de["']/i);
   assert.match(html, /<title>Kostenlose Online-Rechner für Alltag &amp; Finanzen \| SofortTools<\/title>/i);
-  assert.match(html, /62 kostenlose Online-Rechner und Werkzeuge für Gehalt, Steuern, Immobilien, Energie, Bilder und Alltag/i);
+  assert.match(html, /85 kostenlose Online-Rechner und Werkzeuge für Gehalt, Lernen, Texte, SEO, Bilder und Alltag/i);
   assert.match(html, /rel=["']icon["'][^>]+href=["'][^"']*icon-48\.png/i);
   assert.match(html, /rel=["']shortcut icon["'][^>]+href=["'][^"']*favicon\.ico/i);
   assert.match(html, /Organization/i);
@@ -70,15 +70,15 @@ test("brand and category artwork replace starter icons, abbreviations and emoji"
   assert.match(category, /<svg[^>]+viewBox="0 0 48 48"/i);
   assert.match(guideIndex, /<svg[^>]+viewBox="0 0 48 48"/i);
   const toolIconSlugs = [...home.matchAll(/data-tool-icon="([^"]+)"/g)].map((match) => match[1]);
-  assert.equal(toolIconSlugs.length, 62);
-  assert.equal(new Set(toolIconSlugs).size, 62);
+  assert.equal(toolIconSlugs.length, 85);
+  assert.equal(new Set(toolIconSlugs).size, 85);
   assert.match(home, /data-tool-icon="prozentrechner"/);
   assert.match(home, /data-tool-icon="mehrwertsteuerrechner"/);
   assert.match(home, /data-tool-icon="stundenlohnrechner"/);
   assert.match(home, /data-tool-icon="spritkostenrechner"/);
   assert.doesNotMatch(`${home}\n${category}\n${guideIndex}\n${localTool}`, /🎂|⏱|⛽|🏠|🌙|🔒/u);
   assert.doesNotMatch(`${homeSource}\n${categorySource}\n${toolPageSource}`, /\{(?:tool|item|category|group\.details)\.icon\}/);
-  assert.match(home, /SofortTools bietet[\s\S]{0,40}62[\s\S]{0,40}kostenlose Online-Rechner und Werkzeuge/i);
+  assert.match(home, /SofortTools bietet[\s\S]{0,40}85[\s\S]{0,40}kostenlose Online-Rechner und Werkzeuge/i);
 });
 
 test("category tools stay in one horizontally scrollable row", async () => {
@@ -176,14 +176,15 @@ test("robots and sitemap point only to the preferred www domain", async () => {
   assert.match(sitemapText, /https:\/\/www\.sofort-tools\.de\/tools\/mietrendite-rechner/i);
   assert.doesNotMatch(`${robotsText}\n${sitemapText}`, /mielerik\.chatgpt\.site/i);
   assert.match(sitemapText, /https:\/\/www\.sofort-tools\.de\/ueber-uns/i);
-  assert.equal((sitemapText.match(/<url>/g) ?? []).length, 111);
+  assert.equal((sitemapText.match(/<url>/g) ?? []).length, 136);
 });
 
 test("every published tool has dedicated SEO guidance", async () => {
-  const [baseSource, registrySource, seoSource, growthIndex, growthFiles] = await Promise.all([
+  const [baseSource, registrySource, seoSource, learningSource, growthIndex, growthFiles] = await Promise.all([
     readFile(new URL("../app/data/tools.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/data/tool-registry.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/data/tool-seo.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/data/learning-text-seo-tools.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/data/growth/index.ts", import.meta.url), "utf8"),
     Promise.all([
       "netto-gehalt-rechner", "einkommensteuer-rechner", "pendlerpauschale-rechner", "rentenrechner", "abfindungs-rechner", "bauspar-rechner",
@@ -194,19 +195,21 @@ test("every published tool has dedicated SEO guidance", async () => {
   ]);
   const baseToolSection = baseSource.split("export const categories")[0];
   const extendedToolSection = registrySource.split("const register")[0];
-  const publishedSlugs = [...baseToolSection.matchAll(/slug: "([^"]+)"/g), ...extendedToolSection.matchAll(/slug: "([^"]+)"/g), ...growthFiles.flatMap((source) => [...source.matchAll(/slug: "([^"]+)"/g)].slice(0, 1))].map((match) => match[1]);
+  const learningSlugs = [...learningSource.matchAll(/^  \["([^"]+)"/gm)].map((match) => match[1]);
+  const publishedSlugs = [...baseToolSection.matchAll(/slug: "([^"]+)"/g), ...extendedToolSection.matchAll(/slug: "([^"]+)"/g), ...growthFiles.flatMap((source) => [...source.matchAll(/slug: "([^"]+)"/g)].slice(0, 1))].map((match) => match[1]).concat(learningSlugs);
   const optimizedSlugs = new Set([...seoSource.matchAll(/^  "([^"]+)": \{/gm)].map((match) => match[1]));
   const growthSeoSlugs = new Set([...growthIndex.matchAll(/import \{ \w+ \} from "\.\/(.+)";/g)].map((match) => match[1]));
 
-  assert.equal(publishedSlugs.length, 62);
-  assert.deepEqual(publishedSlugs.filter((slug) => !optimizedSlugs.has(slug) && !growthSeoSlugs.has(slug)), []);
+  assert.equal(publishedSlugs.length, 85);
+  assert.deepEqual(publishedSlugs.filter((slug) => !optimizedSlugs.has(slug) && !growthSeoSlugs.has(slug) && !learningSlugs.includes(slug)), []);
 });
 
 test("every tool page adds human guidance and only topic-specific questions", async () => {
   const worker = await createWorker();
-  const [baseSource, registrySource, growthFiles] = await Promise.all([
+  const [baseSource, registrySource, learningSource, growthFiles] = await Promise.all([
     readFile(new URL("../app/data/tools.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/data/tool-registry.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/data/learning-text-seo-tools.ts", import.meta.url), "utf8"),
     Promise.all([
       "netto-gehalt-rechner", "einkommensteuer-rechner", "pendlerpauschale-rechner", "rentenrechner", "abfindungs-rechner", "bauspar-rechner",
       "stromkosten-rechner", "heizkosten-rechner", "gasverbrauch-rechner", "solar-ertrag-rechner", "bmi-rechner", "kalorienbedarf-rechner",
@@ -217,10 +220,10 @@ test("every tool page adds human guidance and only topic-specific questions", as
   const baseToolSection = baseSource.split("export const categories")[0];
   const registryToolSection = registrySource.split("const register")[0];
   const slugs = [...baseToolSection.matchAll(/slug: "([^"]+)"/g), ...registryToolSection.matchAll(/slug: "([^"]+)"/g), ...growthFiles.flatMap((source) => [...source.matchAll(/slug: "([^"]+)"/g)].slice(0, 1))]
-    .map((match) => match[1]);
+    .map((match) => match[1]).concat([...learningSource.matchAll(/^  \["([^"]+)"/gm)].map((match) => match[1]));
   const uniqueSlugs = [...new Set(slugs)];
 
-  assert.equal(uniqueSlugs.length, 62);
+  assert.equal(uniqueSlugs.length, 85);
   for (const slug of uniqueSlugs) {
     const response = await fetchFromWorker(worker, `/tools/${slug}`);
     const html = await response.text();
@@ -400,4 +403,28 @@ test("consent is global, reversible and does not include tracking SDKs", async (
   assert.match(banner, /localStorage\.setItem\(KEY, value\)/);
   assert.match(footer, /ConsentSettingsButton/);
   assert.doesNotMatch(appSources, /gtag\(|google-analytics|analytics\.js|document\.cookie/i);
+});
+
+test("learning, text and SEO are separate complete tool categories", async () => {
+  const worker = await createWorker();
+  const routes = [
+    ["/nischen/schule-lernen", 8, /Notenrechner mit Gewichtung/i],
+    ["/nischen/text-sprache", 8, /Lesbarkeitsanalyse für deutsche Texte/i],
+    ["/nischen/seo-website", 10, /Google-Snippet-Vorschau/i],
+  ];
+  for (const [route, expectedCards, heading] of routes) {
+    const response = await fetchFromWorker(worker, route);
+    const html = await response.text();
+    assert.equal(response.status, 200, route);
+    assert.equal((html.match(/data-tool-icon=/g) ?? []).length, expectedCards, route);
+    assert.match(html, heading, route);
+  }
+  const [definitions, runner] = await Promise.all([
+    readFile(new URL("../app/data/learning-text-seo-tools.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/LearningTextSeoRunner.tsx", import.meta.url), "utf8"),
+  ]);
+  const slugs = [...definitions.matchAll(/^  \["([^"]+)"/gm)].map((match) => match[1]);
+  assert.equal(slugs.length, 23);
+  assert.equal(new Set(slugs).size, 23);
+  slugs.forEach((slug) => assert.match(runner, new RegExp(`"?${slug}"?\\s*:`), slug));
 });
