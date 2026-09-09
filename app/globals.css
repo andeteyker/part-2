@@ -435,6 +435,11 @@ mark.added { background: #dff5a8; color: #254000; } mark.removed { background: #
 .social-preview small { margin-top: 15px; color: var(--muted); }
 .social-preview strong { margin-top: 6px; color: var(--navy); font-size: 18px; }
 .social-preview p { margin-top: 7px; margin-bottom: 18px; color: #526174; }
+.tool-glossary { margin: 0 0 24px; padding: 13px 14px; display: flex; flex-wrap: wrap; gap: 8px; border: 1px solid #dce8bd; border-radius: 11px; background: #f6fae9; }
+.tool-glossary::before { content: "Begriffe:"; align-self: center; margin-right: 2px; color: #64738a; font-size: 12px; font-weight: 800; }
+.tool-glossary > span { min-height: 34px; padding: 6px 8px 6px 10px; display: inline-flex; align-items: center; gap: 7px; border-radius: 8px; background: #fff; color: var(--navy); font-size: 13px; }
+.tool-glossary b { font-weight: 800; }
+.tool-glossary .info-tip > button { width: 21px; height: 21px; border-color: var(--lime-dark); color: var(--navy); background: var(--lime); }
 
 @media (max-width: 960px) {
   .hero { grid-template-columns: 1fr; gap: 45px; }

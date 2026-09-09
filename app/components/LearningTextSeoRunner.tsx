@@ -1,13 +1,65 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { Field, Result, SelectField, fmt, number } from "./ToolUI";
+import { useId, useMemo, useState, type ComponentProps } from "react";
+import { Field as BaseField, InfoTip, Result, SelectField as BaseSelectField, fmt, number } from "./ToolUI";
 
 const demoText = "Gute Texte beantworten eine konkrete Frage. Kurze Sätze helfen beim Lesen, doch abwechslungsreiche Formulierungen bleiben wichtig.";
 const words = (text: string) => text.toLocaleLowerCase("de").match(/[a-zäöüß0-9]+/gi) ?? [];
 const copy = (value: string) => navigator.clipboard.writeText(value);
-function Area({ label, value, onChange, rows = 7, placeholder, readOnly = false }: { label: string; value: string; onChange: (v: string) => void; rows?: number; placeholder?: string; readOnly?: boolean }) {
-  return <label className="field"><span>{label}</span><textarea rows={rows} value={value} placeholder={placeholder} readOnly={readOnly} onChange={(e) => onChange(e.target.value)} /></label>;
+
+const INPUT_HELP: Record<string, string> = {
+  "Gewichtung": "Bestimmt, wie stark diese Note in den Durchschnitt eingeht. Eine Gewichtung von 2 zählt doppelt so stark wie 1.",
+  "Gewünschter Schnitt": "Der Notendurchschnitt, den du nach der nächsten Leistung erreichen möchtest.",
+  "Gewichtung der nächsten Note": "Wie stark die kommende Leistung gegenüber den bisherigen Noten zählt.",
+  "Maximal erreichbare Punkte": "Die höchste Punktzahl, die in der Prüfung oder Aufgabe möglich ist.",
+  "Gesamtpunkte": "Die insgesamt erreichbare Punktzahl der bewerteten Leistung.",
+  "Erreichte Punkte": "Die Punkte, die tatsächlich erzielt wurden.",
+  "Bestehensgrenze": "Der kleinste prozentuale Anteil, der noch als bestanden beziehungsweise Note 4 gilt.",
+  "Zähler A": "Die obere Zahl des ersten Bruchs. Sie nennt die Anzahl der betrachteten Teile.",
+  "Nenner A": "Die untere Zahl des ersten Bruchs. Sie darf nicht 0 sein und beschreibt die Teilung des Ganzen.",
+  "Zähler B": "Die obere Zahl des zweiten Bruchs.",
+  "Nenner B": "Die untere Zahl des zweiten Bruchs. Sie darf nicht 0 sein.",
+  "Rechenart": "Wähle Addition, Subtraktion, Multiplikation oder Division der beiden Brüche.",
+  "a": "Faktor vor x. Er bestimmt, wie stark sich die linke Seite mit x verändert.",
+  "b": "Fester Wert auf der linken Seite der Gleichung ax + b = c.",
+  "c": "Wert auf der rechten Seite der Gleichung ax + b = c.",
+  "Prüfungstermin": "Datum, bis zu dem der Lernstoff vorbereitet sein soll.",
+  "Lernstunden pro Woche": "Zeit, die du in einer normalen Woche realistisch für dieses Lernziel reservieren kannst.",
+  "Quellentyp": "Art der Quelle; davon hängt ab, welche bibliografischen Angaben benötigt werden.",
+  "Zitierstil": "Regelwerk für Reihenfolge, Zeichensetzung und Darstellung einer Quellenangabe.",
+  "Autor/in": "Verfasser der Quelle, möglichst in der von deinem Zitierstil verlangten Namensform.",
+  "Jahr": "Erscheinungs- oder Veröffentlichungsjahr der Quelle.",
+  "Verlag / Website / Zeitschrift": "Organisation oder Publikation, in der die Quelle erschienen ist.",
+  "Abrufdatum": "Tag, an dem du den Inhalt der Website zuletzt aufgerufen hast.",
+  "Seitentitel": "Klickbare Hauptüberschrift eines möglichen Suchergebnisses; entspricht häufig dem HTML-Title.",
+  "Title": "HTML-Titel der Seite. Er erscheint häufig als Überschrift im Suchergebnis und im Browser-Tab.",
+  "URL": "Vollständige Internetadresse einschließlich https://.",
+  "Canonical URL": "Bevorzugte Hauptadresse einer Seite, wenn gleiche oder sehr ähnliche Inhalte unter mehreren URLs erreichbar sind.",
+  "Robots": "Anweisung, ob Suchmaschinen die Seite indexieren und ihren Links folgen dürfen.",
+  "User-agent": "Name des Crawlers, für den die folgenden Regeln gelten. Ein Stern steht für alle Crawler.",
+  "Sitemap-URL": "Vollständige Adresse der XML-Sitemap, die von Crawlern abgerufen werden kann.",
+  "Letzte Änderung (optional)": "Datum einer inhaltlich wichtigen Änderung an den aufgeführten Seiten – nicht das Datum jedes Seitenaufrufs.",
+  "Seiten-URL": "Vollständige öffentliche Adresse der Seite, die geteilt werden soll.",
+  "Bild-URL": "Öffentlich erreichbare absolute Adresse des Vorschaubildes.",
+  "Beschreibung": "Kurze, konkrete Zusammenfassung des Seiteninhalts für die Linkvorschau.",
+  "Titel": "Eindeutiger Titel der Quelle, Seite oder Linkvorschau.",
+  "Überschrift": "Ausgangstext, aus dem eine kurze und technisch sichere URL erzeugt wird.",
+};
+
+function Field(props: ComponentProps<typeof BaseField>) {
+  const help = props.help ?? INPUT_HELP[props.label] ?? `Trage hier den Wert für „${props.label}“ ein. Die Eingabe wird nur lokal verarbeitet.`;
+  return <BaseField {...props} help={help} />;
+}
+
+function SelectField(props: ComponentProps<typeof BaseSelectField>) {
+  const help = props.help ?? INPUT_HELP[props.label] ?? `Wähle die passende Einstellung für „${props.label}“ aus.`;
+  return <BaseSelectField {...props} help={help} />;
+}
+
+function Area({ label, value, onChange, rows = 7, placeholder, readOnly = false, help }: { label: string; value: string; onChange: (v: string) => void; rows?: number; placeholder?: string; readOnly?: boolean; help?: string }) {
+  const id = useId();
+  const explanation = help ?? INPUT_HELP[label] ?? `Füge oder schreibe hier den Inhalt für „${label}“ ein. Er bleibt auf deinem Gerät.`;
+  return <div className="field"><span className="field-label"><label htmlFor={id}>{label}</label><InfoTip text={explanation} label={`${label} erklären`} /></span><textarea id={id} rows={rows} value={value} placeholder={placeholder} readOnly={readOnly} onChange={(e) => onChange(e.target.value)} /></div>;
 }
 function CodeResult({ value, label = "Erzeugter Code" }: { value: string; label?: string }) {
   return <div className="generated-output"><div><strong>{label}</strong><button type="button" onClick={() => copy(value)}>Kopieren</button></div><pre><code>{value}</code></pre></div>;
@@ -92,4 +144,35 @@ function Sitemap() { const [input, setInput] = useState("https://www.example.de/
 
 function Hreflang() { const [input, setInput] = useState("de-DE | https://www.example.de/seite\nen-GB | https://www.example.com/page\nx-default | https://www.example.com/page"); const entries = input.split("\n").map((x) => x.split("|").map((v) => v.trim())).filter(([lang, url]) => /^(x-default|[a-z]{2}(?:-[A-Z]{2})?)$/.test(lang) && /^https?:\/\//.test(url)); const output = entries.map(([lang, url]) => `<link rel="alternate" hreflang="${lang}" href="${esc(url)}">`).join("\n"); return <><Area label="Eine Version pro Zeile: Sprachcode | absolute URL" value={input} onChange={setInput} rows={8} /><p className={`status-line ${entries.length >= 2 ? "ok" : "warn"}`}>{entries.length} gültige Versionen. Füge diesen vollständigen Satz auf jeder aufgeführten Seite ein.</p><CodeResult value={output} /></>; }
 
-export function LearningTextSeoRunner({ slug }: { slug: string }) { const content: Record<string, React.ReactNode> = { "notenrechner-gewichtung": <WeightedGrades />, "notenschluessel-rechner": <GradeKey />, "punkte-in-note-rechner": <GradeKey single />, bruchrechner: <Fractions />, gleichungsrechner: <Equation />, "lernplan-rechner": <LearningPlan />, "karteikarten-generator": <Flashcards />, lesbarkeitsanalyse: <Readability />, textvergleich: <TextDiff />, "fuellwort-finder": <Fillers />, textbereiniger: <Cleaner />, "gross-kleinschreibung": <LetterCase />, "quellenangaben-generator": <Citation />, "google-snippet-vorschau": <Snippet />, "keyworddichte-analyse": <KeywordDensity />, "onpage-seo-pruefer": <Onpage />, "seo-slug-generator": <Slug />, "meta-tag-generator": <MetaTags />, "faq-schema-generator": <FaqSchema />, "open-graph-generator": <OpenGraph />, "robots-txt-generator": <Robots />, "sitemap-generator": <Sitemap />, "hreflang-generator": <Hreflang /> }; return <>{content[slug]}</>; }
+const TOOL_TERMS: Record<string, [string, string][]> = {
+  "notenrechner-gewichtung": [["Gewichtung", "Sie legt fest, wie stark eine einzelne Note in den Gesamtdurchschnitt eingeht."], ["Zielnote", "Die rechnerisch benötigte nächste Note, um einen gewünschten Durchschnitt zu erreichen."]],
+  "notenschluessel-rechner": [["Notenschlüssel", "Eine Zuordnung von Punkt- oder Prozentbereichen zu Schulnoten."], ["linear", "Die Notengrenzen werden in gleichmäßigen Abständen zwischen Höchstleistung und Bestehensgrenze verteilt."]],
+  "punkte-in-note-rechner": [["Bestehensgrenze", "Der kleinste Anteil der Gesamtpunkte, der noch als bestanden gilt."], ["lineare Umrechnung", "Eine gleichmäßige mathematische Verteilung der Notenbereiche; reale Vorgaben können abweichen."]],
+  bruchrechner: [["Zähler", "Die Zahl oberhalb des Bruchstrichs."], ["Nenner", "Die Zahl unterhalb des Bruchstrichs; sie darf nicht 0 sein."], ["kürzen", "Zähler und Nenner durch denselben gemeinsamen Teiler teilen."]],
+  gleichungsrechner: [["linear", "Die Variable x kommt nur in der ersten Potenz vor."], ["Koeffizient", "Der Zahlenfaktor unmittelbar vor einer Variablen, hier der Wert a vor x."]],
+  "lernplan-rechner": [["Lerneinheit", "Ein klar begrenzter Lernabschnitt mit Thema und Zeitbudget."], ["Wiederholungszeit", "Reservierte Zeit zum Festigen, Abrufen und Anwenden bereits gelernter Inhalte."]],
+  "karteikarten-generator": [["Karteikarte", "Eine Lernkarte mit einer Frage auf der Vorder- und der zugehörigen Antwort auf der Rückseite."], ["Trennzeichen |", "Der senkrechte Strich trennt in jeder Eingabezeile die Frage von der Antwort."]],
+  lesbarkeitsanalyse: [["Flesch-Wert", "Eine Kennzahl aus durchschnittlicher Satz- und Silbenlänge. Höhere Werte stehen für leichter lesbare Texte."], ["Silbe", "Ein gesprochener Wortabschnitt mit einem Vokalkern; die automatische Zählung ist eine Näherung."]],
+  textvergleich: [["Wortvergleich", "Beide Versionen werden in Wörter und Leerzeichen zerlegt und anschließend in ihrer Reihenfolge abgeglichen."], ["hinzugefügt/entfernt", "Grün markierter Text kommt in der neuen Version hinzu; rot markierter Text wurde entfernt."]],
+  "fuellwort-finder": [["Füllwort", "Ein Wort, das Ton oder Rhythmus beeinflusst, aber häufig wenig zur Kernaussage beiträgt."], ["Wiederholung", "Mehrfaches Auftreten desselben Begriffs; das kann gewollt oder stilistisch auffällig sein."]],
+  textbereiniger: [["typografische Zeichen", "Besondere Anführungszeichen oder Auslassungspunkte, die aus anderen Programmen übernommen wurden."], ["Zeilenumbruch", "Steuerzeichen für eine neue Zeile; nicht jeder Zeilenumbruch bildet einen neuen Absatz."]],
+  "gross-kleinschreibung": [["Satzschreibweise", "Kleinschreibung mit großem Anfang nach Satzgrenzen."], ["Überschriftenschreibweise", "Mechanische Großschreibung von Wortanfängen; sie ersetzt keine deutsche Grammatikprüfung."]],
+  "quellenangaben-generator": [["APA", "Ein international verbreiteter Zitierstil der American Psychological Association."], ["Harvard", "Eine Familie von Autor-Jahr-Zitierweisen, die je nach Institution unterschiedlich ausgestaltet wird."]],
+  "google-snippet-vorschau": [["Snippet", "Titel, Adresse und Textausschnitt, die eine Suchmaschine zu einem Treffer anzeigen kann."], ["Meta-Description", "Kurze Seitenbeschreibung im HTML; Google kann für ein Suchergebnis auch einen anderen Text wählen."]],
+  "keyworddichte-analyse": [["Keyworddichte", "Anteil eines Begriffs an den ausgewerteten Wörtern. Es gibt keinen allgemein optimalen Prozentwert."], ["Stopwort", "Sehr häufiges Funktionswort wie „und“ oder „der“, das für die Themenanalyse meist ausgeblendet wird."]],
+  "onpage-seo-pruefer": [["Onpage-SEO", "Maßnahmen an Inhalt und technischem HTML einer einzelnen Website."], ["Alt-Text", "Textalternative eines Bildes für Screenreader und Situationen, in denen das Bild nicht geladen wird."]],
+  "seo-slug-generator": [["Slug", "Lesbarer letzter Teil einer URL, der eine konkrete Seite bezeichnet."], ["ASCII", "Grundlegender Zeichensatz ohne deutsche Umlaute; er ist in URLs besonders kompatibel."]],
+  "meta-tag-generator": [["Canonical", "Verweis auf die bevorzugte Haupt-URL einer Seite."], ["Robots-Meta-Tag", "Seitenbezogene Anweisung zur Indexierung und zum Folgen von Links."]],
+  "faq-schema-generator": [["JSON-LD", "Ein maschinenlesbares Datenformat, das meist als Script-Block in das HTML eingefügt wird."], ["FAQPage", "Schema.org-Datentyp für eine Seite mit sichtbaren Fragen und Antworten."]],
+  "open-graph-generator": [["Open Graph", "Metadaten, mit denen viele Plattformen Titel, Beschreibung und Bild eines geteilten Links bestimmen."], ["Twitter Card", "Metadatenformat für Linkvorschauen auf X beziehungsweise Twitter."]],
+  "robots-txt-generator": [["robots.txt", "Öffentliche Textdatei mit freiwilligen Abrufregeln für Suchmaschinen-Crawler."], ["User-Agent", "Kennung eines Crawlers; ein Stern steht für alle Bots."], ["Disallow", "Regel, die einen Pfad für den bezeichneten Crawler vom Abruf ausschließt."]],
+  "sitemap-generator": [["XML-Sitemap", "Maschinenlesbare Liste kanonischer URLs, die Suchmaschinen beim Entdecken von Seiten unterstützt."], ["lastmod", "Optionales Datum der letzten wesentlichen inhaltlichen Änderung einer URL."]],
+  "hreflang-generator": [["hreflang", "HTML-Verweis, der gleichwertige Sprach- oder Länderversionen einer Seite verbindet."], ["x-default", "Optionale Standardversion für Nutzer, zu deren Sprache keine spezifische Variante passt."], ["Rückverweis", "Jede aufgeführte Sprachversion muss auf alle anderen Versionen zurückverweisen."]],
+};
+
+function ToolGlossary({ slug }: { slug: string }) {
+  const terms = TOOL_TERMS[slug] ?? [];
+  return <div className="tool-glossary" aria-label="Fachbegriffe kurz erklärt">{terms.map(([term, explanation]) => <span key={term}><b>{term}</b><InfoTip text={explanation} label={`${term} erklären`} /></span>)}</div>;
+}
+
+export function LearningTextSeoRunner({ slug }: { slug: string }) { const content: Record<string, React.ReactNode> = { "notenrechner-gewichtung": <WeightedGrades />, "notenschluessel-rechner": <GradeKey />, "punkte-in-note-rechner": <GradeKey single />, bruchrechner: <Fractions />, gleichungsrechner: <Equation />, "lernplan-rechner": <LearningPlan />, "karteikarten-generator": <Flashcards />, lesbarkeitsanalyse: <Readability />, textvergleich: <TextDiff />, "fuellwort-finder": <Fillers />, textbereiniger: <Cleaner />, "gross-kleinschreibung": <LetterCase />, "quellenangaben-generator": <Citation />, "google-snippet-vorschau": <Snippet />, "keyworddichte-analyse": <KeywordDensity />, "onpage-seo-pruefer": <Onpage />, "seo-slug-generator": <Slug />, "meta-tag-generator": <MetaTags />, "faq-schema-generator": <FaqSchema />, "open-graph-generator": <OpenGraph />, "robots-txt-generator": <Robots />, "sitemap-generator": <Sitemap />, "hreflang-generator": <Hreflang /> }; return <><ToolGlossary slug={slug} />{content[slug]}</>; }

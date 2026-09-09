@@ -427,4 +427,9 @@ test("learning, text and SEO are separate complete tool categories", async () =>
   assert.equal(slugs.length, 23);
   assert.equal(new Set(slugs).size, 23);
   slugs.forEach((slug) => assert.match(runner, new RegExp(`"?${slug}"?\\s*:`), slug));
+  assert.match(runner, /function Field\(props:[\s\S]*help=\{help\}/);
+  assert.match(runner, /function SelectField\(props:[\s\S]*help=\{help\}/);
+  assert.match(runner, /function Area[\s\S]*<InfoTip/);
+  assert.match(runner, /const TOOL_TERMS:[\s\S]*"hreflang-generator"/);
+  assert.match(runner, /<ToolGlossary slug=\{slug\}/);
 });
