@@ -4,12 +4,13 @@ import { useEffect, useId, useRef, useState } from "react";
 
 type Output = { url: string; blob: Blob; name: string; width?: number; height?: number };
 type Raster = { image: HTMLImageElement; width: number; height: number };
-type Format = "image/jpeg" | "image/png" | "image/webp";
+type Format = "image/jpeg" | "image/png" | "image/webp" | "image/avif";
+type ConverterFormat = Format | "image/bmp";
 
-const acceptImages = ".jpg,.jpeg,.png,.webp,.heic,.heif,image/jpeg,image/png,image/webp,image/heic,image/heif";
+const acceptImages = ".jpg,.jpeg,.png,.webp,.avif,.heic,.heif,image/jpeg,image/png,image/webp,image/avif,image/heic,image/heif";
 const baseName = (name: string) => name.replace(/\.[^.]+$/, "") || "bild";
 const formatSize = (bytes: number) => bytes >= 1024 * 1024 ? `${(bytes / 1024 / 1024).toLocaleString("de-DE", { maximumFractionDigits: 2 })} MB` : `${Math.max(1, Math.round(bytes / 1024)).toLocaleString("de-DE")} KB`;
-const extFor = (format: Format) => format === "image/jpeg" ? "jpg" : format === "image/png" ? "png" : "webp";
+const extFor = (format: ConverterFormat) => format === "image/jpeg" ? "jpg" : format === "image/png" ? "png" : format === "image/webp" ? "webp" : format === "image/avif" ? "avif" : "bmp";
 
 async function normalizeBlob(file: File): Promise<Blob> {
   if (/hei[cf]/i.test(file.type) || /\.hei[cf]$/i.test(file.name)) {
@@ -35,7 +36,30 @@ async function loadRaster(file: File): Promise<Raster> {
 }
 
 function canvasBlob(canvas: HTMLCanvasElement, format: Format, quality = 0.9) {
-  return new Promise<Blob>((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("Das Bild konnte nicht gespeichert werden.")), format, quality));
+  return new Promise<Blob>((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error(`ENCODE_UNSUPPORTED:${format}`)), format, quality));
+}
+
+function bmpBlob(canvas: HTMLCanvasElement) {
+  const ctx = canvas.getContext("2d")!;
+  const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const rowSize = (canvas.width * 3 + 3) & ~3;
+  const pixelSize = rowSize * canvas.height;
+  const bytes = new Uint8Array(54 + pixelSize);
+  const view = new DataView(bytes.buffer);
+  bytes[0] = 0x42; bytes[1] = 0x4d;
+  view.setUint32(2, bytes.length, true); view.setUint32(10, 54, true);
+  view.setUint32(14, 40, true); view.setInt32(18, canvas.width, true); view.setInt32(22, canvas.height, true);
+  view.setUint16(26, 1, true); view.setUint16(28, 24, true); view.setUint32(34, pixelSize, true);
+  view.setInt32(38, 2835, true); view.setInt32(42, 2835, true);
+  for (let y = 0; y < canvas.height; y++) {
+    const targetRow = 54 + (canvas.height - 1 - y) * rowSize;
+    for (let x = 0; x < canvas.width; x++) {
+      const source = (y * canvas.width + x) * 4;
+      const target = targetRow + x * 3;
+      bytes[target] = data[source + 2]; bytes[target + 1] = data[source + 1]; bytes[target + 2] = data[source];
+    }
+  }
+  return new Blob([bytes], { type: "image/bmp" });
 }
 
 function canvasFrom(image: HTMLImageElement, width = image.naturalWidth, height = image.naturalHeight, fill?: string) {
@@ -103,9 +127,10 @@ function ToolShell({ children }: { children: React.ReactNode }) {
 
 function FormatConverter() {
   const [files, setFiles] = useState<File[]>([]); const file = files[0];
-  const [format, setFormat] = useState<Format>("image/jpeg"); const [quality, setQuality] = useState(90); const [busy, setBusy] = useState(false); const [error, setError] = useState(""); const [output, setOutput] = useOutput();
-  const run = async () => { if (!file) return; setBusy(true); setError(""); try { const raster = await loadRaster(file); const canvas = canvasFrom(raster.image, raster.width, raster.height, format === "image/jpeg" ? "#fff" : undefined); const blob = await canvasBlob(canvas, format, quality / 100); setOutput({ blob, name: `${baseName(file.name)}.${extFor(format)}`, width: canvas.width, height: canvas.height }); } catch { setError("Dieses Bildformat konnte dein Browser nicht lesen. Bitte prüfe die Datei oder verwende ein anderes Bild."); } finally { setBusy(false); } };
-  return <ToolShell><UploadZone files={files} onFiles={(next) => { setFiles(next); setOutput(null); }} />{file && <div className="image-controls"><div><span className="control-label">Ausgabeformat</span><div className="format-buttons">{(["image/jpeg", "image/png", "image/webp"] as Format[]).map((item) => <button type="button" className={format === item ? "active" : ""} onClick={() => setFormat(item)} key={item}>{extFor(item).toUpperCase()}</button>)}</div></div>{format !== "image/png" && <label className="range-field"><span>Bildqualität <b>{quality} %</b></span><input type="range" min="40" max="100" value={quality} onChange={(event) => setQuality(Number(event.target.value))} /></label>}<button className="primary-button" onClick={run} disabled={busy}>{busy ? "Bild wird umgewandelt …" : `In ${extFor(format).toUpperCase()} umwandeln`}</button></div>}<ErrorNote error={error} />{output && <DownloadResult output={output} originalSize={file?.size} />}</ToolShell>;
+  const [format, setFormat] = useState<ConverterFormat>("image/jpeg"); const [quality, setQuality] = useState(90); const [busy, setBusy] = useState(false); const [error, setError] = useState(""); const [output, setOutput] = useOutput();
+  const run = async () => { if (!file) return; setBusy(true); setError(""); try { const raster = await loadRaster(file); const canvas = canvasFrom(raster.image, raster.width, raster.height, format === "image/jpeg" || format === "image/bmp" ? "#fff" : undefined); const blob = format === "image/bmp" ? bmpBlob(canvas) : await canvasBlob(canvas, format, quality / 100); if (format === "image/avif" && blob.type !== "image/avif") throw new Error("ENCODE_UNSUPPORTED:image/avif"); setOutput({ blob, name: `${baseName(file.name)}.${extFor(format)}`, width: canvas.width, height: canvas.height }); } catch (caught) { setError(caught instanceof Error && caught.message === "ENCODE_UNSUPPORTED:image/avif" ? "Dein Browser kann AVIF noch nicht erzeugen. Nutze stattdessen WebP – es bietet ebenfalls kleine Dateien bei guter Bildqualität." : "Dieses Bildformat konnte dein Browser nicht lesen. Bitte prüfe die Datei oder verwende ein anderes Bild."); } finally { setBusy(false); } };
+  const usesQuality = format === "image/jpeg" || format === "image/webp" || format === "image/avif";
+  return <ToolShell><UploadZone files={files} onFiles={(next) => { setFiles(next); setOutput(null); }} hint="JPG, PNG, WebP, AVIF, HEIC oder HEIF" />{file && <div className="image-controls"><div><span className="control-label">Ausgabeformat</span><div className="format-buttons">{(["image/jpeg", "image/png", "image/webp", "image/avif", "image/bmp"] as ConverterFormat[]).map((item) => <button type="button" className={format === item ? "active" : ""} onClick={() => { setFormat(item); setOutput(null); setError(""); }} key={item}>{extFor(item).toUpperCase()}</button>)}</div></div>{usesQuality && <label className="range-field"><span>Bildqualität <b>{quality} %</b></span><input type="range" min="40" max="100" value={quality} onChange={(event) => setQuality(Number(event.target.value))} /></label>}<p className="form-hint">JPG für hohe Kompatibilität, PNG für Transparenz, WebP oder AVIF für kleine Webdateien und BMP für ältere Programme ohne moderne Formatunterstützung.</p><button className="primary-button" onClick={run} disabled={busy}>{busy ? "Bild wird umgewandelt …" : `In ${extFor(format).toUpperCase()} umwandeln`}</button></div>}<ErrorNote error={error} />{output && <DownloadResult output={output} originalSize={file?.size} />}</ToolShell>;
 }
 
 function hexRgb(hex: string) { const value = Number.parseInt(hex.slice(1), 16); return [(value >> 16) & 255, (value >> 8) & 255, value & 255] as const; }
@@ -146,7 +171,7 @@ function CropTool() {
   return <ToolShell><UploadZone files={files} onFiles={(next) => { setFiles(next); setOutput(null); }} />{file && <div className="image-controls">{preview && <div className="crop-preview"><img src={preview} alt="Vorschau des gewählten Bildes" /><span style={{ left: `${crop.x}%`, top: `${crop.y}%`, width: `${crop.w}%`, height: `${crop.h}%` }} /></div>}<div><span className="control-label">Seitenverhältnis</span><div className="format-buttons">{(["frei", "1:1", "4:3", "16:9", "9:16"] as CropPreset[]).map((item) => <button className={preset === item ? "active" : ""} onClick={() => choosePreset(item)} key={item}>{item === "frei" ? "Gesamtes Bild" : item}</button>)}</div></div><div className="crop-sliders">{(["x", "y", "w", "h"] as const).map((key) => <label key={key}><span>{{ x: "Von links", y: "Von oben", w: "Breite", h: "Höhe" }[key]} <b>{Math.round(crop[key])} %</b></span><input type="range" min={key === "w" || key === "h" ? "10" : "0"} max="100" value={crop[key]} onChange={(event) => setPart(key, Number(event.target.value))} /></label>)}</div><div className="format-buttons"><button onClick={() => setRotation((rotation + 90) % 360)}>Um 90° drehen</button><button className={flip ? "active" : ""} onClick={() => setFlip(!flip)}>Horizontal spiegeln</button></div><button className="primary-button" onClick={run} disabled={busy}>{busy ? "Ausschnitt wird erstellt …" : "Bild zuschneiden"}</button></div>}<ErrorNote error={error} />{output && <DownloadResult output={output} originalSize={file?.size} />}</ToolShell>;
 }
 
-async function compressToTarget(image: HTMLImageElement, target: number, format: Exclude<Format, "image/png">) {
+async function compressToTarget(image: HTMLImageElement, target: number, format: "image/jpeg" | "image/webp") {
   let width = image.naturalWidth; let height = image.naturalHeight; let best: Blob | null = null; let canvas = canvasFrom(image, width, height, "#fff");
   for (let resize = 0; resize < 4; resize++) { let low = .25; let high = .96; for (let attempt = 0; attempt < 9; attempt++) { const quality = (low + high) / 2; const blob = await canvasBlob(canvas, format, quality); if (blob.size <= target) { best = blob; low = quality; } else high = quality; } if (best) return { blob: best, width: canvas.width, height: canvas.height }; const minimum = await canvasBlob(canvas, format, .2); const scale = Math.min(.9, Math.sqrt(target / minimum.size) * .92); width = Math.max(320, Math.round(width * scale)); height = Math.max(240, Math.round(height * scale)); canvas = canvasFrom(image, width, height, "#fff"); }
   return { blob: await canvasBlob(canvas, format, .18), width: canvas.width, height: canvas.height };

@@ -129,6 +129,23 @@ test("image category contains ten useful tools with real drag and drop", async (
   assert.doesNotMatch(category, /HEIC in JPG|WebP in JPG|Bild komprimieren/);
 });
 
+test("image format converter offers modern and legacy target formats", async () => {
+  const worker = await createWorker();
+  const [response, runnerSource] = await Promise.all([
+    fetchFromWorker(worker, "/tools/bildformat-konverter"),
+    readFile(new URL("../app/components/ImageToolRunner.tsx", import.meta.url), "utf8"),
+  ]);
+  const html = await response.text();
+
+  assert.equal(response.status, 200);
+  assert.match(html, /JPG, PNG, WebP, AVIF &amp; BMP/);
+  for (const format of ["image/jpeg", "image/png", "image/webp", "image/avif", "image/bmp"]) {
+    assert.match(runnerSource, new RegExp(format.replace("/", "\\/")));
+  }
+  assert.match(runnerSource, /function bmpBlob/);
+  assert.match(runnerSource, /ENCODE_UNSUPPORTED:image\/avif/);
+});
+
 test("tool pages expose canonical, FAQ schema and unique help content", async () => {
   const worker = await createWorker();
   const response = await fetchFromWorker(worker, "/tools/nachtzuschlag-rechner");

@@ -118,9 +118,9 @@ const toolContext: Record<string, PracticeContext> = {
     practical: "Nutze Wortzahl, Satzanzahl und Absätze gemeinsam. Viele Wörter bei wenigen Absätzen sind oft ein Hinweis auf schwer lesbare Textblöcke.",
   },
   "bildformat-konverter": {
-    background: "JPG ist für Fotos weit verbreitet, PNG speichert Transparenz und harte Kanten verlustfrei, WebP verbindet kleine Dateien mit Transparenz. HEIC wird besonders von Apple-Geräten für speichereffiziente Fotos genutzt.",
-    rules: "Ein Formatwechsel verbessert ein bereits komprimiertes Bild nicht. JPG kann keine Transparenz speichern; animierte WebP-Dateien werden in diesem Werkzeug als einzelnes Standbild verarbeitet.",
-    practical: "Wähle JPG für maximale Foto-Kompatibilität, PNG für Transparenz und Grafiken und WebP für kompakte Webbilder. Behalte die Ursprungsdatei als Qualitätsreserve.",
+    background: "JPG ist für Fotos weit verbreitet, PNG speichert Transparenz und harte Kanten verlustfrei. WebP und AVIF sind auf kleine Webdateien ausgelegt, während BMP Pixel nahezu unkomprimiert und deshalb sehr speicherintensiv ablegt. HEIC wird besonders von Apple-Geräten genutzt.",
+    rules: "Ein Formatwechsel verbessert ein bereits komprimiertes Bild nicht. JPG und die hier erzeugte BMP-Datei speichern keine Transparenz; animierte Dateien werden als einzelnes Standbild verarbeitet. AVIF-Ausgabe hängt von der Kodierunterstützung des Browsers ab.",
+    practical: "Wähle JPG für breite Kompatibilität, PNG für Transparenz und Grafiken, WebP oder AVIF für kompakte Webbilder und BMP nur für ältere Zielprogramme mit entsprechender Vorgabe. Behalte die Ursprungsdatei als Qualitätsreserve.",
   },
   "hintergrund-entfernen": {
     background: "Die lokale Freistellung folgt nicht jedem Objekt semantisch, sondern untersucht zusammenhängende Farben vom Bildrand aus. Das schützt gleichfarbige Bereiche innerhalb eines klar umschlossenen Motivs besser als ein globales Löschen.",

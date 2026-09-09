@@ -69,9 +69,9 @@ const toolSeo: Record<string, ToolSeoContent> = {
     relatedSlugs: ["wordle-hilfe", "woerter-zaehlen", "zeichen-zaehlen"],
   },
   "bildformat-konverter": {
-    steps: [{ title: "Bild ablegen", text: "Ziehe ein JPG-, PNG-, WebP-, HEIC- oder HEIF-Bild in die Ablagefläche oder wähle es auf deinem Gerät aus." }, { title: "Zielformat festlegen", text: "Wähle JPG, PNG oder WebP. Nur bei verlustbehafteten Formaten stellst du zusätzlich die gewünschte Bildqualität ein." }, { title: "Arbeitskopie herunterladen", text: "Der Browser zeichnet die Pixel in das neue Format und stellt die fertige Datei direkt zum Download bereit." }],
-    formula: "Ausgabedatei = dekodierte Bildpixel + Eigenschaften des gewählten Dateiformats",
-    example: "Ein transparentes PNG bleibt als PNG oder WebP transparent. Bei JPG werden transparente Flächen weiß gefüllt.",
+    steps: [{ title: "Bild ablegen", text: "Ziehe ein JPG-, PNG-, WebP-, AVIF-, HEIC- oder HEIF-Bild in die Ablagefläche oder wähle es auf deinem Gerät aus." }, { title: "Zielformat festlegen", text: "Wähle JPG, PNG, WebP, AVIF oder BMP. Bei JPG, WebP und AVIF kannst du zusätzlich die gewünschte Bildqualität bestimmen." }, { title: "Arbeitskopie herunterladen", text: "Der Browser zeichnet die Pixel in das neue Format und stellt die fertige Datei direkt zum Download bereit." }],
+    formula: "Ausgabedatei = dekodierte Bildpixel + Kodierung und Eigenschaften des gewählten Zielformats",
+    example: "Ein transparentes PNG bleibt als PNG, WebP oder AVIF transparent. Bei JPG und BMP werden transparente Flächen weiß gefüllt.",
     relatedSlugs: ["bild-dateigroesse-komprimieren", "bildgroesse-aendern", "bild-metadaten-entfernen"],
   },
   "hintergrund-entfernen": {
