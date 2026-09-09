@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 /**
  * Leichtgewichtige Consent-Management-Lösung (DSGVO / TDDDG Opt-in).
  *
- * - Setzt KEINE Tracking-Cookies, solange der Nutzer nicht zugestimmt hat.
+ * - Lädt optionale Reichweitenmessung erst nach Zustimmung.
  * - Speichert die Entscheidung in localStorage unter "st-consent".
  * - Bietet window.__consentRead() / window.__consentGrant() als API,
  *   die zukünftige Tracking- und Affiliate-Dienste abfragen können.
@@ -82,7 +82,7 @@ export default function ConsentBanner() {
         <p>
           <strong>Deine Privatsphäre</strong>
           <span>
-            Aktuell nutzt SofortTools kein Tracking. Optionale Dienste würden erst nach deiner Zustimmung geladen.
+            SofortTools nutzt optional die datenschutzfreundliche Reichweitenmessung von Plausible. Sie wird erst nach deiner Zustimmung geladen.
             Mehr in der <a href="/datenschutz">Datenschutzerklärung</a>.
           </span>
         </p>

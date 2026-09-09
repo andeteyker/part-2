@@ -398,10 +398,11 @@ test("content plan renders 30 focused guides with examples and calculator links"
   assert.match(index, /Angebote richtig kalkulieren: Selbstkosten, Gewinn und Umsatzsteuer/);
 });
 
-test("consent is global, reversible and does not include tracking SDKs", async () => {
-  const [layout, banner, footer, appSources] = await Promise.all([
+test("consent is global, reversible and gates Plausible analytics", async () => {
+  const [layout, banner, plausible, footer, appSources] = await Promise.all([
     readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/components/ConsentBanner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/PlausibleAnalytics.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/components/SiteFooter.tsx", import.meta.url), "utf8"),
     Promise.all([
       readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
@@ -410,11 +411,22 @@ test("consent is global, reversible and does not include tracking SDKs", async (
   ]);
 
   assert.match(layout, /<ConsentBanner \/>/);
+  assert.match(layout, /<PlausibleAnalytics \/>/);
   assert.match(banner, /localStorage\.setItem\(KEY, value\)/);
   assert.match(banner, /setChoice\(value\)/);
   assert.equal((banner.match(/type="button"/g) ?? []).length, 2);
+  assert.match(plausible, /https:\/\/plausible\.io\/js\/pa-967J2UZYysJCeCfhnkhCf\.js/);
+  assert.match(plausible, /managedChoice === "accepted"/);
+  assert.match(plausible, /addEventListener\("st:consent"/);
   assert.match(footer, /ConsentSettingsButton/);
   assert.doesNotMatch(appSources, /gtag\(|google-analytics|analytics\.js|document\.cookie/i);
+
+  const worker = await createWorker();
+  const homepage = await fetchFromWorker(worker, "/").then((response) => response.text());
+  const privacy = await fetchFromWorker(worker, "/datenschutz").then((response) => response.text());
+  assert.doesNotMatch(homepage, /pa-967J2UZYysJCeCfhnkhCf\.js/);
+  assert.match(privacy, /Plausible Analytics/);
+  assert.match(privacy, /Ohne aktive Zustimmung wird Plausible nicht geladen/);
 });
 
 test("learning, text and SEO are separate complete tool categories", async () => {

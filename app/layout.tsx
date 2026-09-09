@@ -3,6 +3,7 @@ import "@fontsource-variable/inter/wght.css";
 import "./globals.css";
 import { SITE_NAME, SITE_URL } from "./lib/site";
 import ConsentBanner from "./components/ConsentBanner";
+import PlausibleAnalytics from "./components/PlausibleAnalytics";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -32,7 +33,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="de">
-      <body className="antialiased">{children}<ConsentBanner /></body>
+      <body className="antialiased">{children}<ConsentBanner /><PlausibleAnalytics /></body>
     </html>
   );
 }
