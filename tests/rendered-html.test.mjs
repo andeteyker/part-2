@@ -144,6 +144,10 @@ test("image format converter offers modern and legacy target formats", async () 
   }
   assert.match(runnerSource, /function bmpBlob/);
   assert.match(runnerSource, /ENCODE_UNSUPPORTED:image\/avif/);
+  assert.match(runnerSource, /function UploadedImagePreview/);
+  assert.match(runnerSource, /Originalvorschau/);
+  assert.match(runnerSource, /Vorschau wird erstellt/);
+  assert.match(runnerSource, /<UploadedImagePreview file=\{file\}/);
 });
 
 test("tool pages expose canonical, FAQ schema and unique help content", async () => {

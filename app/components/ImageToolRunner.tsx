@@ -89,15 +89,27 @@ function useOutput() {
 
 function useFilePreview(file?: File) {
   const [preview, setPreview] = useState<{ file: File; src: string } | null>(null);
-  useEffect(() => { let active = true; if (!file) return; loadRaster(file).then((raster) => { const scale = Math.min(1, 900 / Math.max(raster.width, raster.height)); const canvas = canvasFrom(raster.image, raster.width * scale, raster.height * scale); if (active) setPreview({ file, src: canvas.toDataURL("image/jpeg", .86) }); }).catch(() => undefined); return () => { active = false; }; }, [file]);
+  useEffect(() => { let active = true; if (!file) return; loadRaster(file).then((raster) => { const scale = Math.min(1, 900 / Math.max(raster.width, raster.height)); const canvas = canvasFrom(raster.image, raster.width * scale, raster.height * scale); if (active) setPreview({ file, src: canvas.toDataURL("image/png") }); }).catch(() => undefined); return () => { active = false; }; }, [file]);
   return preview && preview.file === file ? preview.src : "";
+}
+
+function UploadedImagePreview({ file }: { file: File }) {
+  const [preview, setPreview] = useState<{ file: File; src: string; error: string } | null>(null);
+  useEffect(() => { let active = true; loadRaster(file).then((raster) => { const scale = Math.min(1, 900 / Math.max(raster.width, raster.height)); const canvas = canvasFrom(raster.image, raster.width * scale, raster.height * scale); if (active) setPreview({ file, src: canvas.toDataURL("image/png"), error: "" }); }).catch(() => { if (active) setPreview({ file, src: "", error: "Für diese Datei konnte keine Vorschau erstellt werden." }); }); return () => { active = false; }; }, [file]);
+  const currentPreview = preview?.file === file ? preview : null;
+  const extension = file.name.split(".").pop()?.toUpperCase();
+  const inputFormat = extension || file.type.split("/").pop()?.toUpperCase() || "BILD";
+  return <figure className="uploaded-image-preview" aria-label="Vorschau des ausgewählten Originalbildes">
+    <div className="uploaded-image-canvas">{currentPreview?.src ? <img src={currentPreview.src} alt={`Originalvorschau von ${file.name}`} /> : <span role="status">{currentPreview?.error || "Vorschau wird erstellt …"}</span>}</div>
+    <figcaption><span><small>Originalvorschau</small><strong>{file.name}</strong></span><span>{inputFormat} · {formatSize(file.size)}</span></figcaption>
+  </figure>;
 }
 
 function UploadZone({ files, onFiles, multiple = false, hint = "JPG, PNG, WebP, HEIC oder HEIF" }: { files: File[]; onFiles: (files: File[]) => void; multiple?: boolean; hint?: string }) {
   const id = useId();
   const [dragging, setDragging] = useState(false);
   const choose = (list: FileList | null) => {
-    const next = Array.from(list ?? []).filter((file) => file.type.startsWith("image/") || /\.(jpe?g|png|webp|hei[cf])$/i.test(file.name));
+    const next = Array.from(list ?? []).filter((file) => file.type.startsWith("image/") || /\.(jpe?g|png|webp|avif|hei[cf])$/i.test(file.name));
     if (next.length) onFiles(multiple ? next : [next[0]]);
   };
   return <label className={`upload-zone ${dragging ? "is-dragging" : ""}`} htmlFor={id}
@@ -130,7 +142,7 @@ function FormatConverter() {
   const [format, setFormat] = useState<ConverterFormat>("image/jpeg"); const [quality, setQuality] = useState(90); const [busy, setBusy] = useState(false); const [error, setError] = useState(""); const [output, setOutput] = useOutput();
   const run = async () => { if (!file) return; setBusy(true); setError(""); try { const raster = await loadRaster(file); const canvas = canvasFrom(raster.image, raster.width, raster.height, format === "image/jpeg" || format === "image/bmp" ? "#fff" : undefined); const blob = format === "image/bmp" ? bmpBlob(canvas) : await canvasBlob(canvas, format, quality / 100); if (format === "image/avif" && blob.type !== "image/avif") throw new Error("ENCODE_UNSUPPORTED:image/avif"); setOutput({ blob, name: `${baseName(file.name)}.${extFor(format)}`, width: canvas.width, height: canvas.height }); } catch (caught) { setError(caught instanceof Error && caught.message === "ENCODE_UNSUPPORTED:image/avif" ? "Dein Browser kann AVIF noch nicht erzeugen. Nutze stattdessen WebP – es bietet ebenfalls kleine Dateien bei guter Bildqualität." : "Dieses Bildformat konnte dein Browser nicht lesen. Bitte prüfe die Datei oder verwende ein anderes Bild."); } finally { setBusy(false); } };
   const usesQuality = format === "image/jpeg" || format === "image/webp" || format === "image/avif";
-  return <ToolShell><UploadZone files={files} onFiles={(next) => { setFiles(next); setOutput(null); }} hint="JPG, PNG, WebP, AVIF, HEIC oder HEIF" />{file && <div className="image-controls"><div><span className="control-label">Ausgabeformat</span><div className="format-buttons">{(["image/jpeg", "image/png", "image/webp", "image/avif", "image/bmp"] as ConverterFormat[]).map((item) => <button type="button" className={format === item ? "active" : ""} onClick={() => { setFormat(item); setOutput(null); setError(""); }} key={item}>{extFor(item).toUpperCase()}</button>)}</div></div>{usesQuality && <label className="range-field"><span>Bildqualität <b>{quality} %</b></span><input type="range" min="40" max="100" value={quality} onChange={(event) => setQuality(Number(event.target.value))} /></label>}<p className="form-hint">JPG für hohe Kompatibilität, PNG für Transparenz, WebP oder AVIF für kleine Webdateien und BMP für ältere Programme ohne moderne Formatunterstützung.</p><button className="primary-button" onClick={run} disabled={busy}>{busy ? "Bild wird umgewandelt …" : `In ${extFor(format).toUpperCase()} umwandeln`}</button></div>}<ErrorNote error={error} />{output && <DownloadResult output={output} originalSize={file?.size} />}</ToolShell>;
+  return <ToolShell><UploadZone files={files} onFiles={(next) => { setFiles(next); setOutput(null); }} hint="JPG, PNG, WebP, AVIF, HEIC oder HEIF" />{file && <><UploadedImagePreview file={file} /><div className="image-controls"><div><span className="control-label">Ausgabeformat</span><div className="format-buttons">{(["image/jpeg", "image/png", "image/webp", "image/avif", "image/bmp"] as ConverterFormat[]).map((item) => <button type="button" className={format === item ? "active" : ""} onClick={() => { setFormat(item); setOutput(null); setError(""); }} key={item}>{extFor(item).toUpperCase()}</button>)}</div></div>{usesQuality && <label className="range-field"><span>Bildqualität <b>{quality} %</b></span><input type="range" min="40" max="100" value={quality} onChange={(event) => setQuality(Number(event.target.value))} /></label>}<p className="form-hint">JPG für hohe Kompatibilität, PNG für Transparenz, WebP oder AVIF für kleine Webdateien und BMP für ältere Programme ohne moderne Formatunterstützung.</p><button className="primary-button" onClick={run} disabled={busy}>{busy ? "Bild wird umgewandelt …" : `In ${extFor(format).toUpperCase()} umwandeln`}</button></div></>}<ErrorNote error={error} />{output && <DownloadResult output={output} originalSize={file?.size} />}</ToolShell>;
 }
 
 function hexRgb(hex: string) { const value = Number.parseInt(hex.slice(1), 16); return [(value >> 16) & 255, (value >> 8) & 255, value & 255] as const; }
