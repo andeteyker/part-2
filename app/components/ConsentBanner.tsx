@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 
 /**
  * Leichtgewichtige Consent-Management-Lösung (DSGVO / TDDDG Opt-in).
@@ -37,18 +37,16 @@ function readStored(): Choice {
 }
 
 export default function ConsentBanner() {
-  const subscribe = useCallback((notify: () => void) => {
-    window.addEventListener("st:consent", notify);
-    return () => window.removeEventListener("st:consent", notify);
-  }, []);
-  const choice = useSyncExternalStore(subscribe, readStored, () => null);
+  const [choice, setChoice] = useState<Choice>(null);
 
-  // Nach dem Mount globale Helfer für optionale zukünftige Dienste registrieren.
+  // Nach dem Mount gespeicherte Auswahl lesen und Helfer für optionale Dienste registrieren.
   useEffect(() => {
+    setChoice(readStored());
     window.__consentRead = () => readStored();
 
     window.__consentGrant = (value, persist = true) => {
       window.__consentChoice = value;
+      setChoice(value);
       if (persist) {
         try {
           window.localStorage.setItem(KEY, value);
@@ -64,6 +62,7 @@ export default function ConsentBanner() {
 
   function grant(value: Exclude<Choice, null>) {
     window.__consentChoice = value;
+    setChoice(value);
     try {
       window.localStorage.setItem(KEY, value);
     } catch {
@@ -88,10 +87,10 @@ export default function ConsentBanner() {
           </span>
         </p>
         <div className="consent-actions">
-          <button onClick={() => grant("denied")} className="consent-deny">
+          <button type="button" onClick={() => grant("denied")} className="consent-deny">
             Nur notwendig
           </button>
-          <button onClick={() => grant("accepted")} className="consent-accept">
+          <button type="button" onClick={() => grant("accepted")} className="consent-accept">
             Alle akzeptieren
           </button>
         </div>

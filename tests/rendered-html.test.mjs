@@ -411,6 +411,8 @@ test("consent is global, reversible and does not include tracking SDKs", async (
 
   assert.match(layout, /<ConsentBanner \/>/);
   assert.match(banner, /localStorage\.setItem\(KEY, value\)/);
+  assert.match(banner, /setChoice\(value\)/);
+  assert.equal((banner.match(/type="button"/g) ?? []).length, 2);
   assert.match(footer, /ConsentSettingsButton/);
   assert.doesNotMatch(appSources, /gtag\(|google-analytics|analytics\.js|document\.cookie/i);
 });
