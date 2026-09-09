@@ -315,7 +315,13 @@ test("practice guidance is tool-specific and calculator sections share one width
   assert.doesNotMatch(ruleOfThree, /Wortzahl und Zeichenlänge/i);
   for (const selector of ["tool-surface", "calculation-guide", "tool-editorial", "faq-section"]) {
     assert.match(css, new RegExp(`\\.${selector}[^}]*max-width:\\s*920px`));
+    assert.match(css, new RegExp(`\\.${selector}[^}]*margin(?:-inline)?:[^;}]*auto`));
   }
+  for (const selector of ["guide-body", "guide-related", "guide-rechner-cta", "related"]) {
+    assert.match(css, new RegExp(`\\.${selector}[^}]*margin(?:-inline)?:[^;}]*auto`));
+  }
+  assert.match(css, /\.guide-grid\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/);
+  assert.match(css, /\.category-tool-list\s*\{[^}]*min-width:\s*0[^}]*max-width:\s*100%/);
   assert.match(css, /\.calculation-guide[^}]*background:\s*#f8fafb/);
 });
 
