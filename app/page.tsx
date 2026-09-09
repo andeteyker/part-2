@@ -24,7 +24,7 @@ export default function Home() {
         url: absoluteUrl("/"),
         inLanguage: "de-DE",
         publisher: { "@id": `${absoluteUrl("/")}#organization` },
-        description: "55 kostenlose Online-Rechner für Gehalt, Steuern, Immobilien, Energie, Gesundheit und Alltag – verständlich erklärt und ohne Anmeldung.",
+        description: "62 kostenlose Online-Rechner und Werkzeuge für Gehalt, Steuern, Immobilien, Energie, Bilder und Alltag – verständlich erklärt und ohne Anmeldung.",
       },
       {
         "@type": "WebPage",
@@ -33,7 +33,7 @@ export default function Home() {
         url: absoluteUrl("/"),
         isPartOf: { "@id": `${absoluteUrl("/")}#website` },
         about: { "@id": `${absoluteUrl("/")}#organization` },
-        description: "55 kostenlose Online-Rechner für Gehalt, Steuern, Immobilien, Energie, Gesundheit und Alltag – sofort nutzbar, verständlich erklärt, ohne Anmeldung.",
+        description: "62 kostenlose Online-Rechner und Werkzeuge für Gehalt, Steuern, Immobilien, Energie, Bilder und Alltag – sofort nutzbar, verständlich erklärt, ohne Anmeldung.",
       },
     ],
   };

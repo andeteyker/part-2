@@ -1,6 +1,9 @@
 export type ToolSource = { label: string; publisher: string; href: string };
 
 const sources: Record<string, ToolSource[]> = {
+  "passfoto-zuschneiden": [
+    { label: "Digitale Lichtbilder für Ausweisdokumente seit Mai 2025", publisher: "Personalausweisportal des Bundes", href: "https://www.personalausweisportal.de/SharedDocs/kurzmeldungen/Webs/PA/DE/2025/neue-passbilder.html" },
+  ],
   "einkommensteuer-rechner": [
     { label: "§ 32a EStG – Einkommensteuertarif", publisher: "Bundesministerium der Justiz", href: "https://www.gesetze-im-internet.de/estg/__32a.html" },
   ],

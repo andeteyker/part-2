@@ -6,6 +6,7 @@ import QRCode from "qrcode";
 import { Field, Result, SelectField, fmt, money, number } from "./ToolUI";
 import { useUrlState } from "../hooks/useUrlState";
 import { GrowthToolRunner } from "./GrowthToolRunner";
+import { ImageToolRunner, imageToolSlugs } from "./ImageToolRunner";
 
 function Percentage() {
   const [base, setBase] = useUrlState("grundwert", "250"); const [rate, setRate] = useUrlState("prozentsatz", "19");
@@ -47,25 +48,6 @@ function TextStats({ mode }: { mode: "chars" | "words" }) {
   const [text, setText] = useState("Hier kannst du deinen Text einfügen und direkt auswerten.");
   const words = text.trim() ? text.trim().split(/\s+/).length : 0; const chars = text.length; const noSpace = text.replace(/\s/g, "").length; const sentences = text.trim() ? text.split(/[.!?]+/).filter(Boolean).length : 0; const lines = text ? text.split(/\n/).length : 0; const paragraphs = text.trim() ? text.split(/\n\s*\n/).filter(Boolean).length : 0;
   return <><label className="field"><span>Dein Text</span><textarea value={text} onChange={(e) => setText(e.target.value)} rows={9} /></label><div className="stats-grid">{(mode === "chars" ? [["Zeichen", chars], ["Ohne Leerzeichen", noSpace], ["Wörter", words], ["Zeilen", lines]] : [["Wörter", words], ["Sätze", sentences], ["Absätze", paragraphs], ["Lesezeit", `${Math.max(1, Math.ceil(words / 200))} Min.`]]).map(([label, value]) => <div key={label}><strong>{value}</strong><span>{label}</span></div>)}</div><p className="privacy-note">Dein Text bleibt vollständig auf diesem Gerät.</p></>;
-}
-
-async function imageToJpeg(file: File, quality = 0.9) {
-  let source: Blob = file;
-  if (/hei[cf]/i.test(file.type) || /\.hei[cf]$/i.test(file.name)) {
-    const heic2any = (await import("heic2any")).default;
-    const converted = await heic2any({ blob: file, toType: "image/jpeg", quality });
-    source = Array.isArray(converted) ? converted[0] : converted;
-  }
-  const url = URL.createObjectURL(source); const image = new Image(); image.src = url; await image.decode();
-  const canvas = document.createElement("canvas"); canvas.width = image.naturalWidth; canvas.height = image.naturalHeight; const ctx = canvas.getContext("2d")!; ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.drawImage(image, 0, 0); URL.revokeObjectURL(url);
-  return await new Promise<Blob>((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error("Konvertierung fehlgeschlagen")), "image/jpeg", quality));
-}
-
-function ImageTool({ kind }: { kind: "heic" | "webp" | "compress" }) {
-  const [file, setFile] = useState<File | null>(null); const [quality, setQuality] = useState(82); const [result, setResult] = useState<{ url: string; size: number } | null>(null); const [error, setError] = useState("");
-  const run = async () => { if (!file) return; setError(""); try { const blob = await imageToJpeg(file, quality / 100); if (result) URL.revokeObjectURL(result.url); setResult({ url: URL.createObjectURL(blob), size: blob.size }); } catch { setError("Diese Datei konnte im Browser nicht verarbeitet werden. Bitte versuche eine andere Datei."); } };
-  const accept = kind === "heic" ? ".heic,.heif,image/heic,image/heif" : kind === "webp" ? "image/webp" : "image/jpeg,image/png,image/webp";
-  return <><label className="upload-zone"><input type="file" accept={accept} onChange={(e) => { setFile(e.target.files?.[0] || null); setResult(null); }} /><span className="upload-icon">＋</span><strong>{file ? file.name : "Bild auswählen oder hier ablegen"}</strong><small>{kind === "heic" ? "HEIC oder HEIF" : kind === "webp" ? "WebP" : "JPG, PNG oder WebP"} · Verarbeitung nur im Browser</small></label>{file && <><label className="range-field"><span>JPG-Qualität <b>{quality} %</b></span><input type="range" min="20" max="100" value={quality} onChange={(e) => setQuality(Number(e.target.value))} /></label><button className="primary-button" onClick={run}>{kind === "compress" ? "Bild komprimieren" : "In JPG umwandeln"}</button></>}{error && <p className="error-note">{error}</p>}{result && <div className="download-result"><div><strong>Fertig</strong><span>{fmt(result.size / 1024, 0)} KB{file ? ` · vorher ${fmt(file.size / 1024, 0)} KB` : ""}</span></div><a href={result.url} download={`${file?.name.replace(/\.[^.]+$/, "") || "bild"}.jpg`}>JPG herunterladen ↓</a></div>}</>;
 }
 
 function QrTool() {
@@ -136,7 +118,8 @@ function PasswordTool() {
 
 export function ToolRunner({ slug }: { slug: string }) {
   const content: Record<string, React.ReactNode> = {
-    prozentrechner: <Percentage />, dreisatzrechner: <RuleOfThree />, "woerter-aus-buchstaben": <WordFinder />, "wordle-hilfe": <Wordle />, "zeichen-zaehlen": <TextStats mode="chars" />, "woerter-zaehlen": <TextStats mode="words" />, "heic-zu-jpg": <ImageTool kind="heic" />, "webp-zu-jpg": <ImageTool kind="webp" />, "bild-komprimieren": <ImageTool kind="compress" />, "qr-code-erstellen": <QrTool />, "meine-ip": <IpTool />, "ping-test": <PingTool />, altersrechner: <AgeTool />, "zeitdauer-berechnen": <DurationTool />, mehrwertsteuerrechner: <VatTool />, stundenlohnrechner: <HourlyTool />, spritkostenrechner: <FuelTool />, kalenderwoche: <WeekTool />, zufallsgenerator: <RandomTool />, passwortgenerator: <PasswordTool />,
+    prozentrechner: <Percentage />, dreisatzrechner: <RuleOfThree />, "woerter-aus-buchstaben": <WordFinder />, "wordle-hilfe": <Wordle />, "zeichen-zaehlen": <TextStats mode="chars" />, "woerter-zaehlen": <TextStats mode="words" />, "qr-code-erstellen": <QrTool />, "meine-ip": <IpTool />, "ping-test": <PingTool />, altersrechner: <AgeTool />, "zeitdauer-berechnen": <DurationTool />, mehrwertsteuerrechner: <VatTool />, stundenlohnrechner: <HourlyTool />, spritkostenrechner: <FuelTool />, kalenderwoche: <WeekTool />, zufallsgenerator: <RandomTool />, passwortgenerator: <PasswordTool />,
   };
+  if (imageToolSlugs.includes(slug)) return <div className="tool-surface"><ImageToolRunner slug={slug} /></div>;
   return content[slug] ? <div className="tool-surface">{content[slug]}</div> : <GrowthToolRunner slug={slug} />;
 }

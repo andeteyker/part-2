@@ -40,7 +40,7 @@ test("renders one consistent production canonical and no preview marker", async 
   const html = await response.text();
   assert.match(html, /<html[^>]+lang=["']de["']/i);
   assert.match(html, /<title>Kostenlose Online-Rechner für Alltag &amp; Finanzen \| SofortTools<\/title>/i);
-  assert.match(html, /55 kostenlose Online-Rechner für Gehalt, Steuern, Immobilien, Energie, Gesundheit und Alltag/i);
+  assert.match(html, /62 kostenlose Online-Rechner und Werkzeuge für Gehalt, Steuern, Immobilien, Energie, Bilder und Alltag/i);
   assert.match(html, /rel=["']icon["'][^>]+href=["'][^"']*icon-48\.png/i);
   assert.match(html, /rel=["']shortcut icon["'][^>]+href=["'][^"']*favicon\.ico/i);
   assert.match(html, /Organization/i);
@@ -70,15 +70,15 @@ test("brand and category artwork replace starter icons, abbreviations and emoji"
   assert.match(category, /<svg[^>]+viewBox="0 0 48 48"/i);
   assert.match(guideIndex, /<svg[^>]+viewBox="0 0 48 48"/i);
   const toolIconSlugs = [...home.matchAll(/data-tool-icon="([^"]+)"/g)].map((match) => match[1]);
-  assert.equal(toolIconSlugs.length, 55);
-  assert.equal(new Set(toolIconSlugs).size, 55);
+  assert.equal(toolIconSlugs.length, 62);
+  assert.equal(new Set(toolIconSlugs).size, 62);
   assert.match(home, /data-tool-icon="prozentrechner"/);
   assert.match(home, /data-tool-icon="mehrwertsteuerrechner"/);
   assert.match(home, /data-tool-icon="stundenlohnrechner"/);
   assert.match(home, /data-tool-icon="spritkostenrechner"/);
   assert.doesNotMatch(`${home}\n${category}\n${guideIndex}\n${localTool}`, /🎂|⏱|⛽|🏠|🌙|🔒/u);
   assert.doesNotMatch(`${homeSource}\n${categorySource}\n${toolPageSource}`, /\{(?:tool|item|category|group\.details)\.icon\}/);
-  assert.match(home, /SofortTools bietet 55 kostenlose Online-Rechner/i);
+  assert.match(home, /SofortTools bietet[\s\S]{0,40}62[\s\S]{0,40}kostenlose Online-Rechner und Werkzeuge/i);
 });
 
 test("category tools stay in one horizontally scrollable row", async () => {
@@ -97,6 +97,36 @@ test("category tools stay in one horizontally scrollable row", async () => {
   assert.match(css, /grid-auto-flow:\s*column/);
   assert.match(css, /overflow-x:\s*auto/);
   assert.match(css, /scroll-snap-type:\s*inline mandatory/);
+});
+
+test("image category contains ten useful tools with real drag and drop", async () => {
+  const worker = await createWorker();
+  const slugs = [
+    "bildformat-konverter", "hintergrund-entfernen", "bildgroesse-aendern",
+    "bild-zuschneiden-drehen", "bild-dateigroesse-komprimieren",
+    "bild-metadaten-entfernen", "passfoto-zuschneiden", "bilder-zu-pdf",
+    "bildfarben-korrigieren", "favicon-erstellen",
+  ];
+  const [categoryResponse, runnerSource] = await Promise.all([
+    fetchFromWorker(worker, "/nischen/iphone-bilder"),
+    readFile(new URL("../app/components/ImageToolRunner.tsx", import.meta.url), "utf8"),
+  ]);
+  const category = await categoryResponse.text();
+
+  assert.equal(categoryResponse.status, 200);
+  assert.match(category, /Bilder &amp; Dateien/);
+  assert.equal((category.match(/data-tool-icon=/g) ?? []).length, 10);
+  for (const slug of slugs) {
+    const response = await fetchFromWorker(worker, `/tools/${slug}`);
+    assert.equal(response.status, 200, slug);
+    assert.match(await response.text(), /Bild hier ablegen oder auswählen/, slug);
+  }
+  assert.match(runnerSource, /onDragEnter=/);
+  assert.match(runnerSource, /onDragOver=/);
+  assert.match(runnerSource, /onDrop=/);
+  assert.match(runnerSource, /event\.dataTransfer\.files/);
+  assert.match(runnerSource, /multiple=\{multiple\}/);
+  assert.doesNotMatch(category, /HEIC in JPG|WebP in JPG|Bild komprimieren/);
 });
 
 test("tool pages expose canonical, FAQ schema and unique help content", async () => {
@@ -125,7 +155,7 @@ test("robots and sitemap point only to the preferred www domain", async () => {
   assert.match(sitemapText, /https:\/\/www\.sofort-tools\.de\/tools\/mietrendite-rechner/i);
   assert.doesNotMatch(`${robotsText}\n${sitemapText}`, /mielerik\.chatgpt\.site/i);
   assert.match(sitemapText, /https:\/\/www\.sofort-tools\.de\/ueber-uns/i);
-  assert.equal((sitemapText.match(/<url>/g) ?? []).length, 104);
+  assert.equal((sitemapText.match(/<url>/g) ?? []).length, 111);
 });
 
 test("every published tool has dedicated SEO guidance", async () => {
@@ -147,7 +177,7 @@ test("every published tool has dedicated SEO guidance", async () => {
   const optimizedSlugs = new Set([...seoSource.matchAll(/^  "([^"]+)": \{/gm)].map((match) => match[1]));
   const growthSeoSlugs = new Set([...growthIndex.matchAll(/import \{ \w+ \} from "\.\/(.+)";/g)].map((match) => match[1]));
 
-  assert.equal(publishedSlugs.length, 55);
+  assert.equal(publishedSlugs.length, 62);
   assert.deepEqual(publishedSlugs.filter((slug) => !optimizedSlugs.has(slug) && !growthSeoSlugs.has(slug)), []);
 });
 
@@ -169,7 +199,7 @@ test("every tool page adds human guidance and only topic-specific questions", as
     .map((match) => match[1]);
   const uniqueSlugs = [...new Set(slugs)];
 
-  assert.equal(uniqueSlugs.length, 55);
+  assert.equal(uniqueSlugs.length, 62);
   for (const slug of uniqueSlugs) {
     const response = await fetchFromWorker(worker, `/tools/${slug}`);
     const html = await response.text();
@@ -278,13 +308,14 @@ test("imprint identifies the operator with a complete service address", async ()
 });
 
 test("all calculator families use reusable URL state while upload tools stay local", async () => {
-  const [hook, core, property, shift, handwerker, growth] = await Promise.all([
+  const [hook, core, property, shift, handwerker, growth, images] = await Promise.all([
     readFile(new URL("../app/hooks/useUrlState.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/components/ToolRunner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/components/PropertyToolRunner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/components/ShiftToolRunner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/components/HandwerkerToolRunner.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/components/GrowthToolRunner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/ImageToolRunner.tsx", import.meta.url), "utf8"),
   ]);
 
   assert.match(hook, /history\.replaceState/);
@@ -293,7 +324,9 @@ test("all calculator families use reusable URL state while upload tools stay loc
   assert.match(shift, /useUrlState\("nachtstunden"/);
   assert.match(handwerker, /useUrlState\("dachflaeche"/);
   assert.match(growth, /useUrlState\(field\.key, field\.defaultValue\)/);
-  assert.match(core, /const \[file, setFile\] = useState<File \| null>/);
+  assert.match(images, /type="file"/);
+  assert.match(images, /event\.dataTransfer\.files/);
+  assert.doesNotMatch(images, /useUrlState/);
 });
 
 test("content plan renders 30 focused guides with examples and calculator links", async () => {

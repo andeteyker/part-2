@@ -33,7 +33,7 @@ export function HomeClient() {
         <div className="hero-copy">
           <p className="eyebrow"><span /> Kostenlos · Ohne Anmeldung · Direkt im Browser</p>
           <h1>Kostenlose Online-Rechner.<br /><em>Sofort ein klares Ergebnis.</em></h1>
-          <p className="hero-text">SofortTools bietet 55 kostenlose Online-Rechner für Gehalt, Steuern, Immobilien, Energie, Gesundheit und Alltag – sofort nutzbar, verständlich erklärt und ohne Anmeldung.</p>
+          <p className="hero-text">SofortTools bietet {tools.length} kostenlose Online-Rechner und Werkzeuge für Gehalt, Steuern, Immobilien, Energie, Bilder und Alltag – sofort nutzbar, verständlich erklärt und ohne Anmeldung.</p>
           <label className="tool-search">
             <span aria-hidden="true">⌕</span>
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Welches Tool brauchst du?" aria-label="Tools durchsuchen" />

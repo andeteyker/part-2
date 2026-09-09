@@ -180,15 +180,6 @@ const recommendations: Record<string, Recommendation> = {
     url: digistoreLink("<PRODUCT_ID>"), // TODO: echte Digistore24-Produkt-ID eintragen.
   },
 
-  // ---- Medien / Bilder ----
-  "heic-zu-jpg": {
-    tag: "Anzeige",
-    headline: "Professionelle Bildkonvertierung",
-    network: "Digistore24",
-    product: "Bildbearbeitungs-Software",
-    text: "Für große Bildmengen oder zusätzliche Formate lohnt sich ein leistungsfähiges Konvertierungs-Tool.",
-    url: digistoreLink("<PRODUCT_ID>"), // TODO: echte Digistore24-Produkt-ID eintragen.
-  },
 };
 
 /** Fallback-Empfehlungen nach ToolRunner-Gruppe. */

@@ -20,8 +20,8 @@ export function CategoryIcon({ category, className }: CategoryIconProps) {
       return <IconFrame className={className}><path d="M13 8h16l8 8v24H13V8Zm14 3v8h8l-8-8ZM18 24h14v3H18v-3Zm0 7h11v3H18v-3Z" /><path d="m32 33 7 7-2 2-7-7 2-2Z" /></IconFrame>;
     case "Wortspiele & Rätsel":
       return <IconFrame className={className}><rect x="9" y="9" width="13" height="13" rx="3" /><rect x="26" y="9" width="13" height="13" rx="3" /><rect x="9" y="26" width="13" height="13" rx="3" /><path d="M31 27h4v4h4v4h-4v4h-4v-4h-4v-4h4v-4Z" /></IconFrame>;
-    case "iPhone & Bilder":
-      return <IconFrame className={className}><rect x="12" y="6" width="24" height="36" rx="5" /><rect x="16" y="12" width="16" height="21" rx="2" fill="white" opacity=".9" /><circle cx="24" cy="37" r="2" fill="white" /><path d="m17 29 5-6 4 4 3-4 3 6H17Z" /></IconFrame>;
+    case "Bilder & Dateien":
+      return <IconFrame className={className}><rect x="7" y="9" width="34" height="30" rx="5" /><circle cx="17" cy="18" r="4" fill="white" /><path d="m10 34 9-10 6 6 5-6 8 10H10Z" fill="white" /><path d="M32 7v8M28 11h8" /></IconFrame>;
     case "Internet & Sicherheit":
       return <IconFrame className={className}><path d="M24 5 39 11v10c0 10-6 17-15 22C15 38 9 31 9 21V11l15-6Zm-2 12v4h-4v6h4v4h5v-4h4v-6h-4v-4h-5Z" /></IconFrame>;
     case "Zeit & Planung":

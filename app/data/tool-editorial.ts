@@ -29,10 +29,10 @@ const categoryContext: Record<string, PracticeContext> = {
     rules: "Welche Wörter erlaubt sind, bestimmt das jeweilige Spiel und seine Wörterbuchausgabe. Ein technisch passender Treffer muss deshalb nicht in jeder Spielrunde zulässig sein.",
     practical: "Vergleiche den Treffer mit deinen bereits bestätigten Buchstaben und dem konkreten Regelwerk. Seltene Wörter solltest du vor dem Eintragen kurz nachschlagen.",
   },
-  "iPhone & Bilder": {
-    background: "Bildformate wurden für unterschiedliche Zwecke entwickelt: HEIC und WebP sparen Speicher, JPG ist dafür besonders weit verbreitet. Beim Umwandeln entsteht stets eine neue Arbeitskopie.",
-    rules: "Urheber- und Persönlichkeitsrechte gelten unabhängig vom Dateiformat. Außerdem kann JPG keine Transparenz speichern und verlustbehaftete Kompression entfernt dauerhaft Bildinformationen.",
-    practical: "Bewahre das Original auf und prüfe die erzeugte Datei bei voller Ansicht. Für wichtige Fotos ist eine kleinere Datei nur dann besser, wenn die sichtbare Qualität ausreicht.",
+  "Bilder & Dateien": {
+    background: "Digitale Bilder bestehen aus Pixeln, werden aber je nach Zweck unterschiedlich gespeichert. Format, Auflösung, Kompression und Metadaten beeinflussen Kompatibilität, Qualität und Dateigröße getrennt voneinander.",
+    rules: "Urheber- und Persönlichkeitsrechte gelten auch nach einer Bearbeitung. Verlustbehaftete Formate entfernen Bildinformationen dauerhaft; Transparenz und Zusatzdaten werden nicht von jedem Format unterstützt.",
+    practical: "Bewahre das Original auf und arbeite mit einer Kopie. Prüfe das fertige Bild in voller Größe und im Zielprogramm, bevor du das Original löschst oder die Datei veröffentlichst.",
   },
   "Internet & Sicherheit": {
     background: "IP-Adressen, Latenz und Passwörter sind Grundbausteine des Internets. Die angezeigten Werte beschreiben immer den aktuellen Anschluss, Browser oder gewählten Testzeitpunkt.",
@@ -117,20 +117,55 @@ const toolContext: Record<string, PracticeContext> = {
     rules: "Zusammensetzungen, Bindestriche und Sonderzeichen werden von Programmen unterschiedlich gezählt. Bei formalen Vorgaben zählt die Methode der abnehmenden Stelle.",
     practical: "Nutze Wortzahl, Satzanzahl und Absätze gemeinsam. Viele Wörter bei wenigen Absätzen sind oft ein Hinweis auf schwer lesbare Textblöcke.",
   },
-  "heic-zu-jpg": {
-    background: "HEIC speichert iPhone-Fotos meist effizienter als JPG. Die Umwandlung erhöht die Kompatibilität, kann aber eine größere Datei erzeugen.",
-    rules: "JPG unterstützt weder Transparenz noch alle Zusatzinformationen eines HEIC-Containers. Das Original sollte deshalb erhalten bleiben.",
-    practical: "Öffne das JPG nach dem Download und prüfe Farben, Ausrichtung und Schärfe, bevor du das Original löschst oder die Datei weitergibst.",
+  "bildformat-konverter": {
+    background: "JPG ist für Fotos weit verbreitet, PNG speichert Transparenz und harte Kanten verlustfrei, WebP verbindet kleine Dateien mit Transparenz. HEIC wird besonders von Apple-Geräten für speichereffiziente Fotos genutzt.",
+    rules: "Ein Formatwechsel verbessert ein bereits komprimiertes Bild nicht. JPG kann keine Transparenz speichern; animierte WebP-Dateien werden in diesem Werkzeug als einzelnes Standbild verarbeitet.",
+    practical: "Wähle JPG für maximale Foto-Kompatibilität, PNG für Transparenz und Grafiken und WebP für kompakte Webbilder. Behalte die Ursprungsdatei als Qualitätsreserve.",
   },
-  "webp-zu-jpg": {
-    background: "WebP wurde für kompakte Webgrafiken entwickelt, während JPG von älteren Programmen und Uploadportalen breiter unterstützt wird.",
-    rules: "Transparente Bildbereiche müssen beim Wechsel zu JPG mit einer Hintergrundfarbe gefüllt werden; Animationen können nicht als einzelnes JPG erhalten bleiben.",
-    practical: "Kontrolliere besonders Logos und freigestellte Bilder. Ein weißer Hintergrund kann dort unerwünscht sein.",
+  "hintergrund-entfernen": {
+    background: "Die lokale Freistellung folgt nicht jedem Objekt semantisch, sondern untersucht zusammenhängende Farben vom Bildrand aus. Das schützt gleichfarbige Bereiche innerhalb eines klar umschlossenen Motivs besser als ein globales Löschen.",
+    rules: "Haare, Schatten, durchscheinende Stoffe und unruhige Hintergründe lassen sich durch reine Farbanalyse nur begrenzt trennen. Das Ergebnis sollte an den Motivkanten kontrolliert werden.",
+    practical: "Beginne mit niedriger Empfindlichkeit. Steigere sie schrittweise und nutze die manuelle Farbe, wenn die Bildecken nicht zuverlässig den tatsächlichen Hintergrund zeigen.",
   },
-  "bild-komprimieren": {
-    background: "Verlustbehaftete Kompression entfernt Bildinformationen, die für das Auge weniger auffällig sind. Dadurch sinkt die Dateigröße, aber nicht ohne Qualitätsverlust.",
-    rules: "Mehrfaches Speichern einer bereits komprimierten Datei verschlechtert sie weiter. Arbeite für neue Varianten immer vom Original aus.",
-    practical: "Reduziere zuerst die Abmessungen auf die tatsächlich benötigte Größe und passe danach die Qualität an. Das spart meist mehr als starke Kompression allein.",
+  "bildgroesse-aendern": {
+    background: "Die Pixelmaße legen fest, wie viele Bildpunkte eine Datei enthält. Beim Verkleinern werden Pixel zusammengefasst; beim Vergrößern müssen neue Zwischenwerte geschätzt werden.",
+    rules: "Mehr Pixel bedeuten nicht automatisch mehr sichtbare Qualität. Eine Vergrößerung kann keine Details erzeugen, die im Original fehlen, und ein entsperrtes Seitenverhältnis verzerrt das Motiv.",
+    practical: "Passe das Bild an die tatsächlich benötigte Anzeigegröße an. Für scharfe Darstellung auf hochauflösenden Displays kann etwa die doppelte CSS-Anzeigebreite sinnvoll sein.",
+  },
+  "bild-zuschneiden-drehen": {
+    background: "Zuschneiden verändert die Bildaussage, weil störende Ränder verschwinden und das Hauptmotiv anders gewichtet wird. Das Seitenverhältnis richtet sich am späteren Einsatz aus.",
+    rules: "Abgeschnittene Pixel sind in der erzeugten Datei nicht mehr vorhanden. Häufiges Drehen in 90-Grad-Schritten ist unkritisch, während anschließendes starkes Hochskalieren die Schärfe reduziert.",
+    practical: "Lass wichtigen Motiven etwas Rand und prüfe vor allem Gesichter, Text und Logos. Für mehrere Ausgaben solltest du jeden neuen Ausschnitt wieder aus dem Original erstellen.",
+  },
+  "bild-dateigroesse-komprimieren": {
+    background: "Die Dateigröße hängt nicht nur von den Pixelmaßen ab. Detailreiche Fotos, Bildrauschen und feine Strukturen benötigen bei gleicher Auflösung oft mehr Speicher als ruhige Flächen.",
+    rules: "Verlustbehaftete Kompression entfernt Details. Mehrfaches Komprimieren verschlechtert das Bild stärker als eine einzelne Ausgabe direkt aus dem Original.",
+    practical: "Nutze die echte Grenze des Zielportals und wähle WebP nur, wenn es dort akzeptiert wird. Prüfe feine Schrift, Gesichter und harte Kanten nach dem Download bei 100 Prozent Ansicht.",
+  },
+  "bild-metadaten-entfernen": {
+    background: "EXIF-Daten unterstützen Sortierung und Fotografie, können aber auch GPS-Koordinaten, Aufnahmezeit, Kameramodell und technische Einstellungen enthalten.",
+    rules: "Neu kodierte Bildpixel entfernen übliche eingebettete Metadaten, verändern aber nicht Informationen, die sichtbar im Motiv stehen. Plattformen können beim Hochladen außerdem eigene Daten ergänzen.",
+    practical: "Teile bei privaten Wohn-, Kinder- oder Reisedaten nur die bereinigte Kopie. Bewahre das Original separat, wenn Aufnahmezeit und Kameraeinstellungen später noch wichtig sind.",
+  },
+  "passfoto-zuschneiden": {
+    background: "Das deutsche Passbildformat beträgt 35 × 45 Millimeter. Für amtliche Dokumente zählt jedoch nicht nur die Größe, sondern auch die aktuelle Art der digitalen Übermittlung und die biometrische Eignung.",
+    rules: "Dieses Tool prüft weder Gesichtshöhe, Blickrichtung noch behördliche Annahmefähigkeit. Seit Mai 2025 gelten in Deutschland besondere Regeln für digital übermittelte Passbilder bei Ausweisdokumenten.",
+    practical: "Nutze den Zuschnitt für eine Voransicht oder andere Dokumente. Für Personalausweis und Reisepass sollte das Foto über einen zugelassenen Dienst oder direkt bei der Behörde erstellt werden.",
+  },
+  "bilder-zu-pdf": {
+    background: "Eine PDF bündelt mehrere Bilder in einer festen Seitenreihenfolge. Dadurch lassen sich fotografierte Unterlagen einfacher versenden, drucken und gemeinsam archivieren.",
+    rules: "Das Tool führt Bilder zusammen, führt aber keine Texterkennung durch. Der Text bleibt Bildinhalt und ist im PDF nicht automatisch durchsuchbar oder barrierefrei.",
+    practical: "Drehe jede Seite vorher richtig, ordne Vorder- und Rückseiten und kontrolliere die Reihenfolge. Für amtliche Einreichungen solltest du zusätzlich die erlaubte Dateigröße prüfen.",
+  },
+  "bildfarben-korrigieren": {
+    background: "Helligkeit verschiebt alle Tonwerte, Kontrast vergrößert ihre Abstände, Sättigung verändert die Farbintensität und Temperatur korrigiert einen blauen oder gelben Farbstich.",
+    rules: "Stark aufgehellte Schatten zeigen häufig Rauschen. Zu hoher Kontrast kann helle und dunkle Bilddetails abschneiden; übermäßige Sättigung erzeugt unnatürliche Haut- und Produktfarben.",
+    practical: "Korrigiere in kleinen Schritten: zuerst Helligkeit, dann Kontrast, danach Farbe. Vergleiche das Ergebnis mit dem Original und beurteile besonders neutrale Flächen und Hauttöne.",
+  },
+  "favicon-erstellen": {
+    background: "Favicons helfen, eine Website in Browser-Tabs, Lesezeichen und auf Startbildschirmen wiederzuerkennen. Sehr kleine Größen benötigen wesentlich einfachere Formen als ein normales Logo.",
+    rules: "Browser verwenden unterschiedliche Dateien und können alte Favicons lange zwischenspeichern. Die erzeugten Symbole müssen anschließend korrekt im HTML beziehungsweise Web-App-Manifest verknüpft werden.",
+    practical: "Teste vor allem die 16- und 32-Pixel-Version. Entferne kleine Schrift und feine Details, wenn das Symbol im Browser-Tab nicht eindeutig erkennbar bleibt.",
   },
   "qr-code-erstellen": {
     background: "Ein statischer QR-Code speichert den Inhalt direkt im Muster. Er benötigt nach der Erstellung keinen SofortTools-Dienst, das Ziel eines Links kann aber später verschwinden.",

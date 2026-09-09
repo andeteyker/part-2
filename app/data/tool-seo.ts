@@ -68,21 +68,65 @@ const toolSeo: Record<string, ToolSeoContent> = {
     example: "Aus A, E, R und T können je nach Wortliste unter anderem passende Kombinationen mit diesen Buchstaben gefunden werden.",
     relatedSlugs: ["wordle-hilfe", "woerter-zaehlen", "zeichen-zaehlen"],
   },
-  "heic-zu-jpg": {
-    steps: [
-      { title: "HEIC-Datei auswählen", text: "Wähle ein HEIC- oder HEIF-Foto von deinem Gerät aus. Die Verarbeitung findet direkt im Browser statt." },
-      { title: "In JPG konvertieren", text: "Das Bild wird lokal in ein kompatibles JPG umgewandelt, ohne dass die Datei auf einen externen Server hochgeladen werden muss." },
-      { title: "JPG speichern", text: "Lade die erzeugte JPG-Datei herunter und verwende sie in Programmen, Upload-Portalen oder E-Mails." },
-    ],
-    relatedSlugs: ["webp-zu-jpg", "bild-komprimieren"],
+  "bildformat-konverter": {
+    steps: [{ title: "Bild ablegen", text: "Ziehe ein JPG-, PNG-, WebP-, HEIC- oder HEIF-Bild in die Ablagefläche oder wähle es auf deinem Gerät aus." }, { title: "Zielformat festlegen", text: "Wähle JPG, PNG oder WebP. Nur bei verlustbehafteten Formaten stellst du zusätzlich die gewünschte Bildqualität ein." }, { title: "Arbeitskopie herunterladen", text: "Der Browser zeichnet die Pixel in das neue Format und stellt die fertige Datei direkt zum Download bereit." }],
+    formula: "Ausgabedatei = dekodierte Bildpixel + Eigenschaften des gewählten Dateiformats",
+    example: "Ein transparentes PNG bleibt als PNG oder WebP transparent. Bei JPG werden transparente Flächen weiß gefüllt.",
+    relatedSlugs: ["bild-dateigroesse-komprimieren", "bildgroesse-aendern", "bild-metadaten-entfernen"],
   },
-  "bild-komprimieren": {
-    steps: [
-      { title: "Bild auswählen", text: "Öffne ein JPG-, PNG- oder WebP-Bild direkt im Browser." },
-      { title: "Qualität einstellen", text: "Passe den Qualitätsregler an und vergleiche die resultierende Dateigröße mit dem Original." },
-      { title: "Kompakte Datei speichern", text: "Speichere die verkleinerte Version für Websites, E-Mails oder Upload-Portale." },
-    ],
-    relatedSlugs: ["heic-zu-jpg", "webp-zu-jpg"],
+  "hintergrund-entfernen": {
+    steps: [{ title: "Motiv mit erkennbarem Hintergrund wählen", text: "Die besten Ergebnisse entstehen bei einem scharfen Motiv vor einer ruhigen Farbe, die den äußeren Bildrand erreicht." }, { title: "Hintergrundfarbe bestimmen", text: "Im Automatikmodus werden die vier Bildecken ausgewertet. Alternativ kannst du die Hintergrundfarbe selbst festlegen." }, { title: "Empfindlichkeit kontrollieren", text: "Zusammenhängende Randpixel mit ähnlicher Farbe werden transparent. Ein niedriger Wert schützt feine Motivkanten." }],
+    formula: "Transparenz = zusammenhängende Randfläche innerhalb der gewählten Farbtoleranz",
+    example: "Bei einem Produkt vor einer weißen Wand erkennt das Tool Weiß an den Ecken und entfernt nur die verbundene helle Fläche vom Rand aus.",
+    relatedSlugs: ["bild-zuschneiden-drehen", "bildformat-konverter", "favicon-erstellen"],
+  },
+  "bildgroesse-aendern": {
+    steps: [{ title: "Originalgröße einlesen", text: "Nach der Auswahl werden Breite, Höhe und das ursprüngliche Seitenverhältnis übernommen." }, { title: "Zielmaße eingeben", text: "Ändere Breite oder Höhe. Bei gesperrtem Seitenverhältnis wird die jeweils andere Größe automatisch passend berechnet." }, { title: "Bild neu berechnen", text: "Der Browser skaliert die Pixel mit hochwertiger Glättung und speichert das Ergebnis als PNG." }],
+    formula: "Neue Höhe = neue Breite ÷ ursprüngliches Seitenverhältnis",
+    example: "Ein Bild mit 2400 × 1600 Pixeln hat das Verhältnis 1,5. Bei 1200 Pixeln Breite ergibt sich eine Höhe von 800 Pixeln.",
+    relatedSlugs: ["bild-zuschneiden-drehen", "bild-dateigroesse-komprimieren", "passfoto-zuschneiden"],
+  },
+  "bild-zuschneiden-drehen": {
+    steps: [{ title: "Seitenverhältnis wählen", text: "Nutze das gesamte Bild oder einen mittigen Ausschnitt in 1:1, 4:3, 16:9 oder 9:16." }, { title: "Ausschnitt verfeinern", text: "Mit den Prozentreglern bestimmst du Beginn, Breite und Höhe des verwendeten Bildbereichs." }, { title: "Ausrichtung korrigieren", text: "Drehe das Ergebnis in 90-Grad-Schritten oder spiegele es horizontal, bevor du die PNG-Datei speicherst." }],
+    formula: "Ausschnitt in Pixeln = Bildmaß × gewählter Prozentanteil ÷ 100",
+    example: "50 Prozent Breite eines 2000 Pixel breiten Fotos ergeben einen Ausschnitt mit 1000 Pixeln Breite.",
+    relatedSlugs: ["bildgroesse-aendern", "passfoto-zuschneiden", "bildfarben-korrigieren"],
+  },
+  "bild-dateigroesse-komprimieren": {
+    steps: [{ title: "Dateigrenze angeben", text: "Trage die maximale Größe des Uploadportals oder E-Mail-Anhangs in Kilobyte ein." }, { title: "Beste Qualität suchen", text: "Das Tool testet mehrere Qualitätsstufen und behält die hochwertigste Datei unterhalb der Grenze." }, { title: "Nur bei Bedarf skalieren", text: "Ist selbst die niedrigste sinnvolle Qualitätsstufe noch zu groß, wird zusätzlich die Pixelauflösung schrittweise reduziert." }],
+    formula: "Optimale Datei = höchste Qualitätsstufe mit Dateigröße ≤ gewählter KB-Grenze",
+    example: "Für eine Grenze von 500 KB wird zuerst die JPG-Qualität angepasst. Die Auflösung sinkt nur, wenn die Grenze damit nicht erreichbar ist.",
+    relatedSlugs: ["bildgroesse-aendern", "bildformat-konverter", "bilder-zu-pdf"],
+  },
+  "bild-metadaten-entfernen": {
+    steps: [{ title: "Bild lokal öffnen", text: "Das sichtbare Bild wird im Browser dekodiert; der ursprüngliche EXIF-Datenblock wird nicht weiterverwendet." }, { title: "Nur Pixel übernehmen", text: "Der Browser zeichnet Breite, Höhe und sichtbare Pixel auf eine neue, leere Bildfläche." }, { title: "Saubere Kopie speichern", text: "Die neue JPG-, PNG- oder WebP-Datei enthält die neu kodierten Pixel, aber keine übernommenen Standort- oder Kameradaten." }],
+    formula: "Saubere Kopie = sichtbare Bildpixel ohne Metadatenblöcke des Originals",
+    example: "GPS-Koordinaten eines Smartphone-Fotos werden nicht in die neu erzeugte Bildkopie geschrieben.",
+    relatedSlugs: ["bildformat-konverter", "bild-dateigroesse-komprimieren", "bilder-zu-pdf"],
+  },
+  "passfoto-zuschneiden": {
+    steps: [{ title: "Porträt auswählen", text: "Verwende ein frontales, scharfes Foto vor einem ruhigen und gleichmäßig ausgeleuchteten Hintergrund." }, { title: "Kopf im Rahmen positionieren", text: "Passe Vergrößerung und Verschiebung an, bis Gesicht und oberer Schulterbereich sinnvoll im Hochformat liegen." }, { title: "Datei im Nennformat erzeugen", text: "Das Ergebnis wird im Verhältnis 35 zu 45 und mit 413 × 531 Pixeln als JPG gespeichert." }],
+    formula: "Pixelmaß bei 300 dpi = Millimeter ÷ 25,4 × 300",
+    example: "35 mm ergeben rund 413 Pixel und 45 mm rund 531 Pixel bei einer vorgesehenen Druckauflösung von 300 dpi.",
+    relatedSlugs: ["bild-zuschneiden-drehen", "bildgroesse-aendern", "bildfarben-korrigieren"],
+  },
+  "bilder-zu-pdf": {
+    steps: [{ title: "Bilder gemeinsam hinzufügen", text: "Ziehe mehrere Bilddateien in die Ablagefläche. Weitere Bilder lassen sich später ergänzen." }, { title: "Seitenreihenfolge festlegen", text: "Verschiebe jede Datei nach oben oder unten und entferne falsche Seiten vor der Erstellung." }, { title: "A4-PDF erzeugen", text: "Jedes Bild wird proportional und ohne Beschnitt auf einer eigenen A4-Seite platziert." }],
+    formula: "Skalierungsfaktor = kleinere Grenze aus verfügbarer Seitenbreite ÷ Bildbreite und Seitenhöhe ÷ Bildhöhe",
+    example: "Ein breites Foto wird so verkleinert, dass es vollständig auf die A4-Seite passt; die übrige Fläche bleibt weiß.",
+    relatedSlugs: ["bild-metadaten-entfernen", "bild-dateigroesse-komprimieren", "bildformat-konverter"],
+  },
+  "bildfarben-korrigieren": {
+    steps: [{ title: "Grundhelligkeit ausgleichen", text: "Korrigiere zuerst ein insgesamt zu dunkles oder zu helles Foto mit dem Helligkeitsregler." }, { title: "Kontrast und Sättigung fein abstimmen", text: "Erhöhe beide Werte nur so weit, dass helle Flächen, Schatten und Hauttöne noch natürliche Abstufungen zeigen." }, { title: "Farbstich korrigieren", text: "Verschiebe die Temperatur bei bläulichem Licht in den warmen und bei gelblichem Licht in den kühlen Bereich." }],
+    formula: "Neue Farbwerte = Helligkeitskorrektur + Kontrastspreizung + Sättigung + Temperaturverschiebung",
+    example: "Ein leicht blaues Innenraumfoto wird mit etwas Wärme und moderater Helligkeit natürlicher, ohne Farben künstlich zu übersteuern.",
+    relatedSlugs: ["bild-zuschneiden-drehen", "bild-dateigroesse-komprimieren", "passfoto-zuschneiden"],
+  },
+  "favicon-erstellen": {
+    steps: [{ title: "Klares Logo auswählen", text: "Nutze möglichst ein quadratisches Motiv mit wenigen Formen und ausreichend Rand." }, { title: "Mitte quadratisch zuschneiden", text: "Nicht quadratische Vorlagen werden ohne Verzerrung mittig auf ein Quadrat beschnitten." }, { title: "Browsergrößen herunterladen", text: "Das Tool erzeugt favicon.ico sowie PNG-Dateien mit 16, 32, 48, 180, 192 und 512 Pixeln." }],
+    formula: "Favicon = mittiger quadratischer Ausschnitt, skaliert auf die jeweilige Zielgröße",
+    example: "Aus einem 1200 × 800 Pixel großen Logo wird zunächst ein mittiger 800 × 800-Ausschnitt und daraus jede benötigte Symbolgröße.",
+    relatedSlugs: ["bild-zuschneiden-drehen", "hintergrund-entfernen", "bildgroesse-aendern"],
   },
   "zeichen-zaehlen": {
     steps: [
@@ -136,14 +180,6 @@ const toolSeo: Record<string, ToolSeoContent> = {
     ],
     example: "Das Muster A..EN findet deutsche Wörter mit A am Anfang und EN am Ende.",
     relatedSlugs: ["woerter-aus-buchstaben", "woerter-zaehlen"],
-  },
-  "webp-zu-jpg": {
-    steps: [
-      { title: "WebP-Datei auswählen", text: "Wähle das WebP-Bild aus, das du für Programme oder Upload-Portale als JPG benötigst." },
-      { title: "Lokal umwandeln", text: "Die Konvertierung läuft direkt auf deinem Gerät; transparente Bereiche werden für JPG weiß hinterlegt." },
-      { title: "JPG herunterladen", text: "Speichere die erzeugte JPG-Datei bei unveränderter Bildbreite und Bildhöhe." },
-    ],
-    relatedSlugs: ["heic-zu-jpg", "bild-komprimieren"],
   },
   "qr-code-erstellen": {
     steps: [
