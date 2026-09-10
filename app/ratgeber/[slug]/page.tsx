@@ -73,6 +73,34 @@ const editorialHeadings: Record<string, string[]> = {
     "Ein typischer Monat als Beispiel",
     "Diese Fehler führen oft zu falschen Ergebnissen",
   ],
+  "Handwerker & Renovierung": [
+    "Was vor dem ersten Angebot geklärt sein sollte",
+    "Welche Mengen und Kostenpositionen wirklich zählen",
+    "So entsteht aus Einzelpreisen ein realistisches Budget",
+    "Ein Beispiel mit Reserve statt Wunschdenken",
+    "Wo Renovierungsbudgets besonders oft kippen",
+  ],
+  "Geld & Beruf": [
+    "Die Bezugsgröße ist wichtiger als die Formel",
+    "Welche Werte du sauber voneinander trennen solltest",
+    "So kommst du zu einem nachvollziehbaren Ergebnis",
+    "Ein kurzes Beispiel aus dem Alltag",
+    "Die häufigsten Rechenfehler",
+  ],
+  "Text & Sprache": [
+    "Was einen guten Text tatsächlich ausmacht",
+    "Welche Kennzahlen beim Überarbeiten helfen",
+    "So verbesserst du einen Text systematisch",
+    "Ein Beispiel für sinnvolle Textanalyse",
+    "Was reine Wort- und Zeichenzahlen nicht leisten können",
+  ],
+  "Schule & Lernen": [
+    "Das Prinzip hinter der Aufgabe",
+    "Welche Angaben zusammengehören",
+    "So löst du die Aufgabe nachvollziehbar",
+    "Ein Beispiel Schritt für Schritt",
+    "Woran typische Fehler zu erkennen sind",
+  ],
   "Energie & Umwelt": [
     "Wo deine Energiekosten tatsächlich entstehen",
     "Welche Verbrauchswerte du kennen solltest",
@@ -80,21 +108,21 @@ const editorialHeadings: Record<string, string[]> = {
     "Ein Rechenbeispiel aus dem Alltag",
     "Was einfache Energievergleiche oft übersehen",
   ],
-  Gesundheit: [
+  "Gesundheit & Fitness": [
     "Was der Wert überhaupt aussagen kann",
     "Welche Angaben das Ergebnis beeinflussen",
     "So ordnest du die Zahl sinnvoll ein",
     "Ein Beispiel zur Orientierung",
     "Warum eine einzelne Kennzahl nie die ganze Geschichte erzählt",
   ],
-  Familie: [
+  "Familie & Leben": [
     "Was du frühzeitig planen kannst – und was nicht",
     "Welche Daten du dafür brauchst",
     "So bekommst du eine realistische Orientierung",
     "Ein Beispiel für die Planung",
     "Wo pauschale Annahmen schnell in die Irre führen",
   ],
-  "Arbeit & Projekte": [
+  "Arbeitgeber & Business": [
     "Die Frage hinter der eigentlichen Rechnung",
     "Welche Angaben du sauber erfassen solltest",
     "So entsteht eine belastbare Kalkulation",
