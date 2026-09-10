@@ -5,6 +5,7 @@ import { CardArrow } from "../components/CardArrow";
 import { SiteFooter } from "../components/SiteFooter";
 import { SiteHeader } from "../components/SiteHeader";
 import { allGuides } from "../data/guides";
+import { getGuideEditorialOverride } from "../data/guide-editorial";
 import { getTool } from "../data/tool-registry";
 
 export const metadata: Metadata = {
@@ -24,8 +25,8 @@ export default function RatgeberPage() {
         <div className="shell">
           <section className="tool-hero">
             <p className="eyebrow"><span /> Ratgeber</p>
-            <h1>Erst verstehen, dann rechnen</h1>
-            <p>Hier geht es nicht nur um Formeln. Die Ratgeber erklären Entscheidungen, typische Fallstricke und sinnvolle Annahmen. Wo eine eigene Rechnung hilfreich ist, findest du den passenden Rechner direkt im Beitrag.</p>
+            <h1>Fragen aus dem Alltag verständlich beantwortet</h1>
+            <p>Die Beiträge starten bei der eigentlichen Frage – nicht beim Rechner. Du bekommst zuerst eine verständliche Einordnung, Beispiele und typische Fallstricke. Nur wenn eine eigene Berechnung wirklich weiterhilft, verlinken wir das passende Werkzeug direkt an der richtigen Stelle.</p>
           </section>
 
           {clusters.map((cluster) => (
@@ -44,6 +45,9 @@ export default function RatgeberPage() {
                   .map((guide) => {
                     const guideTools = (guide.toolSlugs ?? [guide.toolSlug]).map(getTool).filter((tool) => tool !== undefined);
                     const tool = guideTools[0];
+                    const editorial = getGuideEditorialOverride(guide.slug);
+                    const title = editorial?.title ?? guide.title;
+                    const excerpt = editorial?.description ?? guide.excerpt;
 
                     return (
                       <Link href={`/ratgeber/${guide.slug}`} key={guide.slug} className={`guide-card ${guide.kind === "pillar" ? "guide-card-pillar" : ""}`}>
@@ -52,11 +56,11 @@ export default function RatgeberPage() {
                           <CardArrow />
                         </div>
                         <p>{guide.kind === "pillar" ? "Ausführlicher Leitfaden" : "Ratgeber"}</p>
-                        <h3>{guide.title}</h3>
-                        <span>{guide.excerpt}</span>
+                        <h3>{title}</h3>
+                        <span>{excerpt}</span>
                         {guideTools.length > 0 && (
                           <div className="guide-card-tools" aria-label="Im Artikel verlinkte Rechner">
-                            <strong>Im Beitrag hilfreich:</strong>
+                            <strong>Bei Bedarf weiterrechnen:</strong>
                             <span>{guideTools.slice(0, 2).map((item) => item.title).join(" · ")}</span>
                           </div>
                         )}
