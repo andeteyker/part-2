@@ -325,7 +325,15 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .guide-related > h2 { color: var(--navy); font-size: 28px; letter-spacing: -.03em; }
 .guide-grid.compact { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .guide-inline-links { display: grid; justify-items: start; }
-.guide-body { width: 100%; max-width: 800px; margin: 20px auto 60px; }
+.guide-body { width: 100%; max-width: 800px; margin: 20px auto 60px; overflow-wrap: anywhere; }
+.studio button { padding: 11px 16px; border: 1px solid #ccd8b4; border-radius: 8px; background: #f3f8e7; color: #18310d; font: inherit; cursor: pointer; margin: 3px; }
+.studio button:hover { background: #e6f3c5; }
+.studio button:disabled { opacity: .55; cursor: wait; }
+.studio h1 { margin: 20px 0 12px; font-size: 36px; }
+.studio h2 { font-size: 23px; margin: 24px 0 14px; }
+.studio p { line-height: 1.65; margin-block: 12px; }
+.studio label { display: grid; gap: 7px; }
+.studio summary { cursor: pointer; padding: 12px 0; }
 .guide-section { padding: 8px 0 8px; border-bottom: 1px solid var(--line); }
 .guide-section h2 { margin: 30px 0 12px; color: var(--navy); font-size: 27px; letter-spacing: -.03em; }
 .guide-section h3 { margin: 22px 0 8px; color: var(--navy); font-size: 19px; }

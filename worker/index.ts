@@ -40,7 +40,13 @@ const worker = {
       }, allowedWidths);
     }
 
-    return handler.fetch(request, env, ctx);
+    const response = await handler.fetch(request, env, ctx);
+    if (url.pathname === "/studio" || url.pathname.startsWith("/api/studio") || url.pathname === "/seiten" || url.pathname.startsWith("/seiten/")) {
+      const uncached = new Response(response.body, response);
+      uncached.headers.set("Cache-Control", "private, no-store");
+      return uncached;
+    }
+    return response;
   },
 };
 
