@@ -386,8 +386,8 @@ test("content plan renders 30 focused guides with examples and calculator links"
     const words = body.replace(/<[^>]+>/g, " ").replace(/&[^;]+;/g, " ").trim().split(/\s+/).filter(Boolean);
     assert.ok(words.length >= 150, `${slug} enthält nur ${words.length} Wörter`);
     assert.match(html, /Ein konkretes Beispiel/);
-    assert.equal((html.match(/class="guide-context-tools"/g) ?? []).length, 1);
-    assert.match(html, /href="\/tools\/[^"]+" class="guide-inline-link"/);
+    assert.equal((html.match(/class="guide-context-tools"/g) ?? []).length, 0);
+    assert.match(body, /href="\/tools\/[^"]+" class="guide-text-link"/);
     assert.doesNotMatch(html, /guide-rechner-cta|guide-tool-cta/);
     assert.match(html, /Passend dazu weiterlesen/);
     assert.doesNotMatch(html, /Eine belastbare Orientierung entsteht nicht durch einen einzelnen Richtwert/);
@@ -398,6 +398,11 @@ test("content plan renders 30 focused guides with examples and calculator links"
   assert.match(index, /Bei Bedarf weiterrechnen/);
   assert.match(index, /Kreditraten-Rechner für Immobilien/);
   assert.match(index, /Wie kalkuliere ich ein Angebot richtig\? Von Selbstkosten bis Gewinn/);
+
+  const offerGuide = await fetchFromWorker(worker, "/ratgeber/arbeit-projekte-kalkulieren").then((response) => response.text());
+  assert.match(offerGuide, /href="\/tools\/angebots-kalkulation" class="guide-text-link">Gewinnaufschlag<\/a>/);
+  assert.match(offerGuide, /href="\/tools\/mehrwertsteuerrechner" class="guide-text-link">Umsatzsteuer<\/a>/);
+  assert.doesNotMatch(offerGuide, /Passende Rechner|Wenn du die Zahlen auf deinen eigenen Fall übertragen willst/);
 });
 
 test("consent is global, reversible and gates Plausible analytics", async () => {

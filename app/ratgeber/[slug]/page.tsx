@@ -6,7 +6,7 @@ import { SiteFooter } from "../../components/SiteFooter";
 import { SiteHeader } from "../../components/SiteHeader";
 import { allGuides, getGuide, getRelatedGuides } from "../../data/guides";
 import { getGuideEditorialOverride } from "../../data/guide-editorial";
-import { getTool } from "../../data/tool-registry";
+import { guideToolLinkTerms } from "../../data/guide-tool-links";
 import { absoluteUrl } from "../../lib/site";
 import type { GuideBlock } from "../../data/guides";
 
@@ -32,23 +32,49 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-function renderBlock(block: GuideBlock) {
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function renderLinkedText(text: string, toolSlugs: string[], linkedTools: Set<string>) {
+  const candidates = toolSlugs.flatMap((slug) =>
+    (guideToolLinkTerms[slug] ?? []).map((term) => ({ slug, term })),
+  ).filter(({ slug }) => !linkedTools.has(slug));
+
+  if (candidates.length === 0) return text;
+
+  const pattern = new RegExp(`(${candidates.map(({ term }) => escapeRegExp(term)).join("|")})`, "gi");
+  const parts = text.split(pattern);
+
+  return parts.map((part, index) => {
+    const match = candidates.find(({ term, slug }) =>
+      !linkedTools.has(slug) && term.localeCompare(part, "de", { sensitivity: "base" }) === 0,
+    );
+    if (!match) return part;
+
+    linkedTools.add(match.slug);
+    return <Link className="guide-text-link" href={`/tools/${match.slug}`} key={`${match.slug}-${index}`}>{part}</Link>;
+  });
+}
+
+function renderBlock(block: GuideBlock, toolSlugs: string[], linkedTools: Set<string>, enableLinks: boolean) {
+  const linked = (text: string) => enableLinks ? renderLinkedText(text, toolSlugs, linkedTools) : text;
   switch (block.type) {
     case "p":
-      return <p>{block.text}</p>;
+      return <p>{linked(block.text)}</p>;
     case "ul":
-      return <ul>{block.items.map((item, i) => <li key={i}>{item}</li>)}</ul>;
+      return <ul>{block.items.map((item, i) => <li key={i}>{linked(item)}</li>)}</ul>;
     case "ol":
-      return <ol>{block.items.map((item, i) => <li key={i}>{item}</li>)}</ol>;
+      return <ol>{block.items.map((item, i) => <li key={i}>{linked(item)}</li>)}</ol>;
     case "h3":
       return <h3>{block.text}</h3>;
     case "tip":
-      return <div className="guide-tip">{block.text}</div>;
+      return <div className="guide-tip">{linked(block.text)}</div>;
     case "table":
       return (
         <table className="guide-table">
-          <thead><tr>{block.head.map((cell, i) => <th key={i}>{cell}</th>)}</tr></thead>
-          <tbody>{block.rows.map((row, i) => <tr key={i}>{row.map((cell, j) => <td key={j}>{cell}</td>)}</tr>)}</tbody>
+          <thead><tr>{block.head.map((cell, i) => <th key={i}>{linked(cell)}</th>)}</tr></thead>
+          <tbody>{block.rows.map((row, i) => <tr key={i}>{row.map((cell, j) => <td key={j}>{linked(cell)}</td>)}</tr>)}</tbody>
         </table>
       );
     default:
@@ -112,24 +138,6 @@ function getEditorialHeading(cluster: string, index: number, fallback: string) {
   return editorialHeadings[cluster]?.[index] ?? fallback;
 }
 
-function ContextualToolLinks({ toolSlugs, intro }: { toolSlugs: string[]; intro?: string }) {
-  const tools = toolSlugs.map(getTool).filter((item) => item !== undefined).slice(0, 3);
-  if (tools.length === 0) return null;
-
-  return (
-    <aside className="guide-context-tools" aria-label="Passende Rechner">
-      <p>{intro ?? "Wenn du die Zahlen auf deinen eigenen Fall übertragen willst:"}</p>
-      <div className="guide-tool-links">
-        {tools.map((tool) => (
-          <Link className="guide-inline-link" href={`/tools/${tool.slug}`} key={tool.slug}>
-            {tool.title}<span aria-hidden="true">→</span>
-          </Link>
-        ))}
-      </div>
-    </aside>
-  );
-}
-
 export default async function GuidePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const guide = getGuide(slug);
@@ -141,10 +149,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const canonical = absoluteUrl(`/ratgeber/${guide.slug}`);
   const relatedGuides = getRelatedGuides(guide);
   const directToolSlugs = guide.toolSlugs ?? [guide.toolSlug];
-  const relatedToolSlugs = guide.kind === "pillar"
-    ? relatedGuides.flatMap((related) => related.toolSlugs ?? [related.toolSlug])
-    : [];
-  const contextualToolSlugs = [...new Set([...directToolSlugs, ...relatedToolSlugs])].slice(0, 3);
+  const linkedTools = new Set<string>();
 
   const schema = {
     "@context": "https://schema.org",
@@ -198,10 +203,9 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             {guide.sections.map((section, sectionIndex) => (
               <section key={section.h2} className="guide-section">
                 <h2>{editorial?.headings[sectionIndex] ?? getEditorialHeading(guide.cluster, sectionIndex, section.h2)}</h2>
-                {section.blocks.map((block, i) => <div key={i}>{renderBlock(block)}</div>)}
-                {sectionIndex === 1 && (
-                  <ContextualToolLinks toolSlugs={contextualToolSlugs} intro={editorial?.toolIntro} />
-                )}
+                {section.blocks.map((block, i) => (
+                  <div key={i}>{renderBlock(block, directToolSlugs, linkedTools, sectionIndex >= 3)}</div>
+                ))}
               </section>
             ))}
 
