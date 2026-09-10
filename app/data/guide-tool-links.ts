@@ -1,8 +1,11 @@
-/** Natürliche Linkbegriffe für Rechner innerhalb der Ratgebertexte. */
+/**
+ * Natürliche Linkbegriffe für Rechner innerhalb der Ratgebertexte.
+ * Pro Abschnitt wird jeder passende Rechner höchstens einmal verlinkt.
+ */
 export const guideToolLinkTerms: Record<string, string[]> = {
   "abfindungs-rechner": ["Abfindung"],
   "angebots-kalkulation": ["Gewinnaufschlag", "Selbstkosten", "Angebotspreis"],
-  "badrenovierung-rechner": ["Badrenovierung", "Badsanierung"],
+  "badrenovierung-rechner": ["Badrenovierung", "Badsanierung", "Renovierungsbudget", "Sicherheitspuffer"],
   "bauspar-rechner": ["Bausparguthaben", "Bausparziel", "Bausparen"],
   "bmi-rechner": ["BMI"],
   "bodenverlegung-kosten-rechner": ["Bodenfläche", "Bodenverlegung", "Bodenkosten"],
@@ -16,7 +19,7 @@ export const guideToolLinkTerms: Record<string, string[]> = {
   "idealgewicht-rechner": ["Gewichtsbereich", "Idealgewicht"],
   "kalorienbedarf-rechner": ["Kalorienbedarf", "Grundumsatz", "Gesamtbedarf"],
   "kaufnebenkosten-rechner": ["Kaufnebenkosten", "Erwerbsnebenkosten"],
-  "kindergeld-rechner": ["Kindergeld"],
+  "kindergeld-rechner": ["Kindergeld", "Monatsbetrag", "Gesamtsumme"],
   "koerperfett-anteil-rechner": ["Körperfettwert", "Körperfett"],
   mehrwertsteuerrechner: ["Umsatzsteuer", "Mehrwertsteuer"],
   "mietrendite-rechner": ["Nettorendite", "Bruttorendite", "Mietrendite"],
@@ -31,8 +34,8 @@ export const guideToolLinkTerms: Record<string, string[]> = {
   "stromkosten-rechner": ["Stromkosten", "Kilowattstunden pro Jahr"],
   stundenlohnrechner: ["Stundenlohn", "Stundensatz"],
   "ueberstunden-rechner": ["Überstunden", "Freizeitausgleich"],
-  "umzugskosten-rechner": ["Umzugskosten", "Umzugsbudget"],
-  "urlaubsanspruch-rechner": ["Urlaubsanspruch", "Urlaubstage", "Tage Urlaub"],
+  "umzugskosten-rechner": ["Umzugskosten", "Umzugsbudget", "Eigenumzug", "Firmenangebot"],
+  "urlaubsanspruch-rechner": ["Urlaubsanspruch", "Urlaubstage", "Tage Urlaub", "Jahresurlaub", "Teilurlaub"],
   "woerter-zaehlen": ["Wortzahl", "Lesezeit"],
   "zeichen-zaehlen": ["Zeichenzahl", "Zeichen"],
 };

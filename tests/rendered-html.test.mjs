@@ -387,7 +387,8 @@ test("content plan renders 30 focused guides with examples and calculator links"
     assert.ok(words.length >= 150, `${slug} enthält nur ${words.length} Wörter`);
     assert.match(html, /Ein konkretes Beispiel/);
     assert.equal((html.match(/class="guide-context-tools"/g) ?? []).length, 0);
-    assert.match(body, /href="\/tools\/[^"]+" class="guide-text-link"/);
+    const calculatorLinks = body.match(/href="\/tools\/[^"]+" class="guide-text-link"/g) ?? [];
+    assert.ok(calculatorLinks.length >= 2, `${slug} enthält nur ${calculatorLinks.length} natürliche Rechnerlinks`);
     assert.doesNotMatch(html, /guide-rechner-cta|guide-tool-cta/);
     assert.match(html, /Passend dazu weiterlesen/);
     assert.doesNotMatch(html, /Eine belastbare Orientierung entsteht nicht durch einen einzelnen Richtwert/);

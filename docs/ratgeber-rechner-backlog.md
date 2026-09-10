@@ -19,6 +19,6 @@ Diese interne Liste hält Kennwerte fest, die in Ratgebertexten vorkommen, für 
 
 Wenn ein neuer oder überarbeiteter Ratgeber eine berechenbare Kennzahl nennt, wird geprüft:
 
-1. Gibt es dafür bereits einen passenden Rechner? Dann wird der aussagekräftige Begriff im Text direkt verlinkt.
+1. Gibt es dafür bereits einen passenden Rechner? Dann wird der aussagekräftige Begriff im Text direkt verlinkt. Derselbe Rechner darf in mehreren fachlich passenden Abschnitten auftauchen, aber höchstens einmal pro Abschnitt.
 2. Fehlt der Rechner, wird die Idee mit Eingaben, Ergebnis und fachlicher Grenze in dieser Liste ergänzt.
 3. Ein neuer Rechner wird erst umgesetzt, wenn er einen eigenständigen Nutzwert hat und keine vorhandene Funktion doppelt.

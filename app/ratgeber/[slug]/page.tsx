@@ -149,8 +149,6 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const canonical = absoluteUrl(`/ratgeber/${guide.slug}`);
   const relatedGuides = getRelatedGuides(guide);
   const directToolSlugs = guide.toolSlugs ?? [guide.toolSlug];
-  const linkedTools = new Set<string>();
-
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
@@ -200,14 +198,17 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               </section>
             )}
 
-            {guide.sections.map((section, sectionIndex) => (
-              <section key={section.h2} className="guide-section">
-                <h2>{editorial?.headings[sectionIndex] ?? getEditorialHeading(guide.cluster, sectionIndex, section.h2)}</h2>
-                {section.blocks.map((block, i) => (
-                  <div key={i}>{renderBlock(block, directToolSlugs, linkedTools, sectionIndex >= 3)}</div>
-                ))}
-              </section>
-            ))}
+            {guide.sections.map((section, sectionIndex) => {
+              const linkedToolsInSection = new Set<string>();
+              return (
+                <section key={section.h2} className="guide-section">
+                  <h2>{editorial?.headings[sectionIndex] ?? getEditorialHeading(guide.cluster, sectionIndex, section.h2)}</h2>
+                  {section.blocks.map((block, i) => (
+                    <div key={i}>{renderBlock(block, directToolSlugs, linkedToolsInSection, true)}</div>
+                  ))}
+                </section>
+              );
+            })}
 
             <section className="guide-editorial-note" aria-label="Hinweis zur Einordnung">
               <h2>Was du aus dem Beitrag mitnehmen solltest</h2>
