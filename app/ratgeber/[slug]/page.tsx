@@ -119,16 +119,33 @@ function ContextualToolLinks({ toolSlugs, intro }: { toolSlugs: string[]; intro?
   return (
     <aside className="guide-context-tools" aria-label="Passende Rechner">
       <p>{intro ?? "Wenn du die Zahlen auf deinen eigenen Fall übertragen willst:"}</p>
-      <p>
-        {tools.map((tool, index) => (
-          <span key={tool.slug}>
-            {index > 0 && (index === tools.length - 1 ? " oder " : ", ")}
-            <Link href={`/tools/${tool.slug}`}>{tool.title}</Link>
-          </span>
+      <div className="guide-tool-links">
+        {tools.map((tool) => (
+          <Link className="guide-inline-link" href={`/tools/${tool.slug}`} key={tool.slug}>
+            {tool.title}<span aria-hidden="true">→</span>
+          </Link>
         ))}
-        .
-      </p>
+      </div>
     </aside>
+  );
+}
+
+function GuideCalculatorCta({ toolSlugs }: { toolSlugs: string[] }) {
+  const tools = toolSlugs.map(getTool).filter((item) => item !== undefined).slice(0, 3);
+  if (tools.length === 0) return null;
+
+  return (
+    <section className="guide-rechner-cta" aria-labelledby="guide-calculators-heading">
+      <h2 id="guide-calculators-heading">Passende Rechner direkt öffnen</h2>
+      <p>Nutze deine eigenen Werte. Jeder Rechner öffnet sich direkt und kostenlos.</p>
+      <div className="guide-tool-links">
+        {tools.map((tool) => (
+          <Link className="guide-tool-cta" href={`/tools/${tool.slug}`} key={tool.slug}>
+            {tool.title}<span aria-hidden="true">→</span>
+          </Link>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -189,6 +206,8 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             <p>{articleDescription}</p>
             <p className="guide-meta">Stand {guide.updated.split("-").reverse().join("/")} · Redaktionell eingeordnet und mit nachvollziehbaren Beispielen.</p>
           </section>
+
+          <GuideCalculatorCta toolSlugs={contextualToolSlugs} />
 
           <article className="guide-body">
             {editorial?.lead && (

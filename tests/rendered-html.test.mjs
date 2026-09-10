@@ -386,16 +386,17 @@ test("content plan renders 30 focused guides with examples and calculator links"
     const words = body.replace(/<[^>]+>/g, " ").replace(/&[^;]+;/g, " ").trim().split(/\s+/).filter(Boolean);
     assert.ok(words.length >= 150, `${slug} enthält nur ${words.length} Wörter`);
     assert.match(html, /Ein konkretes Beispiel/);
-    assert.match(html, /Mit deinen eigenen Zahlen weiterrechnen/);
-    assert.match(html, /Passende Ratgeber/);
+    assert.match(html, /Passende Rechner direkt öffnen/);
+    assert.match(html, /href="\/tools\/[^"]+" class="guide-tool-cta"/);
+    assert.match(html, /Passend dazu weiterlesen/);
     assert.doesNotMatch(html, /Eine belastbare Orientierung entsteht nicht durch einen einzelnen Richtwert/);
   }
 
   const index = await fetchFromWorker(worker, "/ratgeber").then((response) => response.text());
-  assert.match(index, /Themen, die wir wirklich erklären/);
-  assert.match(index, /Passende Rechner/);
+  assert.match(index, /Fragen aus dem Alltag verständlich beantwortet/);
+  assert.match(index, /Bei Bedarf weiterrechnen/);
   assert.match(index, /Kreditraten-Rechner für Immobilien/);
-  assert.match(index, /Angebote richtig kalkulieren: Selbstkosten, Gewinn und Umsatzsteuer/);
+  assert.match(index, /Wie kalkuliere ich ein Angebot richtig\? Von Selbstkosten bis Gewinn/);
 });
 
 test("consent is global, reversible and gates Plausible analytics", async () => {
