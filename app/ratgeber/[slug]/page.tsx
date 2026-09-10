@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { SiteFooter } from "../../components/SiteFooter";
 import { SiteHeader } from "../../components/SiteHeader";
 import { allGuides, getGuide, getRelatedGuides } from "../../data/guides";
+import { getGuideEditorialOverride } from "../../data/guide-editorial";
 import { getTool } from "../../data/tool-registry";
 import { absoluteUrl } from "../../lib/site";
 import type { GuideBlock } from "../../data/guides";
@@ -17,13 +18,17 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const guide = getGuide(slug);
   if (!guide) return {};
+  const editorial = getGuideEditorialOverride(slug);
+  const title = editorial?.title ?? guide.title;
+  const description = editorial?.description ?? guide.description;
+
   return {
-    title: guide.title,
-    description: guide.description,
+    title,
+    description,
     keywords: guide.keywords,
     alternates: { canonical: `/ratgeber/${guide.slug}` },
-    openGraph: { title: guide.title, description: guide.description, url: `/ratgeber/${guide.slug}`, type: "article" },
-    twitter: { title: guide.title, description: guide.description },
+    openGraph: { title, description, url: `/ratgeber/${guide.slug}`, type: "article" },
+    twitter: { title, description },
   };
 }
 
@@ -73,34 +78,6 @@ const editorialHeadings: Record<string, string[]> = {
     "Ein typischer Monat als Beispiel",
     "Diese Fehler führen oft zu falschen Ergebnissen",
   ],
-  "Handwerker & Renovierung": [
-    "Was vor dem ersten Angebot geklärt sein sollte",
-    "Welche Mengen und Kostenpositionen wirklich zählen",
-    "So entsteht aus Einzelpreisen ein realistisches Budget",
-    "Ein Beispiel mit Reserve statt Wunschdenken",
-    "Wo Renovierungsbudgets besonders oft kippen",
-  ],
-  "Geld & Beruf": [
-    "Die Bezugsgröße ist wichtiger als die Formel",
-    "Welche Werte du sauber voneinander trennen solltest",
-    "So kommst du zu einem nachvollziehbaren Ergebnis",
-    "Ein kurzes Beispiel aus dem Alltag",
-    "Die häufigsten Rechenfehler",
-  ],
-  "Text & Sprache": [
-    "Was einen guten Text tatsächlich ausmacht",
-    "Welche Kennzahlen beim Überarbeiten helfen",
-    "So verbesserst du einen Text systematisch",
-    "Ein Beispiel für sinnvolle Textanalyse",
-    "Was reine Wort- und Zeichenzahlen nicht leisten können",
-  ],
-  "Schule & Lernen": [
-    "Das Prinzip hinter der Aufgabe",
-    "Welche Angaben zusammengehören",
-    "So löst du die Aufgabe nachvollziehbar",
-    "Ein Beispiel Schritt für Schritt",
-    "Woran typische Fehler zu erkennen sind",
-  ],
   "Energie & Umwelt": [
     "Wo deine Energiekosten tatsächlich entstehen",
     "Welche Verbrauchswerte du kennen solltest",
@@ -135,14 +112,14 @@ function getEditorialHeading(cluster: string, index: number, fallback: string) {
   return editorialHeadings[cluster]?.[index] ?? fallback;
 }
 
-function ContextualToolLinks({ toolSlugs }: { toolSlugs: string[] }) {
+function ContextualToolLinks({ toolSlugs, intro }: { toolSlugs: string[]; intro?: string }) {
   const tools = toolSlugs.map(getTool).filter((item) => item !== undefined).slice(0, 3);
   if (tools.length === 0) return null;
 
   return (
     <aside className="guide-context-tools" aria-label="Passende Rechner">
+      <p>{intro ?? "Wenn du die Zahlen auf deinen eigenen Fall übertragen willst:"}</p>
       <p>
-        <strong>Mit eigenen Zahlen prüfen:</strong>{" "}
         {tools.map((tool, index) => (
           <span key={tool.slug}>
             {index > 0 && (index === tools.length - 1 ? " oder " : ", ")}
@@ -160,6 +137,9 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const guide = getGuide(slug);
   if (!guide) notFound();
 
+  const editorial = getGuideEditorialOverride(slug);
+  const articleTitle = editorial?.title ?? guide.title;
+  const articleDescription = editorial?.description ?? guide.description;
   const canonical = absoluteUrl(`/ratgeber/${guide.slug}`);
   const relatedGuides = getRelatedGuides(guide);
   const directToolSlugs = guide.toolSlugs ?? [guide.toolSlug];
@@ -174,8 +154,8 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
       {
         "@type": "Article",
         "@id": `${canonical}#article`,
-        headline: guide.title,
-        description: guide.description,
+        headline: articleTitle,
+        description: articleDescription,
         inLanguage: "de-DE",
         dateModified: `${guide.updated}-01`,
         author: { "@type": "Organization", name: "Sofort-Tools Redaktion" },
@@ -187,7 +167,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         itemListElement: [
           { "@type": "ListItem", position: 1, name: "Startseite", item: absoluteUrl("/") },
           { "@type": "ListItem", position: 2, name: "Ratgeber", item: absoluteUrl("/ratgeber") },
-          { "@type": "ListItem", position: 3, name: guide.title, item: canonical },
+          { "@type": "ListItem", position: 3, name: articleTitle, item: canonical },
         ],
       },
     ],
@@ -200,42 +180,53 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
       <main className="tool-page">
         <div className="shell">
           <nav className="breadcrumbs" aria-label="Brotkrümelnavigation">
-            <Link href="/">Startseite</Link><span>›</span><Link href="/ratgeber">Ratgeber</Link><span>›</span><b>{guide.title}</b>
+            <Link href="/">Startseite</Link><span>›</span><Link href="/ratgeber">Ratgeber</Link><span>›</span><b>{articleTitle}</b>
           </nav>
 
           <section className="tool-hero guide-article-hero">
             <p className="eyebrow"><span /> {guide.kind === "pillar" ? "Leitfaden" : "Ratgeber"} · {guide.cluster}</p>
-            <h1>{guide.title}</h1>
-            <p>{guide.description}</p>
-            <p className="guide-meta">Stand {guide.updated.split("-").reverse().join("/")} · Verständlich eingeordnet, mit Rechenbeispielen und weiterführenden Werkzeugen.</p>
+            <h1>{articleTitle}</h1>
+            <p>{articleDescription}</p>
+            <p className="guide-meta">Stand {guide.updated.split("-").reverse().join("/")} · Redaktionell eingeordnet und mit nachvollziehbaren Beispielen.</p>
           </section>
 
           <article className="guide-body">
+            {editorial?.lead && (
+              <section className="guide-section guide-lead">
+                <p>{editorial.lead}</p>
+              </section>
+            )}
+
             {guide.sections.map((section, sectionIndex) => (
               <section key={section.h2} className="guide-section">
-                <h2>{getEditorialHeading(guide.cluster, sectionIndex, section.h2)}</h2>
+                <h2>{editorial?.headings[sectionIndex] ?? getEditorialHeading(guide.cluster, sectionIndex, section.h2)}</h2>
                 {section.blocks.map((block, i) => <div key={i}>{renderBlock(block)}</div>)}
-                {sectionIndex === 1 && <ContextualToolLinks toolSlugs={contextualToolSlugs} />}
+                {sectionIndex === 1 && (
+                  <ContextualToolLinks toolSlugs={contextualToolSlugs} intro={editorial?.toolIntro} />
+                )}
               </section>
             ))}
 
             <section className="guide-editorial-note" aria-label="Hinweis zur Einordnung">
-              <h2>Was du aus der Rechnung mitnehmen solltest</h2>
-              <p>Ein Rechner kann Annahmen transparent machen und Varianten schnell vergleichbar machen. Er ersetzt aber keine Unterlagen, Verträge, Bescheide oder individuelle fachliche Beratung. Nutze das Ergebnis deshalb als Orientierung und prüfe entscheidende Werte anschließend an der Originalquelle.</p>
+              <h2>Was du aus dem Beitrag mitnehmen solltest</h2>
+              <p>Die Beispiele und Rechner helfen dir, Größenordnungen zu verstehen und verschiedene Szenarien miteinander zu vergleichen. Bei Verträgen, Steuern, Finanzierung, medizinischen Fragen oder anderen verbindlichen Entscheidungen zählen aber immer die konkreten Unterlagen und die für deinen Fall geltenden Regeln.</p>
             </section>
           </article>
 
           {relatedGuides.length > 0 && (
             <section className="guide-related" aria-labelledby="related-guides-heading">
-              <h2 id="related-guides-heading">Wenn du tiefer einsteigen möchtest</h2>
+              <h2 id="related-guides-heading">Passend dazu weiterlesen</h2>
               <div className="guide-grid compact">
-                {relatedGuides.map((related) => (
-                  <Link href={`/ratgeber/${related.slug}`} key={related.slug} className="guide-card">
-                    <p>{related.kind === "pillar" ? "Leitfaden" : related.cluster}</p>
-                    <h3>{related.title}</h3>
-                    <span>{related.excerpt}</span>
-                  </Link>
-                ))}
+                {relatedGuides.map((related) => {
+                  const relatedEditorial = getGuideEditorialOverride(related.slug);
+                  return (
+                    <Link href={`/ratgeber/${related.slug}`} key={related.slug} className="guide-card">
+                      <p>{related.kind === "pillar" ? "Leitfaden" : related.cluster}</p>
+                      <h3>{relatedEditorial?.title ?? related.title}</h3>
+                      <span>{relatedEditorial?.description ?? related.excerpt}</span>
+                    </Link>
+                  );
+                })}
               </div>
             </section>
           )}
