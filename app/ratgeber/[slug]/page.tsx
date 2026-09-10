@@ -7,8 +7,6 @@ import { SiteHeader } from "../../components/SiteHeader";
 import { allGuides, getGuide, getRelatedGuides } from "../../data/guides";
 import { getTool } from "../../data/tool-registry";
 import { absoluteUrl } from "../../lib/site";
-import { Recommendation } from "../../components/ToolUI";
-import { getRecommendation } from "../../data/affiliate";
 import type { GuideBlock } from "../../data/guides";
 
 export function generateStaticParams() {
@@ -53,16 +51,34 @@ function renderBlock(block: GuideBlock) {
   }
 }
 
+function ContextualToolLinks({ toolSlugs }: { toolSlugs: string[] }) {
+  const tools = toolSlugs.map(getTool).filter((item) => item !== undefined).slice(0, 3);
+  if (tools.length === 0) return null;
+
+  return (
+    <aside className="guide-context-tools" aria-label="Passende Rechner">
+      <p>
+        <strong>Mit eigenen Zahlen prüfen:</strong>{" "}
+        {tools.map((tool, index) => (
+          <span key={tool.slug}>
+            {index > 0 && (index === tools.length - 1 ? " oder " : ", ")}
+            <Link href={`/tools/${tool.slug}`}>{tool.title}</Link>
+          </span>
+        ))}
+        .
+      </p>
+    </aside>
+  );
+}
+
 export default async function GuidePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const guide = getGuide(slug);
   if (!guide) notFound();
 
-  const guideTools = (guide.toolSlugs ?? [guide.toolSlug]).map(getTool).filter((item) => item !== undefined);
-  const tool = guideTools[0];
+  const guideToolSlugs = guide.toolSlugs ?? [guide.toolSlug];
   const canonical = absoluteUrl(`/ratgeber/${guide.slug}`);
   const relatedGuides = getRelatedGuides(guide);
-  const recommendation = getRecommendation(guide.toolSlug, tool?.title);
 
   const schema = {
     "@context": "https://schema.org",
@@ -74,7 +90,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
         description: guide.description,
         inLanguage: "de-DE",
         dateModified: `${guide.updated}-01`,
-        author: { "@type": "Person", name: "Sofort-Tools" },
+        author: { "@type": "Organization", name: "Sofort-Tools Redaktion" },
         publisher: { "@type": "Organization", name: "Sofort-Tools" },
         mainEntityOfPage: canonical,
       },
@@ -99,27 +115,31 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             <Link href="/">Startseite</Link><span>›</span><Link href="/ratgeber">Ratgeber</Link><span>›</span><b>{guide.title}</b>
           </nav>
 
-          <section className="tool-hero">
+          <section className="tool-hero guide-article-hero">
             <p className="eyebrow"><span /> {guide.kind === "pillar" ? "Leitfaden" : "Ratgeber"} · {guide.cluster}</p>
             <h1>{guide.title}</h1>
             <p>{guide.description}</p>
-            {guideTools.length > 0 && <div className="guide-tool-links" aria-label="Passende Rechner zu diesem Thema">
-              {guideTools.map((item) => <Link href={`/tools/${item.slug}`} className="guide-tool-cta" key={item.slug}>{item.title}</Link>)}
-            </div>}
+            <p className="guide-meta">Stand {guide.updated.split("-").reverse().join("/")} · Verständlich eingeordnet, mit Rechenbeispielen und weiterführenden Werkzeugen.</p>
           </section>
 
           <article className="guide-body">
-            {guide.sections.map((section) => (
+            {guide.sections.map((section, sectionIndex) => (
               <section key={section.h2} className="guide-section">
                 <h2>{section.h2}</h2>
                 {section.blocks.map((block, i) => <div key={i}>{renderBlock(block)}</div>)}
+                {sectionIndex === 1 && <ContextualToolLinks toolSlugs={guideToolSlugs} />}
               </section>
             ))}
+
+            <section className="guide-editorial-note" aria-label="Hinweis zur Einordnung">
+              <h2>Was du aus der Rechnung mitnehmen solltest</h2>
+              <p>Ein Rechner kann Annahmen transparent machen und Varianten schnell vergleichbar machen. Er ersetzt aber keine Unterlagen, Verträge, Bescheide oder individuelle fachliche Beratung. Nutze das Ergebnis deshalb als belastbare Orientierung und prüfe entscheidende Werte anschließend an der Originalquelle.</p>
+            </section>
           </article>
 
           {relatedGuides.length > 0 && (
             <section className="guide-related" aria-labelledby="related-guides-heading">
-              <h2 id="related-guides-heading">Passende Ratgeber</h2>
+              <h2 id="related-guides-heading">Wenn du tiefer einsteigen möchtest</h2>
               <div className="guide-grid compact">
                 {relatedGuides.map((related) => (
                   <Link href={`/ratgeber/${related.slug}`} key={related.slug} className="guide-card">
@@ -131,16 +151,6 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
               </div>
             </section>
           )}
-
-          {guideTools.length > 0 && (
-            <section className="guide-rechner-cta">
-              <h2>Mit deinen eigenen Zahlen weiterrechnen</h2>
-              <p>Wähle den Rechner, der zu deiner nächsten Frage passt. Die Eingaben bleiben veränderbar und das Ergebnis zeigt den Rechenweg.</p>
-              {guideTools.map((item) => <Link href={`/tools/${item.slug}`} className="recommendation-link" key={item.slug}>Zum {item.title}</Link>)}
-            </section>
-          )}
-
-          {recommendation && <Recommendation rec={recommendation} />}
         </div>
       </main>
       <SiteFooter />
