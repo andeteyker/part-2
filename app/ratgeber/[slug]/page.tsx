@@ -51,6 +51,62 @@ function renderBlock(block: GuideBlock) {
   }
 }
 
+const editorialHeadings: Record<string, string[]> = {
+  Immobilien: [
+    "Bevor du nach Objekten suchst",
+    "Diese Zahlen entscheiden über deinen Spielraum",
+    "So wird aus einem Wunschbudget eine belastbare Planung",
+    "Was ein realistisches Beispiel zeigt",
+    "Wo Immobilienrechnungen häufig zu optimistisch werden",
+  ],
+  "Finanzen & Steuern": [
+    "Was du zuerst voneinander trennen solltest",
+    "Die wichtigsten Zahlen für eine brauchbare Einschätzung",
+    "So gehst du Schritt für Schritt vor",
+    "Ein Beispiel mit konkreten Annahmen",
+    "Typische Denkfehler bei Finanz- und Steuerrechnungen",
+  ],
+  "Schicht & Zuschläge": [
+    "Warum die Abrechnung schnell unübersichtlich wird",
+    "Welche Zeiten und Sätze wirklich relevant sind",
+    "So prüfst du deine Abrechnung nachvollziehbar",
+    "Ein typischer Monat als Beispiel",
+    "Diese Fehler führen oft zu falschen Ergebnissen",
+  ],
+  "Energie & Umwelt": [
+    "Wo deine Energiekosten tatsächlich entstehen",
+    "Welche Verbrauchswerte du kennen solltest",
+    "So vergleichst du Kosten und Einsparpotenzial sinnvoll",
+    "Ein Rechenbeispiel aus dem Alltag",
+    "Was einfache Energievergleiche oft übersehen",
+  ],
+  Gesundheit: [
+    "Was der Wert überhaupt aussagen kann",
+    "Welche Angaben das Ergebnis beeinflussen",
+    "So ordnest du die Zahl sinnvoll ein",
+    "Ein Beispiel zur Orientierung",
+    "Warum eine einzelne Kennzahl nie die ganze Geschichte erzählt",
+  ],
+  Familie: [
+    "Was du frühzeitig planen kannst – und was nicht",
+    "Welche Daten du dafür brauchst",
+    "So bekommst du eine realistische Orientierung",
+    "Ein Beispiel für die Planung",
+    "Wo pauschale Annahmen schnell in die Irre führen",
+  ],
+  "Arbeit & Projekte": [
+    "Die Frage hinter der eigentlichen Rechnung",
+    "Welche Angaben du sauber erfassen solltest",
+    "So entsteht eine belastbare Kalkulation",
+    "Ein Beispiel mit realistischen Annahmen",
+    "Typische Fehler in der Praxis",
+  ],
+};
+
+function getEditorialHeading(cluster: string, index: number, fallback: string) {
+  return editorialHeadings[cluster]?.[index] ?? fallback;
+}
+
 function ContextualToolLinks({ toolSlugs }: { toolSlugs: string[] }) {
   const tools = toolSlugs.map(getTool).filter((item) => item !== undefined).slice(0, 3);
   if (tools.length === 0) return null;
@@ -76,9 +132,13 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const guide = getGuide(slug);
   if (!guide) notFound();
 
-  const guideToolSlugs = guide.toolSlugs ?? [guide.toolSlug];
   const canonical = absoluteUrl(`/ratgeber/${guide.slug}`);
   const relatedGuides = getRelatedGuides(guide);
+  const directToolSlugs = guide.toolSlugs ?? [guide.toolSlug];
+  const relatedToolSlugs = guide.kind === "pillar"
+    ? relatedGuides.flatMap((related) => related.toolSlugs ?? [related.toolSlug])
+    : [];
+  const contextualToolSlugs = [...new Set([...directToolSlugs, ...relatedToolSlugs])].slice(0, 3);
 
   const schema = {
     "@context": "https://schema.org",
@@ -125,15 +185,15 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
           <article className="guide-body">
             {guide.sections.map((section, sectionIndex) => (
               <section key={section.h2} className="guide-section">
-                <h2>{section.h2}</h2>
+                <h2>{getEditorialHeading(guide.cluster, sectionIndex, section.h2)}</h2>
                 {section.blocks.map((block, i) => <div key={i}>{renderBlock(block)}</div>)}
-                {sectionIndex === 1 && <ContextualToolLinks toolSlugs={guideToolSlugs} />}
+                {sectionIndex === 1 && <ContextualToolLinks toolSlugs={contextualToolSlugs} />}
               </section>
             ))}
 
             <section className="guide-editorial-note" aria-label="Hinweis zur Einordnung">
               <h2>Was du aus der Rechnung mitnehmen solltest</h2>
-              <p>Ein Rechner kann Annahmen transparent machen und Varianten schnell vergleichbar machen. Er ersetzt aber keine Unterlagen, Verträge, Bescheide oder individuelle fachliche Beratung. Nutze das Ergebnis deshalb als belastbare Orientierung und prüfe entscheidende Werte anschließend an der Originalquelle.</p>
+              <p>Ein Rechner kann Annahmen transparent machen und Varianten schnell vergleichbar machen. Er ersetzt aber keine Unterlagen, Verträge, Bescheide oder individuelle fachliche Beratung. Nutze das Ergebnis deshalb als Orientierung und prüfe entscheidende Werte anschließend an der Originalquelle.</p>
             </section>
           </article>
 
