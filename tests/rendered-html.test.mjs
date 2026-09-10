@@ -319,7 +319,7 @@ test("practice guidance is tool-specific and calculator sections share one width
     assert.match(css, new RegExp(`\\.${selector}[^}]*max-width:\\s*920px`));
     assert.match(css, new RegExp(`\\.${selector}[^}]*margin(?:-inline)?:[^;}]*auto`));
   }
-  for (const selector of ["guide-body", "guide-related", "guide-rechner-cta", "related"]) {
+  for (const selector of ["guide-body", "guide-related", "related"]) {
     assert.match(css, new RegExp(`\\.${selector}[^}]*margin(?:-inline)?:[^;}]*auto`));
   }
   assert.match(css, /\.guide-grid\s*\{[^}]*grid-template-columns:\s*repeat\(3,\s*minmax\(0,\s*1fr\)\)/);
@@ -386,8 +386,9 @@ test("content plan renders 30 focused guides with examples and calculator links"
     const words = body.replace(/<[^>]+>/g, " ").replace(/&[^;]+;/g, " ").trim().split(/\s+/).filter(Boolean);
     assert.ok(words.length >= 150, `${slug} enthält nur ${words.length} Wörter`);
     assert.match(html, /Ein konkretes Beispiel/);
-    assert.match(html, /Passende Rechner direkt öffnen/);
-    assert.match(html, /href="\/tools\/[^"]+" class="guide-tool-cta"/);
+    assert.equal((html.match(/class="guide-context-tools"/g) ?? []).length, 1);
+    assert.match(html, /href="\/tools\/[^"]+" class="guide-inline-link"/);
+    assert.doesNotMatch(html, /guide-rechner-cta|guide-tool-cta/);
     assert.match(html, /Passend dazu weiterlesen/);
     assert.doesNotMatch(html, /Eine belastbare Orientierung entsteht nicht durch einen einzelnen Richtwert/);
   }

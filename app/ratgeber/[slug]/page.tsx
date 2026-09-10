@@ -130,25 +130,6 @@ function ContextualToolLinks({ toolSlugs, intro }: { toolSlugs: string[]; intro?
   );
 }
 
-function GuideCalculatorCta({ toolSlugs }: { toolSlugs: string[] }) {
-  const tools = toolSlugs.map(getTool).filter((item) => item !== undefined).slice(0, 3);
-  if (tools.length === 0) return null;
-
-  return (
-    <section className="guide-rechner-cta" aria-labelledby="guide-calculators-heading">
-      <h2 id="guide-calculators-heading">Passende Rechner direkt öffnen</h2>
-      <p>Nutze deine eigenen Werte. Jeder Rechner öffnet sich direkt und kostenlos.</p>
-      <div className="guide-tool-links">
-        {tools.map((tool) => (
-          <Link className="guide-tool-cta" href={`/tools/${tool.slug}`} key={tool.slug}>
-            {tool.title}<span aria-hidden="true">→</span>
-          </Link>
-        ))}
-      </div>
-    </section>
-  );
-}
-
 export default async function GuidePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const guide = getGuide(slug);
@@ -206,8 +187,6 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
             <p>{articleDescription}</p>
             <p className="guide-meta">Stand {guide.updated.split("-").reverse().join("/")} · Redaktionell eingeordnet und mit nachvollziehbaren Beispielen.</p>
           </section>
-
-          <GuideCalculatorCta toolSlugs={contextualToolSlugs} />
 
           <article className="guide-body">
             {editorial?.lead && (
