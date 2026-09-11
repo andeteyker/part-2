@@ -3,15 +3,46 @@ import { studioDb } from "../../../db/studio";
 import { validateDraft } from "../../studio/model";
 export const dynamic = "force-dynamic";
 const json = (value: unknown, status = 200) => Response.json(value, { status, headers: { "Cache-Control": "no-store" } });
-async function authorized() { return (await getChatGPTUser())?.email.toLowerCase() === "mielerik@gmail.com"; }
-export async function GET() {
-  if (!await authorized()) return json({error:"Bitte mit dem freigegebenen Konto anmelden."},403);
+
+type AuthMode = "studio" | "api" | null;
+
+function secureEqual(left: string, right: string) {
+  if (left.length !== right.length) return false;
+  let difference = 0;
+  for (let index = 0; index < left.length; index += 1) difference |= left.charCodeAt(index) ^ right.charCodeAt(index);
+  return difference === 0;
+}
+
+async function configuredApiKey() {
+  try {
+    const runtime = await import("cloudflare:workers");
+    const value = (runtime.env as unknown as Record<string, unknown>).STUDIO_API_KEY;
+    if (typeof value === "string" && value.length >= 32) return value;
+  } catch {
+    // Lokale Entwicklungsumgebungen haben kein Cloudflare-Runtime-Modul.
+  }
+  return process.env.STUDIO_API_KEY;
+}
+
+async function authorize(request: Request): Promise<AuthMode> {
+  const authorization = request.headers.get("authorization");
+  if (authorization?.startsWith("Bearer ")) {
+    const expected = await configuredApiKey();
+    const supplied = authorization.slice(7);
+    if (expected && secureEqual(supplied, expected)) return "api";
+  }
+  return (await getChatGPTUser())?.email.toLowerCase() === "mielerik@gmail.com" ? "studio" : null;
+}
+
+export async function GET(request: Request) {
+  if (!await authorize(request)) return json({error:"Anmeldung oder gültiger API-Schlüssel erforderlich."},403);
   try { const db = await studioDb(); return json((await db.prepare("SELECT * FROM studio_pages ORDER BY updated DESC").all()).results); }
   catch { return json({error:"Seiten konnten nicht geladen werden. Bitte später erneut versuchen."},503); }
 }
 export async function POST(request: Request) {
-  if (!await authorized()) return json({error:"Kein Zugriff."},403);
-  if (request.headers.get("origin") !== new URL(request.url).origin) return json({error:"Ungültiger Ursprung."},403);
+  const authMode = await authorize(request);
+  if (!authMode) return json({error:"Anmeldung oder gültiger API-Schlüssel erforderlich."},403);
+  if (authMode === "studio" && request.headers.get("origin") !== new URL(request.url).origin) return json({error:"Ungültiger Ursprung."},403);
   if (!request.headers.get("content-type")?.startsWith("application/json")) return json({error:"JSON erforderlich."},415);
   const raw = await request.text();
   if (raw.length > 220000) return json({error:"Die Seite ist zu groß."},413);
