@@ -22,7 +22,7 @@ function KindIcon({ kind }: { kind: PageKind }) {
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l3 3v15H6zM9 11h6M9 15h6M9 7h3"/></svg>;
 }
 
-export function StudioEditor({ tools }: { tools: ToolLink[] }) {
+export function StudioEditor({ tools, categories }: { tools: ToolLink[]; categories: string[] }) {
   const [pages, setPages] = useState<PageRecord[]>([]);
   const [draft, setDraft] = useState<PageDraft>(() => templateFor("ratgeber"));
   const [revision, setRevision] = useState(0);
@@ -193,7 +193,7 @@ export function StudioEditor({ tools }: { tools: ToolLink[] }) {
             <div className="studio-meta-grid">
               <label className="studio-field studio-field-wide"><span>Titel</span><input value={draft.title} onChange={event => update("title", event.target.value)} placeholder="Konkreter Titel der Seite"/></label>
               <label className="studio-field"><span>Seitentyp</span><select value={draft.kind} onChange={event => update("kind", event.target.value as PageKind)}><option value="ratgeber">Ratgeber</option><option value="rechner">Rechner</option><option value="tool">Tool</option></select></label>
-              <label className="studio-field"><span>Kategorie</span><input value={draft.category} onChange={event => update("category", event.target.value)} placeholder="z. B. Geld & Beruf"/></label>
+              <label className="studio-field"><span>Kategorie</span><select value={draft.category} onChange={event => update("category", event.target.value)}>{!categories.includes(draft.category) && <option value={draft.category}>{draft.category}</option>}{categories.map(category => <option value={category} key={category}>{category}</option>)}</select></label>
               <label className="studio-field"><span>Themenzeile über der Überschrift</span><input value={draft.eyebrow} onChange={event => update("eyebrow", event.target.value)} placeholder="z. B. Gehalt verständlich erklärt"/></label>
               <label className="studio-field"><span>URL</span><span className="studio-url-field"><b>/seiten/</b><input disabled={revision > 0} value={draft.slug} onChange={event => update("slug", event.target.value)} placeholder="meine-neue-seite"/></span>{revision === 0 && <button className="studio-text-button" type="button" onClick={() => update("slug", slugify(draft.title))}>Aus Titel erzeugen</button>}</label>
               <label className="studio-field studio-field-wide"><span>Kurzbeschreibung <small>{draft.description.length}/400</small></span><textarea rows={3} value={draft.description} onChange={event => update("description", event.target.value)} placeholder="Was erhält der Nutzer auf dieser Seite?"/></label>

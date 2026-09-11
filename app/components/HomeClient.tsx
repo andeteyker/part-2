@@ -7,18 +7,35 @@ import { CategoryIcon } from "./CategoryIcon";
 import { CardArrow } from "./CardArrow";
 import { ToolCarousel } from "./ToolCarousel";
 import { ToolIcon } from "./ToolIcon";
+import { StudioPageIcon } from "./StudioPageIcon";
+import type { StudioCatalogItem } from "../studio/catalog";
 
-export function HomeClient() {
+type CatalogItem = {
+  slug: string;
+  title: string;
+  short: string;
+  eyebrow: string;
+  category: ToolCategory;
+  href: string;
+  keywords: string[];
+  studioKind?: StudioCatalogItem["kind"];
+};
+
+export function HomeClient({ studioPages }: { studioPages: StudioCatalogItem[] }) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<ToolCategory | "Alle">("Alle");
+  const catalog = useMemo<CatalogItem[]>(() => [
+    ...tools.map((tool) => ({ ...tool, href: `/tools/${tool.slug}`, keywords: tool.keywords })),
+    ...studioPages.map((page) => ({ ...page, keywords: [page.kind], studioKind: page.kind })),
+  ], [studioPages]);
   const visible = useMemo(() => {
     const q = query.trim().toLocaleLowerCase("de");
-    return tools.filter((tool) => {
+    return catalog.filter((tool) => {
       const inCategory = category === "Alle" || tool.category === category;
       const haystack = [tool.title, tool.short, tool.category, ...tool.keywords].join(" ").toLocaleLowerCase("de");
       return inCategory && (!q || haystack.includes(q));
     });
-  }, [query, category]);
+  }, [catalog, query, category]);
   const groups = categories.map((name) => ({ name, details: categoryDetails[name], items: visible.filter((tool) => tool.category === name) })).filter((group) => group.items.length);
   const featuredCategories: { name: string; category: ToolCategory; subtitle: string }[] = [
     { name: "Handwerker & Renovierung", category: "Handwerker & Renovierung", subtitle: "Sanierung, Ausbau und Angebote" },
@@ -34,11 +51,11 @@ export function HomeClient() {
         <div className="hero-copy">
           <p className="eyebrow"><span /> Kostenlos · Ohne Anmeldung · Direkt im Browser</p>
           <h1>Kostenlose Online-Rechner.<br /><em>Sofort ein klares Ergebnis.</em></h1>
-          <p className="hero-text">SofortTools bietet {tools.length} kostenlose Online-Rechner und Werkzeuge für Gehalt, Steuern, Immobilien, Energie, Bilder und Alltag – sofort nutzbar, verständlich erklärt und ohne Anmeldung.</p>
+          <p className="hero-text">SofortTools bietet {catalog.length} kostenlose Online-Rechner und Werkzeuge für Gehalt, Steuern, Immobilien, Energie, Bilder und Alltag – sofort nutzbar, verständlich erklärt und ohne Anmeldung.</p>
           <label className="tool-search">
             <span aria-hidden="true">⌕</span>
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Welches Tool brauchst du?" aria-label="Tools durchsuchen" />
-            <kbd>{tools.length} Tools</kbd>
+            <kbd>{catalog.length} Tools</kbd>
           </label>
           <div className="trust-row"><span>✓ Keine Registrierung</span><span>✓ Viele Tools arbeiten lokal</span><span>✓ Mobil optimiert</span></div>
         </div>
@@ -48,7 +65,7 @@ export function HomeClient() {
             <Link href={`/nischen/${categoryDetails[categoryItem.category].slug}`} key={categoryItem.name}>
               <span className="rank">0{index + 1}</span>
               <span className="mini-icon"><CategoryIcon category={categoryItem.category} /></span>
-              <span><strong>{categoryItem.name}</strong><small>{categoryItem.subtitle} · {tools.filter((tool) => tool.category === categoryItem.category).length} Rechner</small></span>
+              <span><strong>{categoryItem.name}</strong><small>{categoryItem.subtitle} · {catalog.filter((tool) => tool.category === categoryItem.category).length} Rechner</small></span>
               <b>→</b>
             </Link>
           ))}
@@ -76,8 +93,8 @@ export function HomeClient() {
                 </header>
                 <ToolCarousel label={group.name}>
                   {group.items.map((tool) => (
-                    <Link href={`/tools/${tool.slug}`} className="tool-card" key={tool.slug}>
-                      <div className="card-top"><span className="tool-icon"><ToolIcon slug={tool.slug} /></span><CardArrow /></div>
+                    <Link href={tool.href} className="tool-card" key={tool.href}>
+                      <div className="card-top"><span className="tool-icon">{tool.studioKind ? <StudioPageIcon kind={tool.studioKind}/> : <ToolIcon slug={tool.slug} />}</span><CardArrow /></div>
                       <p>{tool.eyebrow}</p><h3>{tool.title}</h3><span>{tool.short}</span>
                     </Link>
                   ))}

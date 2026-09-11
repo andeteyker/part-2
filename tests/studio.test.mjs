@@ -33,12 +33,15 @@ test('studio authorization, persistence, draft isolation and publication',async(
   assert.equal((await apiRequest('/api/studio')).status,200);
 });
 
-test('studio API key can publish without a browser origin header',async()=>{
-  const draft={slug:'hermes-page',title:'Hermes Testseite',description:'Von der externen API verwaltet',kind:'ratgeber',eyebrow:'API-Test',category:'Ratgeber',body:'## Externer Zugriff\n\nDie Seite wurde über die Studio-API gespeichert.',code:''};
+test('studio API key can publish without a browser origin header and pages join the public catalog',async()=>{
+  const draft={slug:'hermes-page',title:'Hermes Testseite',description:'Von der externen API verwaltet',kind:'ratgeber',eyebrow:'API-Test',category:'Geld & Beruf',body:'## Externer Zugriff\n\nDie Seite wurde über die Studio-API gespeichert.',code:''};
   const saved=await apiRequest('/api/studio',{draft,revision:0,action:'publish'});
   assert.equal(saved.status,200);
   assert.equal((await saved.json()).revision,1);
   const page=await request('/seiten/hermes-page');
   assert.equal(page.status,200);
   assert.match(await page.text(),/Die Seite wurde über die Studio-API gespeichert/);
+  assert.match(await (await request('/')).text(),/href="\/seiten\/hermes-page"/);
+  assert.match(await (await request('/nischen/geld-beruf')).text(),/href="\/seiten\/hermes-page"/);
+  assert.match(await (await request('/sitemap.xml')).text(),/\/seiten\/hermes-page/);
 });

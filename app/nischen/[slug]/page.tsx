@@ -10,6 +10,10 @@ import { CategoryIcon } from "../../components/CategoryIcon";
 import { CardArrow } from "../../components/CardArrow";
 import { ToolCarousel } from "../../components/ToolCarousel";
 import { ToolIcon } from "../../components/ToolIcon";
+import { StudioPageIcon } from "../../components/StudioPageIcon";
+import { publishedStudioCatalog } from "../../studio/catalog";
+
+export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
   return categories.map((category) => ({ slug: categoryDetails[category].slug }));
@@ -43,6 +47,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const category = getCategoryBySlug(slug);
   if (!category) notFound();
 
+  const studioPages = (await publishedStudioCatalog()).filter((page) => page.category === category.name);
+  const categoryTools = [
+    ...category.tools.map((tool) => ({ ...tool, href: `/tools/${tool.slug}`, studioKind: undefined })),
+    ...studioPages.map((page) => ({ ...page, studioKind: page.kind })),
+  ];
+
   const canonical = absoluteUrl(`/nischen/${category.slug}`);
   const schema = {
     "@context": "https://schema.org",
@@ -56,12 +66,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
         inLanguage: "de-DE",
         mainEntity: {
           "@type": "ItemList",
-          numberOfItems: category.tools.length,
-          itemListElement: category.tools.map((tool, index) => ({
+          numberOfItems: categoryTools.length,
+          itemListElement: categoryTools.map((tool, index) => ({
             "@type": "ListItem",
             position: index + 1,
             name: tool.title,
-            url: absoluteUrl(`/tools/${tool.slug}`),
+            url: absoluteUrl(tool.href),
           })),
         },
       },
@@ -95,11 +105,11 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
         <section className="category-tool-list">
           <div className="section-head">
-            <div><p className="eyebrow"><span /> Spezialisierte Werkzeuge</p><h2>{category.tools.length} Rechner für konkrete Aufgaben</h2></div>
+            <div><p className="eyebrow"><span /> Spezialisierte Werkzeuge</p><h2>{categoryTools.length} Rechner und Seiten für konkrete Aufgaben</h2></div>
           </div>
           <ToolCarousel label={category.name}>
-            {category.tools.map((tool) => <Link href={`/tools/${tool.slug}`} className="tool-card" key={tool.slug}>
-              <div className="card-top"><span className="tool-icon"><ToolIcon slug={tool.slug} /></span><CardArrow /></div>
+            {categoryTools.map((tool) => <Link href={tool.href} className="tool-card" key={tool.href}>
+              <div className="card-top"><span className="tool-icon">{tool.studioKind ? <StudioPageIcon kind={tool.studioKind}/> : <ToolIcon slug={tool.slug} />}</span><CardArrow /></div>
               <p>{tool.eyebrow}</p><h3>{tool.title}</h3><span>{tool.short}</span>
             </Link>)}
           </ToolCarousel>

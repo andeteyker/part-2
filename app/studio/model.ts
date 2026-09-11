@@ -306,7 +306,7 @@ calculate();
 
 export function templateFor(kind: PageKind): PageDraft {
   const shared = { ...emptyDraft, kind };
-  if (kind === "rechner") return { ...shared, title: "Prozentrechner mit Rechenweg", slug: "prozentrechner-beispiel", description: "Prozentwert, Rabatt und Aufschlag direkt online berechnen – mit verständlichem Rechenweg und Beispielen.", eyebrow: "Geld & Beruf", category: "Rechner", body: calculatorTextTemplate, code: calculatorTemplate };
-  if (kind === "tool") return { ...shared, title: "Text-Werkzeug Beispiel", slug: "text-werkzeug-beispiel", description: "Text direkt im Browser bearbeiten, prüfen und kopieren – einfach, lokal und ohne Anmeldung.", eyebrow: "Text & Sprache", category: "Tool", body: toolTextTemplate, code: calculatorTemplate };
-  return { ...shared, title: "Stundenlohn richtig berechnen und vergleichen", slug: "stundenlohn-richtig-berechnen", description: "Stundenlohn aus Monatsgehalt und Arbeitszeit berechnen, typische Fehler vermeiden und Angebote fair vergleichen.", eyebrow: "Geld & Beruf", category: "Ratgeber", body: guideTemplateBody, code: "" };
+  if (kind === "rechner") return { ...shared, title: "Prozentrechner mit Rechenweg", slug: "prozentrechner-beispiel", description: "Prozentwert, Rabatt und Aufschlag direkt online berechnen – mit verständlichem Rechenweg und Beispielen.", eyebrow: "Rabatt, Anteil und Aufschlag", category: "Geld & Beruf", body: calculatorTextTemplate, code: calculatorTemplate };
+  if (kind === "tool") return { ...shared, title: "Text-Werkzeug Beispiel", slug: "text-werkzeug-beispiel", description: "Text direkt im Browser bearbeiten, prüfen und kopieren – einfach, lokal und ohne Anmeldung.", eyebrow: "Texte direkt bearbeiten", category: "Text & Sprache", body: toolTextTemplate, code: calculatorTemplate };
+  return { ...shared, title: "Stundenlohn richtig berechnen und vergleichen", slug: "stundenlohn-richtig-berechnen", description: "Stundenlohn aus Monatsgehalt und Arbeitszeit berechnen, typische Fehler vermeiden und Angebote fair vergleichen.", eyebrow: "Gehalt verständlich erklärt", category: "Geld & Beruf", body: guideTemplateBody, code: "" };
 }
