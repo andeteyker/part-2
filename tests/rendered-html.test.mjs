@@ -70,8 +70,8 @@ test("brand and category artwork replace starter icons, abbreviations and emoji"
   assert.match(category, /<svg[^>]+viewBox="0 0 48 48"/i);
   assert.match(guideIndex, /<svg[^>]+viewBox="0 0 48 48"/i);
   const toolIconSlugs = [...home.matchAll(/data-tool-icon="([^"]+)"/g)].map((match) => match[1]);
-  assert.equal(toolIconSlugs.length, 85);
-  assert.equal(new Set(toolIconSlugs).size, 85);
+  assert.equal(toolIconSlugs.length, 90);
+  assert.equal(new Set(toolIconSlugs).size, 90);
   assert.match(home, /data-tool-icon="prozentrechner"/);
   assert.match(home, /data-tool-icon="mehrwertsteuerrechner"/);
   assert.match(home, /data-tool-icon="stundenlohnrechner"/);
@@ -180,7 +180,7 @@ test("robots and sitemap point only to the preferred www domain", async () => {
   assert.match(sitemapText, /https:\/\/www\.sofort-tools\.de\/tools\/mietrendite-rechner/i);
   assert.doesNotMatch(`${robotsText}\n${sitemapText}`, /mielerik\.chatgpt\.site/i);
   assert.match(sitemapText, /https:\/\/www\.sofort-tools\.de\/ueber-uns/i);
-  assert.equal((sitemapText.match(/<url>/g) ?? []).length, 136);
+  assert.equal((sitemapText.match(/<url>/g) ?? []).length, 141);
 });
 
 test("every published tool has dedicated SEO guidance", async () => {
