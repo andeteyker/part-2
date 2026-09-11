@@ -12,12 +12,15 @@ async function request(path,body,email){const headers={accept:'text/html'};if(em
 test('studio authorization, persistence, draft isolation and publication',async()=>{
   assert.equal((await request('/api/studio')).status,403);
   assert.equal((await request('/api/studio',null,'someone@example.test')).status,403);
-  const draft={slug:'test-page',title:'Testseite',description:'Eine Testseite',kind:'ratgeber',body:'Ein Beispiel mit [Rechner](/tools/prozentrechner).',code:''};
+  const draft={slug:'test-page',title:'Testseite',description:'Eine Testseite',kind:'ratgeber',eyebrow:'Praxiswissen',category:'Testkategorie',body:'## Beispiel\n\n> INFO: Ein konkreter Hinweis.\n\n| Wert | Ergebnis |\n| --- | ---: |\n| Beispiel | 42 |\n\nMit [Rechner](/tools/prozentrechner).',code:''};
   const owner='mielerik@gmail.com';
   assert.equal((await request('/api/studio',{draft,revision:0,action:'save'},owner)).status,200);
   assert.equal((await request('/seiten/test-page')).status,404);
   assert.equal((await request('/api/studio',{draft,revision:1,action:'publish'},owner)).status,200);
-  assert.match(await (await request('/seiten/test-page')).text(),/Ein Beispiel/);
+  const liveHtml=await (await request('/seiten/test-page')).text();
+  assert.match(liveHtml,/Ein konkreter Hinweis/);
+  assert.match(liveHtml,/guide-callout/);
+  assert.match(liveHtml,/guide-table/);
   draft.body='Unveröffentlichte Änderung';
   assert.equal((await request('/api/studio',{draft,revision:2,action:'save'},owner)).status,200);
   assert.doesNotMatch(await (await request('/seiten/test-page')).text(),/Unveröffentlichte Änderung/);
