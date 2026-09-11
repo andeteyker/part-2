@@ -11,6 +11,7 @@ import { HandwerkerToolRunner } from "../../components/HandwerkerToolRunner";
 import { categoryDetails, getTool, tools } from "../../data/tool-registry";
 import { getRecommendation } from "../../data/affiliate";
 import { getGuidesByTool } from "../../data/guides";
+import { getAssociatedGuides } from "../../data/tool-guide-associations";
 import { Recommendation } from "../../components/ToolUI";
 import { getToolSeo } from "../../data/tool-seo";
 import { absoluteUrl } from "../../lib/site";
@@ -58,7 +59,8 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const fallbackRelated = tools.filter((item) => item.category === tool.category && item.slug !== tool.slug && !configuredRelated.some((related) => related?.slug === item.slug));
   const related = [...configuredRelated, ...fallbackRelated].slice(0, 4);
   const recommendation = getRecommendation(tool.slug, tool.title);
-  const guides = getGuidesByTool(tool.slug);
+  const guides = [...getGuidesByTool(tool.slug), ...getAssociatedGuides(tool.slug)]
+    .filter((guide, index, list) => list.findIndex((item) => item.slug === guide.slug) === index);
   const editorial = getToolEditorial(tool, seo, guides[0]?.excerpt);
   const usefulFaq = getUsefulFaq(tool, seo);
   const sources = getToolSources(tool.slug);
