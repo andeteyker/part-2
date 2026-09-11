@@ -39,8 +39,9 @@ function readStored(): Choice {
 export default function ConsentBanner() {
   const [choice, setChoice] = useState<Choice>(null);
 
-  // Nach dem Mount gespeicherte Auswahl lesen und Helfer für optionale Dienste registrieren.
+  // Die gespeicherte Browserentscheidung kann erst nach dem Mount sicher gelesen werden.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setChoice(readStored());
     window.__consentRead = () => readStored();
 
@@ -57,7 +58,6 @@ export default function ConsentBanner() {
     };
   }, []);
 
-  // Entscheidung bereits getroffen -> Banner nie anzeigen.
   if (choice !== null) return null;
 
   function grant(value: Exclude<Choice, null>) {
@@ -72,12 +72,7 @@ export default function ConsentBanner() {
   }
 
   return (
-    <div
-      role="dialog"
-      aria-modal="false"
-      aria-label="Cookie- und Datenschutzeinstellungen"
-      className="consent-banner"
-    >
+    <div role="dialog" aria-modal="false" aria-label="Cookie- und Datenschutzeinstellungen" className="consent-banner">
       <div className="consent-inner">
         <p>
           <strong>Deine Privatsphäre</strong>
@@ -87,12 +82,8 @@ export default function ConsentBanner() {
           </span>
         </p>
         <div className="consent-actions">
-          <button type="button" onClick={() => grant("denied")} className="consent-deny">
-            Nur notwendig
-          </button>
-          <button type="button" onClick={() => grant("accepted")} className="consent-accept">
-            Alle akzeptieren
-          </button>
+          <button type="button" onClick={() => grant("denied")} className="consent-deny">Nur notwendig</button>
+          <button type="button" onClick={() => grant("accepted")} className="consent-accept">Alle akzeptieren</button>
         </div>
       </div>
     </div>
