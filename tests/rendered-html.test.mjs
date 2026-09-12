@@ -387,6 +387,7 @@ test("content plan renders 30 focused guides with examples and calculator links"
 
   const index = await fetchFromWorker(worker, "/ratgeber").then((response) => response.text());
   assert.match(index, /Fragen aus dem Alltag verständlich beantwortet/);
+  assert.match(index, /tool-hero guide-index-hero/);
   assert.match(index, /Bei Bedarf weiterrechnen/);
   assert.match(index, /Kreditraten-Rechner für Immobilien/);
   assert.match(index, /Wie kalkuliere ich ein Angebot richtig\? Von Selbstkosten bis Gewinn/);

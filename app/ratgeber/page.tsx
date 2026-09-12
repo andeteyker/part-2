@@ -23,7 +23,7 @@ export default function RatgeberPage() {
       <SiteHeader />
       <main className="tool-page">
         <div className="shell">
-          <section className="tool-hero">
+          <section className="tool-hero guide-index-hero">
             <p className="eyebrow"><span /> Ratgeber</p>
             <h1>Fragen aus dem Alltag verständlich beantwortet</h1>
             <p>Die Beiträge starten bei der eigentlichen Frage – nicht beim Rechner. Du bekommst zuerst eine verständliche Einordnung, Beispiele und typische Fallstricke. Nur wenn eine eigene Berechnung wirklich weiterhilft, verlinken wir das passende Werkzeug direkt an der richtigen Stelle.</p>
