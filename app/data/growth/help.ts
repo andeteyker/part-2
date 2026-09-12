@@ -76,6 +76,16 @@ const RESULT_HELP: Record<string, string> = {
   "urlaubsanspruch-rechner": "Mathematische Umrechnung des eingegebenen Jahresurlaubs; arbeitsrechtliche Sonderfälle bleiben unberücksichtigt.",
   "angebots-kalkulation": "Kalkulierter Bruttopreis aus Selbstkosten, Aufschlag und Mehrwertsteuer.",
   "umzugskosten-rechner": "Budgetschätzung aus den eingegebenen Einzelkosten einschließlich Reserve.",
+  "arbeitslosengeld-rechner": "Vereinfachte monatliche Orientierung anhand des eingegebenen pauschalierten Leistungsentgelts und Leistungssatzes.",
+  "balkonkraftwerk-rechner": "Geschätzte jährliche Ersparnis aus Anlagenleistung, Standortertrag, Eigenverbrauch und Strompreis.",
+  "fahrtkosten-rechner": "Geschätzte Gesamtkosten der Fahrt aus Kraftstoffverbrauch und den zusätzlich angesetzten Fahrzeugkosten.",
+  "haushaltsbudget-rechner": "Verfügbarer Monatsbetrag nach Abzug aller eingegebenen Ausgaben und der geplanten Sparrate.",
+  "kredit-sondertilgung-rechner": "Modellhafte Zinsersparnis durch jährliche Sondertilgungen bei gleichbleibendem Sollzins und gleichbleibender Rate.",
+  "leasingfaktor-rechner": "Verhältnis der Monatsrate zum Bruttolistenpreis sowie ein Vergleich unter Einbeziehung einmaliger Leasingkosten.",
+  "mietkaution-rechner": "Kautionsbetrag aus Nettokaltmiete und vereinbarter Anzahl der Kautionsmieten einschließlich möglicher Drittelung.",
+  "selbststaendig-stundensatz-rechner": "Erforderlicher Netto-Stundensatz zur Deckung des eingegebenen Jahresbedarfs bei den verfügbaren abrechenbaren Stunden.",
+  "skonto-rechner": "Preisnachlass und verbleibender Zahlbetrag nach Anwendung des vereinbarten Skontosatzes.",
+  "zinseszins-rechner": "Mathematisches Endkapital aus Startkapital, Sparrate, Laufzeit und einer konstant angenommenen Rendite.",
 };
 
 export const getGrowthFieldHelp = (label: string) => FIELD_HELP[label] ?? `Gib hier den für deine Berechnung passenden Wert für „${label}“ ein.`;

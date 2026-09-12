@@ -8,7 +8,7 @@ import PlausibleAnalytics from "./components/PlausibleAnalytics";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: { default: `Kostenlose Online-Rechner für Alltag & Finanzen | ${SITE_NAME}`, template: `%s | ${SITE_NAME}` },
-  description: "85 kostenlose Online-Rechner und Werkzeuge für Gehalt, Steuern, Lernen, Texte, SEO, Bilder und Alltag – sofort nutzbar, verständlich erklärt, ohne Anmeldung.",
+  description: "Kostenlose Online-Rechner und Werkzeuge für Gehalt, Steuern, Lernen, Texte, SEO, Bilder und Alltag – sofort nutzbar, verständlich erklärt, ohne Anmeldung.",
   applicationName: SITE_NAME,
   category: "Online-Rechner und digitale Werkzeuge",
   authors: [{ name: SITE_NAME }],
