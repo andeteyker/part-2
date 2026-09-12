@@ -23,6 +23,7 @@ type FieldProps = {
   max?: string | number;
   step?: string | number;
   placeholder?: string;
+  required?: boolean;
 };
 
 const TERM_HELP: Record<string, string> = {
@@ -128,15 +129,19 @@ function FieldLabel({ label, help, htmlFor }: { label: string; help?: string; ht
   return <span className="field-label"><label htmlFor={htmlFor}>{label}</label>{explanation && <InfoTip text={explanation} label={`${label} erklären`} />}</span>;
 }
 
-export function Field({ label, help, value, onChange, type = "number", suffix, min, max, step, placeholder }: FieldProps) {
+export function Field({ label, help, value, onChange, type = "number", suffix, min, max, step, placeholder, required }: FieldProps) {
   const id = useId();
+  const errorId = `${id}-error`;
+  const needsValue = required ?? (["number", "date", "time"].includes(String(type)) && !/optional/i.test(label));
+  const isEmpty = needsValue && value.trim() === "";
   return (
-    <div className="field">
+    <div className={`field${isEmpty ? " has-error" : ""}`}>
       <FieldLabel label={label} help={help} htmlFor={id} />
       <div>
-        <input id={id} type={type} value={value} min={min} max={max} step={step} placeholder={placeholder} onChange={(event) => onChange(event.target.value)} />
+        <input id={id} type={type} value={value} min={min} max={max} step={step} placeholder={placeholder} required={needsValue} aria-invalid={isEmpty || undefined} aria-describedby={isEmpty ? errorId : undefined} onFocus={(event) => event.currentTarget.select()} onChange={(event) => onChange(event.target.value)} />
         {suffix && <b>{suffix}</b>}
       </div>
+      {isEmpty && <span className="field-error" id={errorId} role="alert">Bitte gib einen Wert ein.</span>}
     </div>
   );
 }

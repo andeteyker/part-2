@@ -129,6 +129,11 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .field input, .field select { width: 100%; min-width: 0; height: 52px; padding: 0 15px; border: 0; background: transparent; outline: 0; color: var(--navy); font-weight: 700; }
 .field select { appearance: auto; }
 .field > div:focus-within, .field textarea:focus { border-color: var(--lime-dark); outline: 3px solid rgba(184,239,44,.2); }
+.field.has-error > div { border-color: #b42318; background: #fff8f7; }
+.field-error { color: #a72727; font-size: 12px; font-weight: 700; line-height: 1.35; }
+.tool-surface:has(.field.has-error) .result-box,
+.tool-surface:has(.field.has-error) .stats-grid { display: none; }
+.tool-surface:has(.field.has-error)::after { content: "Bitte vervollständige die markierten Pflichtfelder, damit ein Ergebnis berechnet werden kann."; display: block; margin-top: 22px; padding: 14px 16px; border: 1px solid #efb5af; border-radius: 10px; background: #fff8f7; color: #8f1d18; font-size: 13px; font-weight: 700; line-height: 1.5; }
 .field b { padding-right: 14px; color: #718095; white-space: nowrap; }
 .field textarea { width: 100%; padding: 15px; resize: vertical; border: 1px solid #cbd5df; border-radius: 10px; outline: 0; color: var(--navy); font-weight: 500; line-height: 1.6; }
 .result-box { margin-top: 24px; padding: 24px; display: grid; gap: 7px; border-radius: 13px; background: var(--navy); color: white; }

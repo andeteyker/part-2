@@ -24,7 +24,10 @@ export function useUrlState(key: string, defaultValue: string) {
   const update = useCallback((nextValue: string) => {
     setValue(nextValue);
     const url = new URL(window.location.href);
-    if (nextValue === defaultValue || nextValue === "") url.searchParams.delete(key);
+    // Ein leerer Wert muss als bewusste Eingabe erhalten bleiben. Würden wir
+    // den Parameter löschen, würde das anschließende URL-Sync sofort wieder
+    // den Standardwert einsetzen und das Feld ließe sich nicht leeren.
+    if (nextValue === defaultValue) url.searchParams.delete(key);
     else url.searchParams.set(key, nextValue);
     window.history.replaceState(window.history.state, "", `${url.pathname}${url.search}${url.hash}`);
     window.dispatchEvent(new Event("st:url-state"));

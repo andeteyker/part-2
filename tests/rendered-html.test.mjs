@@ -459,3 +459,23 @@ test("learning, text and SEO are separate complete tool categories", async () =>
   assert.match(runner, /const TOOL_TERMS:[\s\S]*"hreflang-generator"/);
   assert.match(runner, /<ToolGlossary slug=\{slug\}/);
 });
+
+test("calculator inputs can stay empty and validate before showing a result", async () => {
+  const [urlState, toolUi, growthRunner, imageRunner, styles] = await Promise.all([
+    readFile(new URL("../app/hooks/useUrlState.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/ToolUI.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/GrowthToolRunner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/ImageToolRunner.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.doesNotMatch(urlState, /nextValue === defaultValue \|\| nextValue === ""/);
+  assert.match(urlState, /url\.searchParams\.set\(key, nextValue\)/);
+  assert.match(toolUi, /onFocus=\{\(event\) => event\.currentTarget\.select\(\)\}/);
+  assert.match(toolUi, /aria-invalid=\{isEmpty \|\| undefined\}/);
+  assert.match(toolUi, /Bitte gib einen Wert ein\./);
+  assert.match(growthRunner, /field\.defaultValue !== "0"/);
+  assert.match(imageRunner, /setTargetKb\(event\.target\.value\)/);
+  assert.doesNotMatch(imageRunner, /setTargetKb\(Number\(event\.target\.value\)\)/);
+  assert.match(styles, /tool-surface:has\(\.field\.has-error\) \.result-box/);
+});

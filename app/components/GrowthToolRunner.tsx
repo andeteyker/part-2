@@ -15,7 +15,7 @@ function ConnectedField({ field, onValue }: { field: GrowthField; onValue: (key:
   useEffect(() => onValue(field.key, value), [field.key, onValue, value]);
   const help = getGrowthFieldHelp(field.label);
   if (field.options) return <SelectField label={field.label} help={help} value={value} onChange={setValue} options={field.options} />;
-  return <Field label={field.label} help={help} value={value} onChange={setValue} suffix={field.suffix} type={field.type} min={field.min} max={field.max} step={field.step} />;
+  return <Field label={field.label} help={help} value={value} onChange={setValue} suffix={field.suffix} type={field.type} min={field.min} max={field.max} step={field.step} required={field.defaultValue !== "0" && !/optional/i.test(field.label)} />;
 }
 
 function incomeTax(zveValue: number, year: string) {
