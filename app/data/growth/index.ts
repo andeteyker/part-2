@@ -23,19 +23,24 @@ import { kreditSondertilgungConfig } from "./kredit-sondertilgung-rechner";
 import { balkonkraftwerkConfig } from "./balkonkraftwerk-rechner";
 import { fahrtkostenConfig } from "./fahrtkosten-rechner";
 import { selbststaendigStundensatzConfig } from "./selbststaendig-stundensatz-rechner";
+import { arbeitslosengeldConfig } from "./arbeitslosengeld-rechner";
+import { leasingfaktorConfig } from "./leasingfaktor-rechner";
+import { skontoConfig } from "./skonto-rechner";
+import { mietkautionConfig } from "./mietkaution-rechner";
+import { zinseszinsConfig } from "./zinseszins-rechner";
 import type { GrowthCategory, GrowthToolConfig } from "./types";
 
-export const growthConfigs: GrowthToolConfig[] = [nettoGehaltConfig, einkommensteuerConfig, pendlerpauschaleConfig, rentenConfig, abfindungConfig, bausparConfig, haushaltsbudgetConfig, kreditSondertilgungConfig, fahrtkostenConfig, stromkostenConfig, heizkostenConfig, gasverbrauchConfig, solarErtragConfig, balkonkraftwerkConfig, bmiConfig, kalorienbedarfConfig, koerperfettConfig, idealgewichtConfig, elterngeldConfig, kindergeldConfig, schwangerschaftConfig, urlaubsanspruchConfig, angebotConfig, selbststaendigStundensatzConfig, umzugskostenConfig];
+export const growthConfigs: GrowthToolConfig[] = [nettoGehaltConfig, einkommensteuerConfig, pendlerpauschaleConfig, arbeitslosengeldConfig, rentenConfig, zinseszinsConfig, abfindungConfig, bausparConfig, haushaltsbudgetConfig, kreditSondertilgungConfig, leasingfaktorConfig, fahrtkostenConfig, stromkostenConfig, heizkostenConfig, gasverbrauchConfig, solarErtragConfig, balkonkraftwerkConfig, bmiConfig, kalorienbedarfConfig, koerperfettConfig, idealgewichtConfig, elterngeldConfig, kindergeldConfig, schwangerschaftConfig, mietkautionConfig, urlaubsanspruchConfig, angebotConfig, skontoConfig, selbststaendigStundensatzConfig, umzugskostenConfig];
 export const growthTools = growthConfigs.map(({ tool }) => tool);
 export const growthToolSeo = Object.fromEntries(growthConfigs.map(({ tool, seo }) => [tool.slug, seo]));
 export const getGrowthConfig = (slug: string) => growthConfigs.find(({ tool }) => tool.slug === slug);
 export const growthCategories: GrowthCategory[] = ["Finanzen & Steuern", "Energie & Umwelt", "Gesundheit & Fitness", "Familie & Leben", "Arbeitgeber & Business"];
 export const growthCategoryDetails: Record<GrowthCategory, { slug: string; kicker: string; description: string; icon: string }> = {
-  "Finanzen & Steuern": { slug: "finanzen-steuern", kicker: "Gehalt, Steuer und Vorsorge", description: "Rechner für Nettogehalt, Einkommensteuer, Arbeitsweg, Haushaltsbudget, Kredite, Rente, Abfindung und Bausparen.", icon: "€+" },
+  "Finanzen & Steuern": { slug: "finanzen-steuern", kicker: "Gehalt, Steuer und Vorsorge", description: "Rechner für Nettogehalt, Einkommensteuer, Arbeitsweg, Arbeitslosengeld, Sparen, Kredite, Leasing, Rente, Abfindung und Bausparen.", icon: "€+" },
   "Energie & Umwelt": { slug: "energie-umwelt", kicker: "Verbrauch, Kosten und Solarstrom", description: "Strom-, Heiz- und Gaskosten berechnen sowie Photovoltaik- und Balkonkraftwerk-Ertrag und Amortisation planen.", icon: "kWh" },
   "Gesundheit & Fitness": { slug: "gesundheit-fitness", kicker: "Körperwerte verständlich einordnen", description: "BMI, Kalorienbedarf, Körperfett und Gewichtsbereiche als unverbindliche Orientierung berechnen.", icon: "BMI" },
-  "Familie & Leben": { slug: "familie-leben", kicker: "Leistungen und wichtige Termine", description: "Elterngeld, Kindergeld und den voraussichtlichen Geburtstermin übersichtlich schätzen.", icon: "Fam" },
-  "Arbeitgeber & Business": { slug: "arbeitgeber-business", kicker: "Arbeit, Angebote und Projekte", description: "Urlaubsanspruch, Angebotskalkulation, Selbstständigen-Stundensatz und Umzugskosten transparent planen und vergleichen.", icon: "Biz" },
+  "Familie & Leben": { slug: "familie-leben", kicker: "Leistungen und wichtige Termine", description: "Elterngeld, Kindergeld, Mietkaution und den voraussichtlichen Geburtstermin übersichtlich schätzen.", icon: "Fam" },
+  "Arbeitgeber & Business": { slug: "arbeitgeber-business", kicker: "Arbeit, Angebote und Projekte", description: "Urlaubsanspruch, Angebotskalkulation, Skonto, Selbstständigen-Stundensatz und Umzugskosten transparent planen und vergleichen.", icon: "Biz" },
 };
 
 export type { GrowthCategory, GrowthToolConfig } from "./types";
