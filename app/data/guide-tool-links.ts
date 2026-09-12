@@ -5,6 +5,7 @@
 export const guideToolLinkTerms: Record<string, string[]> = {
   "abfindungs-rechner": ["Abfindung"],
   "angebots-kalkulation": ["Gewinnaufschlag", "Selbstkosten", "Angebotspreis"],
+  "arbeitslosengeld-rechner": ["Arbeitslosengeld", "ALG I", "Arbeitslosigkeit"],
   "badrenovierung-rechner": ["Badrenovierung", "Badsanierung", "Renovierungsbudget", "Sicherheitspuffer"],
   "balkonkraftwerk-rechner": ["Balkonkraftwerk", "Steckersolar", "Steckersolaranlage", "Eigenverbrauch"],
   "bauspar-rechner": ["Bausparguthaben", "Bausparziel", "Bausparen"],
@@ -25,7 +26,9 @@ export const guideToolLinkTerms: Record<string, string[]> = {
   "kindergeld-rechner": ["Kindergeld", "Monatsbetrag", "Gesamtsumme"],
   "koerperfett-anteil-rechner": ["Körperfettwert", "Körperfett"],
   "kredit-sondertilgung-rechner": ["Sondertilgung", "Sondertilgungen", "Zinsersparnis", "Restschuld nach der Zinsbindung"],
+  "leasingfaktor-rechner": ["Leasingfaktor", "Leasingrate", "Leasingangebot"],
   mehrwertsteuerrechner: ["Umsatzsteuer", "Mehrwertsteuer"],
+  "mietkaution-rechner": ["Mietkaution", "Kaution", "Nettokaltmiete"],
   "mietrendite-rechner": ["Nettorendite", "Bruttorendite", "Mietrendite"],
   "nachtzuschlag-rechner": ["Nachtzuschlag", "Nachtstunden"],
   "netto-gehalt-rechner": ["Nettogehalt", "Netto"],
@@ -35,6 +38,7 @@ export const guideToolLinkTerms: Record<string, string[]> = {
   "schichtlohn-rechner": ["Schichtlohn", "Grundvergütung"],
   "schwangerschafts-terminrechner": ["Geburtstermin", "Schwangerschaftswoche"],
   "selbststaendig-stundensatz-rechner": ["Stundensatz für Selbstständige", "Freelancer-Stundensatz", "abrechenbare Stunden", "betrieblicher Stundensatz", "produktive Arbeitsstunden"],
+  "skonto-rechner": ["Skonto", "Zahlungsziel", "Zahlungsbedingungen"],
   "solar-ertrag-rechner": ["Jahresertrag", "Solarertrag", "Photovoltaikanlage"],
   "stromkosten-rechner": ["Stromkosten", "Kilowattstunden pro Jahr"],
   stundenlohnrechner: ["Stundenlohn", "Stundensatz"],
@@ -43,4 +47,5 @@ export const guideToolLinkTerms: Record<string, string[]> = {
   "urlaubsanspruch-rechner": ["Urlaubsanspruch", "Urlaubstage", "Tage Urlaub", "Jahresurlaub", "Teilurlaub"],
   "woerter-zaehlen": ["Wortzahl", "Lesezeit"],
   "zeichen-zaehlen": ["Zeichenzahl", "Zeichen"],
+  "zinseszins-rechner": ["Zinseszins", "Sparplan", "Rendite"],
 };
