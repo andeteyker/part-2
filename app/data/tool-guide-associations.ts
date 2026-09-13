@@ -11,6 +11,11 @@ const toolGuideAssociations: Record<string, string[]> = {
   "selbststaendig-stundensatz-rechner": ["arbeit-projekte-kalkulieren"],
   "skonto-rechner": ["arbeit-projekte-kalkulieren"],
   "zinseszins-rechner": ["finanzen-steuern-planen", "rente-abfindung-bausparen"],
+  "energie-abschlag-rechner": ["energiekosten-senken"],
+  "haushaltsgeraete-kosten-rechner": ["energiekosten-senken"],
+  "co2-heizkosten-rechner": ["energiekosten-senken"],
+  "anhalteweg-rechner": ["geld-rechner-alltag"],
+  "eauto-verbrenner-kosten-rechner": ["geld-rechner-alltag", "energiekosten-senken"],
 };
 
 export function getAssociatedGuides(toolSlug: string): Guide[] {
