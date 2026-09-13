@@ -86,6 +86,11 @@ const RESULT_HELP: Record<string, string> = {
   "selbststaendig-stundensatz-rechner": "Erforderlicher Netto-Stundensatz zur Deckung des eingegebenen Jahresbedarfs bei den verfügbaren abrechenbaren Stunden.",
   "skonto-rechner": "Preisnachlass und verbleibender Zahlbetrag nach Anwendung des vereinbarten Skontosatzes.",
   "zinseszins-rechner": "Mathematisches Endkapital aus Startkapital, Sparrate, Laufzeit und einer konstant angenommenen Rendite.",
+  "energie-abschlag-rechner": "Geschätzter monatlicher Abschlag aus Jahresverbrauch, Arbeitspreis, Grundpreis und dem gewählten Sicherheitspuffer.",
+  "haushaltsgeraete-kosten-rechner": "Gesamtkosten aus Kaufpreis und den geschätzten Stromkosten über die gewählte Nutzungsdauer.",
+  "co2-heizkosten-rechner": "Geschätzte jährliche CO₂-Kosten aus Energieverbrauch, Emissionsfaktor und eingegebenem CO₂-Preis.",
+  "anhalteweg-rechner": "Fahrschul-Faustwert aus Reaktionsweg und Bremsweg; kein physikalisch garantierter Sicherheitsabstand.",
+  "eauto-verbrenner-kosten-rechner": "Vergleich der jährlichen Energie- bzw. Kraftstoffkosten bei der eingegebenen Fahrleistung.",
 };
 
 export const getGrowthFieldHelp = (label: string) => FIELD_HELP[label] ?? `Gib hier den für deine Berechnung passenden Wert für „${label}“ ein.`;
