@@ -6,6 +6,7 @@ import { getGrowthFieldHelp, getGrowthResultHelp } from "../data/growth/help";
 import type { GrowthField } from "../data/growth/types";
 import { useUrlState } from "../hooks/useUrlState";
 import { Field, Result, SelectField, fmt, money, number, useCalculationResult } from "./ToolUI";
+import { calculateExtraGrowth } from "./growth-extra-calculations";
 
 type Values = Record<string, string>;
 type Output = { label: string; value: string; detail?: string; stats?: { label: string; value: string }[] };
@@ -87,7 +88,7 @@ function calculate(slug: string, values: Values): Output {
     case "angebots-kalkulation": { const costs = n("material") + n("stunden") * n("stundensatz") + n("gemeinkosten"); const net = costs * (1 + n("gewinn") / 100); const gross = net * (1 + n("mwst") / 100); return { label: "Brutto-Angebotspreis", value: money(gross), detail: `${money(net)} netto`, stats: [{ label: "Selbstkosten", value: money(costs) }, { label: "Kalkulierter Gewinn", value: money(net - costs) }, { label: "Marge auf Nettoerlös", value: `${fmt((net - costs) / Math.max(net, 1) * 100)} %` }] }; }
     case "selbststaendig-stundensatz-rechner": { const base = n("lohn") + n("betrieb") + n("ruecklage"); const revenue = base * (1 + n("gewinn") / 100); const rate = revenue / Math.max(n("stunden"), 1); return { label: "Erforderlicher Netto-Stundensatz", value: money(rate), detail: `${money(revenue)} benötigter Jahresumsatz`, stats: [{ label: "Kosten & Unternehmerlohn", value: money(base) }, { label: "Gewinnaufschlag", value: money(revenue - base) }, { label: "Abrechenbare Stunden", value: `${fmt(n("stunden"), 0)} Std.` }] }; }
     case "umzugskosten-rechner": { const base = n("fahrzeug") + n("helfer") + n("material") + n("renovierung") + n("entfernung") * n("km-preis"); const own = base * (1 + n("reserve") / 100); const difference = n("firma") - own; return { label: "Geschätzter Eigenumzug", value: money(own), detail: `Inklusive ${fmt(n("reserve"))} % Reserve`, stats: [{ label: "Firmenangebot", value: money(n("firma")) }, { label: difference >= 0 ? "Mögliche Ersparnis" : "Firma günstiger", value: money(Math.abs(difference)) }] }; }
-    default: return { label: "Ergebnis", value: "–" };
+    default: return calculateExtraGrowth(slug, values) ?? { label: "Ergebnis", value: "–" };
   }
 }
 
