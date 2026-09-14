@@ -14,14 +14,18 @@ function secureEqual(left: string, right: string) {
 }
 
 async function configuredApiKey() {
+  const processValue = process.env.STUDIO_API_KEY;
+  if (typeof processValue === "string" && processValue.length >= 32) return processValue;
+
   try {
-    const runtime = await import("cloudflare:workers");
-    const value = (runtime.env as unknown as Record<string, unknown>).STUDIO_API_KEY;
+    const importRuntime = new Function("specifier", "return import(specifier)") as (specifier: string) => Promise<{ env?: Record<string, unknown> }>;
+    const runtime = await importRuntime("cloudflare:workers");
+    const value = runtime.env?.STUDIO_API_KEY;
     if (typeof value === "string" && value.length >= 32) return value;
   } catch {
-    // Lokale Entwicklungsumgebungen haben kein Cloudflare-Runtime-Modul.
+    // Cloudflare's runtime module is unavailable on Vercel and in local Node.js.
   }
-  return process.env.STUDIO_API_KEY;
+  return undefined;
 }
 
 async function authorize(request: Request): Promise<AuthMode> {
