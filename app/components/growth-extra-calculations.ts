@@ -76,6 +76,56 @@ export function calculateExtraGrowth(slug: string, values: Values): Output | nul
       const saving = iceYear - evYear;
       return { label: saving >= 0 ? "E-Auto Energiekosten-Vorteil" : "Verbrenner Energiekosten-Vorteil", value: money(Math.abs(saving)), detail: `Differenz pro Jahr bei ${fmt(n("km"), 0)} km`, stats: [{ label: "E-Auto/Jahr", value: money(evYear) }, { label: "Verbrenner/Jahr", value: money(iceYear) }, { label: "Differenz je 100 km", value: money(Math.abs(ice100 - ev100)) }] };
     }
+    case "erspartes-reichweite-rechner": {
+      const savings = Math.max(0, n("erspartes"));
+      const income = n("einnahmen");
+      const expenses = n("ausgaben");
+      const gap = expenses - income;
+      if (gap <= 0) {
+        const surplus = Math.abs(gap);
+        return { label: "Reichweite der Rücklage", value: "Nicht begrenzt", detail: `Unter diesen Annahmen entsteht ${money(surplus)} monatlicher Überschuss`, stats: [{ label: "Monatlicher Überschuss", value: money(surplus) }, { label: "Erspartes", value: money(savings) }, { label: "Saldo nach 12 Monaten", value: money(savings + surplus * 12) }] };
+      }
+      const months = savings / gap;
+      return { label: "Rechnerische Reichweite", value: `${fmt(months, 1)} Monate`, detail: `${money(gap)} monatliche Finanzierungslücke`, stats: [{ label: "Monatliche Lücke", value: money(gap) }, { label: "Entspricht ungefähr", value: `${fmt(months / 12, 1)} Jahren` }, { label: "Verbrauch der Rücklage/Jahr", value: money(gap * 12) }] };
+    }
+    case "nebenkosten-vorauszahlung-rechner": {
+      const months = Math.min(12, Math.max(1, n("monate")));
+      const actual = Math.max(0, n("jahreskosten"));
+      const oldMonthly = Math.max(0, n("bisher"));
+      const paid = oldMonthly * months;
+      const recommended = actual / months;
+      const balance = actual - paid;
+      const change = recommended - oldMonthly;
+      return { label: "Rechnerische neue Vorauszahlung", value: money(recommended), detail: change >= 0 ? `${money(change)} mehr pro Monat` : `${money(Math.abs(change))} weniger pro Monat`, stats: [{ label: "Bisher vorausgezahlt", value: money(paid) }, { label: balance >= 0 ? "Nachzahlung im Zeitraum" : "Guthaben im Zeitraum", value: money(Math.abs(balance)) }, { label: "Monatliche Anpassung", value: `${change >= 0 ? "+" : "−"}${money(Math.abs(change))}` }] };
+    }
+    case "powerstation-laufzeit-rechner": {
+      const capacity = Math.max(0, n("kapazitaet"));
+      const load = Math.max(0.01, n("leistung"));
+      const efficiency = Math.min(100, Math.max(0, n("wirkungsgrad"))) / 100;
+      const dailyHours = Math.max(0.01, n("stunden"));
+      const usable = capacity * efficiency;
+      const runtime = usable / load;
+      const days = runtime / dailyHours;
+      return { label: "Geschätzte Laufzeit", value: `${fmt(runtime, 1)} Stunden`, detail: `${fmt(usable, 0)} Wh rechnerisch nutzbare Energie`, stats: [{ label: "Nutzbare Kapazität", value: `${fmt(usable, 0)} Wh` }, { label: "Bei täglicher Nutzung", value: `${fmt(days, 1)} Tage` }, { label: "Angesetzter Wirkungsgrad", value: `${fmt(efficiency * 100, 0)} %` }] };
+    }
+    case "erhaltungsruecklage-rechner": {
+      const area = Math.max(0, n("flaeche"));
+      const rate = Math.max(0, n("satz"));
+      const existing = Math.max(0, n("bestand"));
+      const years = Math.max(1, n("jahre"));
+      const annual = area * rate;
+      const planned = annual * years;
+      const total = existing + planned;
+      return { label: "Planrücklage pro Monat", value: money(annual / 12), detail: `${money(annual)} pro Jahr bei ${fmt(rate, 2)} €/m²`, stats: [{ label: `Zuführung in ${fmt(years, 0)} Jahren`, value: money(planned) }, { label: "Vorhandener Bestand", value: money(existing) }, { label: "Bestand + Plan-Zuführung", value: money(total) }] };
+    }
+    case "werbungskosten-steuerersparnis-rechner": {
+      const total = Math.max(0, n("werbungskosten"));
+      const allowance = Math.max(0, n("pauschbetrag"));
+      const rate = Math.min(100, Math.max(0, n("steuersatz"))) / 100;
+      const additional = Math.max(0, total - allowance);
+      const saving = additional * rate;
+      return { label: "Geschätzte zusätzliche Steuerwirkung", value: money(saving), detail: `${money(additional)} Werbungskosten oberhalb des Pauschbetrags`, stats: [{ label: "Werbungskosten gesamt", value: money(total) }, { label: "Über Pauschbetrag", value: money(additional) }, { label: "Grenzsteuersatz", value: `${fmt(rate * 100, 1)} %` }] };
+    }
     default:
       return null;
   }

@@ -53,6 +53,22 @@ const FIELD_HELP: Record<string, string> = {
   Mehrwertsteuer: "Steuer, die nach der Nettokalkulation aufgeschlagen wird. Der tatsächlich geltende Satz hängt von Leistung und Unternehmen ab.",
   Sicherheitspuffer: "Prozentuale Reserve für Preisabweichungen und noch nicht sicher bekannte Zusatzkosten.",
   "Zusatzkosten je Kilometer": "Geschätzte variable Fahrtkosten je Kilometer, etwa für Kraftstoff und Fahrzeugnutzung.",
+  "Verfügbares Erspartes": "Nur der Betrag, der tatsächlich zur Überbrückung zur Verfügung steht und nicht fest für andere Zahlungen gebunden ist.",
+  "Regelmäßige Einnahmen": "Planbare monatliche Einnahmen, die während des betrachteten Zeitraums voraussichtlich weiter eingehen.",
+  "Monatliche Ausgaben": "Regelmäßige und notwendige Ausgaben pro Monat. Unregelmäßige Jahreskosten am besten anteilig berücksichtigen.",
+  "Tatsächliche Jahreskosten laut Abrechnung": "Der auf deine Wohnung entfallende Kostenbetrag für den betrachteten Abrechnungszeitraum.",
+  "Bisherige Vorauszahlung": "Monatlicher Betrag, der bisher als Betriebskostenvorauszahlung gezahlt wurde.",
+  "Abgerechnete Monate": "Anzahl der Monate, auf die sich der eingegebene tatsächliche Kostenbetrag bezieht.",
+  Nennkapazität: "Vom Hersteller angegebene Speicherkapazität in Wattstunden. Real nutzbar ist meist weniger.",
+  "Durchschnittliche Geräteleistung": "Mittlere elektrische Leistungsaufnahme während der Nutzung. Einschaltspitzen werden separat nicht abgebildet.",
+  "Nutzbarer Wirkungsgrad": "Anteil der Nennkapazität, der nach Umwandlungs- und Eigenverbrauchsverlusten rechnerisch am Verbraucher ankommt.",
+  "Nutzung pro Tag": "Durchschnittliche Betriebsdauer des angeschlossenen Geräts pro Tag.",
+  Wohnfläche: "Wohnfläche der betrachteten Einheit als Bezugsgröße für den gewählten Rücklagenwert.",
+  "Geplanter Rücklagenwert": "Frei gewählter Planwert in Euro pro Quadratmeter und Jahr; kein gesetzlich vorgeschriebener Pauschalbetrag.",
+  "Vorhandener anteiliger Rücklagenbestand": "Betrag der gemeinschaftlichen Erhaltungsrücklage, der wirtschaftlich auf die betrachtete Einheit entfällt, soweit bekannt.",
+  Planungszeitraum: "Zeitraum, über den die geplanten jährlichen Zuführungen addiert werden sollen.",
+  "Werbungskosten gesamt": "Summe der beruflich veranlassten Aufwendungen, die du für die überschlägige Rechnung ansetzen möchtest.",
+  "Arbeitnehmer-Pauschbetrag": "Pauschaler Werbungskostenabzug für Arbeitnehmer. Der Wert ist editierbar, falls sich die gesetzliche Höhe ändert.",
 };
 
 const RESULT_HELP: Record<string, string> = {
@@ -91,6 +107,11 @@ const RESULT_HELP: Record<string, string> = {
   "co2-heizkosten-rechner": "Geschätzte jährliche CO₂-Kosten aus Energieverbrauch, Emissionsfaktor und eingegebenem CO₂-Preis.",
   "anhalteweg-rechner": "Fahrschul-Faustwert aus Reaktionsweg und Bremsweg; kein physikalisch garantierter Sicherheitsabstand.",
   "eauto-verbrenner-kosten-rechner": "Vergleich der jährlichen Energie- bzw. Kraftstoffkosten bei der eingegebenen Fahrleistung.",
+  "erspartes-reichweite-rechner": "Rechnerische Zahl von Monaten, die das verfügbare Erspartes bei einer konstanten monatlichen Finanzierungslücke reicht.",
+  "nebenkosten-vorauszahlung-rechner": "Monatlicher Kostenbedarf aus der letzten Abrechnung; keine rechtliche Prüfung einer konkreten Anpassungserklärung.",
+  "powerstation-laufzeit-rechner": "Geschätzte Versorgungsdauer aus Nennkapazität, Wirkungsgrad und durchschnittlicher Geräteleistung.",
+  "erhaltungsruecklage-rechner": "Frei geplante laufende Rücklage aus Wohnfläche und selbst gewähltem Euro-pro-Quadratmeter-Wert.",
+  "werbungskosten-steuerersparnis-rechner": "Vereinfachte zusätzliche Steuerwirkung des Betrags, der über dem eingegebenen Arbeitnehmer-Pauschbetrag liegt.",
 };
 
 export const getGrowthFieldHelp = (label: string) => FIELD_HELP[label] ?? `Gib hier den für deine Berechnung passenden Wert für „${label}“ ein.`;

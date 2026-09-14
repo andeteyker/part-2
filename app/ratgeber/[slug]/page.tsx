@@ -7,6 +7,7 @@ import { SiteHeader } from "../../components/SiteHeader";
 import { allGuides, getGuide, getRelatedGuides } from "../../data/guides";
 import { getGuideEditorialOverride } from "../../data/guide-editorial";
 import { guideToolLinkTerms } from "../../data/guide-tool-links";
+import { getAssociatedToolSlugs } from "../../data/tool-guide-associations";
 import { absoluteUrl } from "../../lib/site";
 import type { GuideBlock } from "../../data/guides";
 
@@ -148,7 +149,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const articleDescription = editorial?.description ?? guide.description;
   const canonical = absoluteUrl(`/ratgeber/${guide.slug}`);
   const relatedGuides = getRelatedGuides(guide);
-  const directToolSlugs = guide.toolSlugs ?? [guide.toolSlug];
+  const directToolSlugs = [...new Set([...(guide.toolSlugs ?? [guide.toolSlug]), ...getAssociatedToolSlugs(guide.slug)])];
   const schema = {
     "@context": "https://schema.org",
     "@graph": [
