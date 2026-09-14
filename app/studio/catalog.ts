@@ -32,9 +32,10 @@ export async function publishedStudioCatalog(): Promise<StudioCatalogItem[]> {
     const db = await studioDb();
     const result = await db.prepare(
       "SELECT slug, published, updated FROM studio_pages WHERE published IS NOT NULL ORDER BY updated DESC",
-    ).all<Pick<PageRecord, "slug" | "published" | "updated">>();
+    ).all();
+    const rows = (result.results ?? []) as Array<Pick<PageRecord, "slug" | "published" | "updated">>;
 
-    return (result.results ?? []).flatMap((record) => {
+    return rows.flatMap((record) => {
       try {
         const page = normalizeDraft(JSON.parse(record.published ?? ""));
         return [{
