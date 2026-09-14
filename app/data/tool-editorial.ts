@@ -410,6 +410,7 @@ const toolContext: Record<string, PracticeContext> = {
 };
 
 export function getToolEditorial(tool: EditorialTool, seo: ToolSeoContent, guideExcerpt?: string) {
+  const isWorkflow = seo.mode === "workflow";
   const context = toolContext[tool.slug] ?? categoryContext[tool.category] ?? {
     background: "Das Werkzeug macht aus deinen Angaben einen nachvollziehbaren Vergleichswert und schafft eine gemeinsame Grundlage für die weitere Entscheidung.",
     rules: "Das Ergebnis bleibt eine Orientierung. Vertragliche, technische oder persönliche Besonderheiten können in einer allgemeinen Online-Berechnung nicht vollständig abgebildet werden.",
@@ -418,7 +419,7 @@ export function getToolEditorial(tool: EditorialTool, seo: ToolSeoContent, guide
 
   return {
     heading: `${tool.title} sinnvoll einordnen`,
-    lead: `${tool.description} ${guideExcerpt ?? "Die folgenden Hinweise zeigen, was hinter dem Wert steckt und wo die Grenzen der Rechnung liegen."}`,
+    lead: `${tool.description} ${guideExcerpt ?? (isWorkflow ? "Die folgenden Hinweise erklären die Funktion, sinnvolle Einsatzfälle und technische Grenzen des Werkzeugs." : "Die folgenden Hinweise zeigen, was hinter dem Wert steckt und wo die Grenzen der Rechnung liegen.")}`,
     background: context.background,
     rules: context.rules,
     practical: context.practical,

@@ -274,6 +274,26 @@ test("calculator pages explain technical terms and the calculation close to the 
   assert.doesNotMatch(html, /So funktioniert der Mietrendite-Rechner/i);
 });
 
+test("non-calculating tools explain their function instead of pretending to calculate", async () => {
+  const worker = await createWorker();
+  const [ipPage, imagePage, textPage, calculatorPage] = await Promise.all([
+    fetchFromWorker(worker, "/tools/meine-ip").then((response) => response.text()),
+    fetchFromWorker(worker, "/tools/bildformat-konverter").then((response) => response.text()),
+    fetchFromWorker(worker, "/tools/textvergleich").then((response) => response.text()),
+    fetchFromWorker(worker, "/tools/prozentrechner").then((response) => response.text()),
+  ]);
+
+  for (const html of [ipPage, imagePage, textPage]) {
+    assert.match(html, /So funktioniert das Werkzeug/i);
+    assert.match(html, /Ablauf und Hinweise/i);
+    assert.doesNotMatch(html, /So wird gerechnet|>Die Formel</i);
+  }
+  assert.match(ipPage, /nach außen sichtbare IP-Adresse/i);
+  assert.match(imagePage, /direkt im Browser bearbeitet/i);
+  assert.match(calculatorPage, /So wird gerechnet/i);
+  assert.match(calculatorPage, />Die Formel</i);
+});
+
 test("tool pages offer accessible result actions and official sources", async () => {
   const worker = await createWorker();
   const [taxPage, bmiPage, aboutPage] = await Promise.all([

@@ -55,6 +55,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const categorySlug = categoryDetails[tool.category].slug;
   const categoryHref = `/nischen/${categorySlug}`;
   const seo = getToolSeo(tool.slug);
+  const isWorkflow = seo.mode === "workflow";
   const configuredRelated = (seo.relatedSlugs ?? []).map((relatedSlug) => getTool(relatedSlug)).filter(Boolean);
   const fallbackRelated = tools.filter((item) => item.category === tool.category && item.slug !== tool.slug && !configuredRelated.some((related) => related?.slug === item.slug));
   const related = [...configuredRelated, ...fallbackRelated].slice(0, 4);
@@ -126,12 +127,22 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         {runner}
         <ToolResultActions title={tool.title} />
 
-        <section className="calculation-guide" aria-labelledby={`calculation-${tool.slug}`}>
+        <section className="calculation-guide" aria-labelledby={`explanation-${tool.slug}`}>
           <header className="calculation-guide-head">
             <span className="calculation-guide-icon" aria-hidden="true">1</span>
-            <div><p className="eyebrow"><span /> Rechenweg</p><h2 id={`calculation-${tool.slug}`}>So wird gerechnet</h2></div>
+            <div><p className="eyebrow"><span /> {isWorkflow ? "Funktionsweise" : "Rechenweg"}</p><h2 id={`explanation-${tool.slug}`}>{isWorkflow ? "So funktioniert das Werkzeug" : "So wird gerechnet"}</h2></div>
           </header>
-          {seo.formula ? <div className="formula-panel">
+          {isWorkflow ? <div className="formula-panel formula-panel-muted">
+            <span>{tool.slug === "meine-ip" || tool.slug === "ping-test" ? "So entsteht die Anzeige" : "Was das Werkzeug macht"}</span>
+            <strong>{tool.category === "Bilder & Dateien"
+              ? "Das Bild wird anhand deiner Auswahl direkt im Browser bearbeitet und anschließend als neue Datei bereitgestellt."
+              : tool.slug === "meine-ip"
+                ? "Der Browser fragt die nach außen sichtbare IP-Adresse ab und ergänzt lokal erkennbare Browserangaben."
+                : tool.slug === "ping-test"
+                  ? "Mehrere Webanfragen messen die Reaktionszeit zwischen deinem Browser und dem SofortTools-Server."
+                  : "Das Werkzeug verarbeitet deine Angaben Schritt für Schritt und zeigt das Ergebnis direkt an."}</strong>
+            {seo.example && <p><b>Gut zu wissen:</b> {seo.example}</p>}
+          </div> : seo.formula ? <div className="formula-panel">
             <span>Die Formel</span>
             <strong>{seo.formula}</strong>
             {seo.example && <p><b>Einfaches Beispiel:</b> {seo.example}</p>}
@@ -139,7 +150,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
             <span>Ablauf statt Formel</span>
             <strong>Dieses Werkzeug wertet deine Eingaben Schritt für Schritt aus.</strong>
           </div>}
-          <div className="calculation-steps" aria-label="Variablen und Rechenschritte">
+          <div className="calculation-steps" aria-label={isWorkflow ? "Ablauf und Hinweise" : "Variablen und Rechenschritte"}>
             {seo.steps.map((step, index) => <article key={step.title}>
               <span>{String(index + 1).padStart(2, "0")}</span>
               <div><strong>{step.title}</strong><p>{step.text}</p></div>
@@ -173,7 +184,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         </section>
 
         {usefulFaq.length > 0 && <section className="faq-section" aria-labelledby={`faq-${tool.slug}`}>
-          <div className="faq-intro"><p className="eyebrow"><span /> Kurz beantwortet</p><h2 id={`faq-${tool.slug}`}>Fragen aus der Praxis</h2><p>Nur Fragen, die beim Rechnen oder Einordnen dieses Ergebnisses wirklich weiterhelfen.</p></div>
+          <div className="faq-intro"><p className="eyebrow"><span /> Kurz beantwortet</p><h2 id={`faq-${tool.slug}`}>Fragen aus der Praxis</h2><p>{isWorkflow ? "Hinweise, die bei der Nutzung und beim Einordnen des Ergebnisses wirklich weiterhelfen." : "Nur Fragen, die beim Rechnen oder Einordnen dieses Ergebnisses wirklich weiterhelfen."}</p></div>
           <div className="faq-list">
             {usefulFaq.map((item) => <details key={item.question}><summary>{item.question}</summary><p>{item.answer}</p></details>)}
           </div>
@@ -183,7 +194,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
 
         {related.length > 0 && <section className="related">
           <div className="section-head">
-            <div><p className="eyebrow"><span /> Passende Werkzeuge</p><h2>Diese Tools passen zu deiner nächsten Berechnung</h2></div>
+            <div><p className="eyebrow"><span /> Passende Werkzeuge</p><h2>{isWorkflow ? "Diese Tools passen zu deinem nächsten Schritt" : "Diese Tools passen zu deiner nächsten Berechnung"}</h2></div>
             <Link href={categoryHref}>Alle {tool.category}-Tools →</Link>
           </div>
           <div className="tool-grid compact">

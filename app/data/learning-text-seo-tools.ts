@@ -36,11 +36,23 @@ export const learningTextSeoTools: ToolDefinition[] = seeds.map(([slug, title, e
 
 export const learningTextSeoSlugs = learningTextSeoTools.map((tool) => tool.slug);
 
+const schoolCalculators = new Set([
+  "notenrechner-gewichtung",
+  "notenschluessel-rechner",
+  "punkte-in-note-rechner",
+  "bruchrechner",
+  "gleichungsrechner",
+]);
+
 export const learningTextSeoContent = Object.fromEntries(learningTextSeoTools.map((tool): [string, ToolSeoContent] => {
-  const steps = tool.category === "Schule & Lernen" ? [
+  const steps = schoolCalculators.has(tool.slug) ? [
     { title: "Aufgabendaten vollständig eintragen", text: `Gib alle Werte ein, die der ${tool.title} für eine nachvollziehbare Berechnung benötigt.` },
     { title: "Rechenweg kontrollieren", text: "Prüfe Zwischenschritte, Gewichtungen, Nenner oder Bewertungsgrenzen – nicht nur das Endergebnis." },
     { title: "Vorgabe abgleichen", text: "Vergleiche das Resultat bei Prüfungen mit dem offiziellen Notenschlüssel oder der Aufgabenstellung." },
+  ] : tool.category === "Schule & Lernen" ? [
+    { title: "Lernstoff eingeben", text: `Trage deine Themen oder Frage-Antwort-Paare vollständig in den ${tool.title} ein.` },
+    { title: "Vorschlag erstellen", text: "Das Werkzeug ordnet deine Angaben als Lernplan oder druckbare Karteikarten, ohne die Inhalte hochzuladen." },
+    { title: "An den eigenen Alltag anpassen", text: "Prüfe Umfang, Reihenfolge und Formulierungen und passe das Ergebnis an Prüfungstermin und Lernstand an." },
   ] : tool.category === "Text & Sprache" ? [
     { title: "Text vollständig einfügen", text: `Füge den relevanten Text in den ${tool.title} ein; die Auswertung bleibt lokal im Browser.` },
     { title: "Muster statt Einzelwert betrachten", text: "Nutze Markierungen und Kennzahlen als Hinweise auf Stellen, die eine bewusste redaktionelle Entscheidung brauchen." },
@@ -50,5 +62,5 @@ export const learningTextSeoContent = Object.fromEntries(learningTextSeoTools.ma
     { title: "Hinweise und Syntax prüfen", text: "Korrigiere unvollständige Angaben und prüfe Längen, Pfade, Sprachcodes oder HTML-Struktur." },
     { title: "Im echten Quelltext validieren", text: "Kopiere das Ergebnis an die passende Stelle der Website und kontrolliere anschließend die ausgelieferte Seite." },
   ];
-  return [tool.slug, { steps }];
+  return [tool.slug, { steps, mode: schoolCalculators.has(tool.slug) ? "calculation" : "workflow" }];
 }));
