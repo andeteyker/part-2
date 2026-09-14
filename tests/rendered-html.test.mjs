@@ -284,14 +284,26 @@ test("non-calculating tools explain their function instead of pretending to calc
   ]);
 
   for (const html of [ipPage, imagePage, textPage]) {
-    assert.match(html, /So funktioniert das Werkzeug/i);
+    assert.match(html, /Kurzanleitung/i);
     assert.match(html, /Ablauf und Hinweise/i);
-    assert.doesNotMatch(html, /So wird gerechnet|>Die Formel</i);
+    assert.doesNotMatch(html, /So funktioniert das Werkzeug|So wird gerechnet|>Die Formel|Was das Werkzeug macht|Das Werkzeug verarbeitet deine Angaben/i);
   }
-  assert.match(ipPage, /nach außen sichtbare IP-Adresse/i);
-  assert.match(imagePage, /direkt im Browser bearbeitet/i);
+  assert.match(ipPage, /Öffentliche IP und Browserdaten richtig lesen/i);
+  assert.match(ipPage, /nach außen sichtbare öffentliche IP-Adresse/i);
+  assert.match(imagePage, /Bildformat auswählen und Datei umwandeln/i);
+  assert.match(imagePage, /Verarbeitung erfolgt lokal in deinem Browser/i);
   assert.match(calculatorPage, /So wird gerechnet/i);
   assert.match(calculatorPage, />Die Formel</i);
+});
+
+test("workflow guides use tool-specific instructions instead of category filler", async () => {
+  const worker = await createWorker();
+  const metaPage = await fetchFromWorker(worker, "/tools/meta-tag-generator").then((response) => response.text());
+
+  assert.match(metaPage, /Passende Meta-Tags für eine Seite erstellen/i);
+  assert.match(metaPage, /Code erzeugen und kopieren/i);
+  assert.match(metaPage, /Ausgeliefertes HTML kontrollieren/i);
+  assert.doesNotMatch(metaPage, /Längen, Pfade, Sprachcodes oder HTML-Struktur/i);
 });
 
 test("tool pages offer accessible result actions and official sources", async () => {

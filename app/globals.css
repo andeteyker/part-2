@@ -184,6 +184,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .calculation-guide-icon { width: 36px; height: 36px; flex: 0 0 36px; margin-top: 0; border: 0; color: var(--navy); background: #eaf5cb; cursor: default; }
 .calculation-guide .eyebrow { margin-bottom: 7px; color: var(--lime-dark); }
 .calculation-guide h2 { margin: 0; color: var(--navy); font-size: clamp(29px, 4vw, 38px); line-height: 1.05; letter-spacing: -.04em; }
+.workflow-guide { padding-block: clamp(22px, 3vw, 30px); background: #fff; }
+.workflow-guide h2 { font-size: clamp(24px, 3vw, 31px); }
+.workflow-guide .calculation-steps { margin-top: 24px; }
 .formula-panel { margin: 28px 0 24px; padding: 22px 24px; border: 1px solid #dce8bd; border-radius: 13px; background: #f1f7df; color: var(--navy); }
 .formula-panel > span { display: block; margin-bottom: 9px; font-size: 12px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; }
 .formula-panel > strong { display: block; font-size: clamp(17px, 2.5vw, 24px); line-height: 1.4; }

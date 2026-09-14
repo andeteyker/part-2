@@ -7,6 +7,7 @@ export type ToolSeoContent = {
   example?: string;
   relatedSlugs?: string[];
   mode?: "calculation" | "workflow";
+  guideTitle?: string;
 };
 
 const toolSeo: Record<string, ToolSeoContent> = {
@@ -64,6 +65,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "woerter-aus-buchstaben": {
     mode: "workflow",
+    guideTitle: "Aus vorhandenen Buchstaben passende Wörter finden",
     steps: [
       { title: "Buchstaben eingeben", text: "Trage alle verfügbaren Buchstaben ein. Doppelte Buchstaben müssen auch mehrfach eingegeben werden." },
       { title: "Passende Wörter finden", text: "Der Wortfinder gleicht deine Buchstaben mit der hinterlegten deutschen Wortliste ab und filtert mögliche Treffer." },
@@ -74,6 +76,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "bildformat-konverter": {
     mode: "workflow",
+    guideTitle: "Bildformat auswählen und Datei umwandeln",
     steps: [{ title: "Bild ablegen", text: "Ziehe ein JPG-, PNG-, WebP-, AVIF-, HEIC- oder HEIF-Bild in die Ablagefläche oder wähle es auf deinem Gerät aus." }, { title: "Zielformat festlegen", text: "Wähle JPG, PNG, WebP, AVIF oder BMP. Bei JPG, WebP und AVIF kannst du zusätzlich die gewünschte Bildqualität bestimmen." }, { title: "Arbeitskopie herunterladen", text: "Der Browser zeichnet die Pixel in das neue Format und stellt die fertige Datei direkt zum Download bereit." }],
     formula: "Ausgabedatei = dekodierte Bildpixel + Kodierung und Eigenschaften des gewählten Zielformats",
     example: "Ein transparentes PNG bleibt als PNG, WebP oder AVIF transparent. Bei JPG und BMP werden transparente Flächen weiß gefüllt.",
@@ -81,6 +84,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "hintergrund-entfernen": {
     mode: "workflow",
+    guideTitle: "Ein Motiv sauber vom Hintergrund trennen",
     steps: [{ title: "Motiv mit erkennbarem Hintergrund wählen", text: "Die besten Ergebnisse entstehen bei einem scharfen Motiv vor einer ruhigen Farbe, die den äußeren Bildrand erreicht." }, { title: "Hintergrundfarbe bestimmen", text: "Im Automatikmodus werden die vier Bildecken ausgewertet. Alternativ kannst du die Hintergrundfarbe selbst festlegen." }, { title: "Empfindlichkeit kontrollieren", text: "Zusammenhängende Randpixel mit ähnlicher Farbe werden transparent. Ein niedriger Wert schützt feine Motivkanten." }],
     formula: "Transparenz = zusammenhängende Randfläche innerhalb der gewählten Farbtoleranz",
     example: "Bei einem Produkt vor einer weißen Wand erkennt das Tool Weiß an den Ecken und entfernt nur die verbundene helle Fläche vom Rand aus.",
@@ -88,6 +92,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "bildgroesse-aendern": {
     mode: "workflow",
+    guideTitle: "Ein Bild auf die richtigen Pixelmaße bringen",
     steps: [{ title: "Originalgröße einlesen", text: "Nach der Auswahl werden Breite, Höhe und das ursprüngliche Seitenverhältnis übernommen." }, { title: "Zielmaße eingeben", text: "Ändere Breite oder Höhe. Bei gesperrtem Seitenverhältnis wird die jeweils andere Größe automatisch passend bestimmt." }, { title: "Bild skalieren", text: "Der Browser skaliert die Pixel mit hochwertiger Glättung und speichert das Ergebnis als PNG." }],
     formula: "Neue Höhe = neue Breite ÷ ursprüngliches Seitenverhältnis",
     example: "Ein Bild mit 2400 × 1600 Pixeln hat das Verhältnis 1,5. Bei 1200 Pixeln Breite ergibt sich eine Höhe von 800 Pixeln.",
@@ -95,6 +100,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "bild-zuschneiden-drehen": {
     mode: "workflow",
+    guideTitle: "Bildausschnitt und Ausrichtung festlegen",
     steps: [{ title: "Seitenverhältnis wählen", text: "Nutze das gesamte Bild oder einen mittigen Ausschnitt in 1:1, 4:3, 16:9 oder 9:16." }, { title: "Ausschnitt verfeinern", text: "Mit den Prozentreglern bestimmst du Beginn, Breite und Höhe des verwendeten Bildbereichs." }, { title: "Ausrichtung korrigieren", text: "Drehe das Ergebnis in 90-Grad-Schritten oder spiegele es horizontal, bevor du die PNG-Datei speicherst." }],
     formula: "Ausschnitt in Pixeln = Bildmaß × gewählter Prozentanteil ÷ 100",
     example: "50 Prozent Breite eines 2000 Pixel breiten Fotos ergeben einen Ausschnitt mit 1000 Pixeln Breite.",
@@ -102,6 +108,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "bild-dateigroesse-komprimieren": {
     mode: "workflow",
+    guideTitle: "Eine vorgegebene Dateigröße erreichen",
     steps: [{ title: "Dateigrenze angeben", text: "Trage die maximale Größe des Uploadportals oder E-Mail-Anhangs in Kilobyte ein." }, { title: "Beste Qualität suchen", text: "Das Tool testet mehrere Qualitätsstufen und behält die hochwertigste Datei unterhalb der Grenze." }, { title: "Nur bei Bedarf skalieren", text: "Ist selbst die niedrigste sinnvolle Qualitätsstufe noch zu groß, wird zusätzlich die Pixelauflösung schrittweise reduziert." }],
     formula: "Optimale Datei = höchste Qualitätsstufe mit Dateigröße ≤ gewählter KB-Grenze",
     example: "Für eine Grenze von 500 KB wird zuerst die JPG-Qualität angepasst. Die Auflösung sinkt nur, wenn die Grenze damit nicht erreichbar ist.",
@@ -109,6 +116,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "bild-metadaten-entfernen": {
     mode: "workflow",
+    guideTitle: "Eine Bildkopie ohne EXIF-Daten erstellen",
     steps: [{ title: "Bild lokal öffnen", text: "Das sichtbare Bild wird im Browser dekodiert; der ursprüngliche EXIF-Datenblock wird nicht weiterverwendet." }, { title: "Nur Pixel übernehmen", text: "Der Browser zeichnet Breite, Höhe und sichtbare Pixel auf eine neue, leere Bildfläche." }, { title: "Saubere Kopie speichern", text: "Die neue JPG-, PNG- oder WebP-Datei enthält die neu kodierten Pixel, aber keine übernommenen Standort- oder Kameradaten." }],
     formula: "Saubere Kopie = sichtbare Bildpixel ohne Metadatenblöcke des Originals",
     example: "GPS-Koordinaten eines Smartphone-Fotos werden nicht in die neu erzeugte Bildkopie geschrieben.",
@@ -116,6 +124,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "passfoto-zuschneiden": {
     mode: "workflow",
+    guideTitle: "Ein Porträt auf 35 × 45 mm ausrichten",
     steps: [{ title: "Porträt auswählen", text: "Verwende ein frontales, scharfes Foto vor einem ruhigen und gleichmäßig ausgeleuchteten Hintergrund." }, { title: "Kopf im Rahmen positionieren", text: "Passe Vergrößerung und Verschiebung an, bis Gesicht und oberer Schulterbereich sinnvoll im Hochformat liegen." }, { title: "Datei im Nennformat erzeugen", text: "Das Ergebnis wird im Verhältnis 35 zu 45 und mit 413 × 531 Pixeln als JPG gespeichert." }],
     formula: "Pixelmaß bei 300 dpi = Millimeter ÷ 25,4 × 300",
     example: "35 mm ergeben rund 413 Pixel und 45 mm rund 531 Pixel bei einer vorgesehenen Druckauflösung von 300 dpi.",
@@ -123,6 +132,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "bilder-zu-pdf": {
     mode: "workflow",
+    guideTitle: "Bilder sortieren und als PDF speichern",
     steps: [{ title: "Bilder gemeinsam hinzufügen", text: "Ziehe mehrere Bilddateien in die Ablagefläche. Weitere Bilder lassen sich später ergänzen." }, { title: "Seitenreihenfolge festlegen", text: "Verschiebe jede Datei nach oben oder unten und entferne falsche Seiten vor der Erstellung." }, { title: "A4-PDF erzeugen", text: "Jedes Bild wird proportional und ohne Beschnitt auf einer eigenen A4-Seite platziert." }],
     formula: "Skalierungsfaktor = kleinere Grenze aus verfügbarer Seitenbreite ÷ Bildbreite und Seitenhöhe ÷ Bildhöhe",
     example: "Ein breites Foto wird so verkleinert, dass es vollständig auf die A4-Seite passt; die übrige Fläche bleibt weiß.",
@@ -130,6 +140,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "bildfarben-korrigieren": {
     mode: "workflow",
+    guideTitle: "Helligkeit und Farben gezielt korrigieren",
     steps: [{ title: "Grundhelligkeit ausgleichen", text: "Korrigiere zuerst ein insgesamt zu dunkles oder zu helles Foto mit dem Helligkeitsregler." }, { title: "Kontrast und Sättigung fein abstimmen", text: "Erhöhe beide Werte nur so weit, dass helle Flächen, Schatten und Hauttöne noch natürliche Abstufungen zeigen." }, { title: "Farbstich korrigieren", text: "Verschiebe die Temperatur bei bläulichem Licht in den warmen und bei gelblichem Licht in den kühlen Bereich." }],
     formula: "Neue Farbwerte = Helligkeitskorrektur + Kontrastspreizung + Sättigung + Temperaturverschiebung",
     example: "Ein leicht blaues Innenraumfoto wird mit etwas Wärme und moderater Helligkeit natürlicher, ohne Farben künstlich zu übersteuern.",
@@ -137,6 +148,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "favicon-erstellen": {
     mode: "workflow",
+    guideTitle: "Aus einem Logo passende Website-Symbole erstellen",
     steps: [{ title: "Klares Logo auswählen", text: "Nutze möglichst ein quadratisches Motiv mit wenigen Formen und ausreichend Rand." }, { title: "Mitte quadratisch zuschneiden", text: "Nicht quadratische Vorlagen werden ohne Verzerrung mittig auf ein Quadrat beschnitten." }, { title: "Browsergrößen herunterladen", text: "Das Tool erzeugt favicon.ico sowie PNG-Dateien mit 16, 32, 48, 180, 192 und 512 Pixeln." }],
     formula: "Favicon = mittiger quadratischer Ausschnitt, skaliert auf die jeweilige Zielgröße",
     example: "Aus einem 1200 × 800 Pixel großen Logo wird zunächst ein mittiger 800 × 800-Ausschnitt und daraus jede benötigte Symbolgröße.",
@@ -144,6 +156,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "zeichen-zaehlen": {
     mode: "workflow",
+    guideTitle: "Zeichenlänge und Plattformlimits prüfen",
     steps: [
       { title: "Text einfügen", text: "Füge deinen Text direkt in das Eingabefeld ein. Die Auswertung erfolgt lokal im Browser." },
       { title: "Zeichenwerte vergleichen", text: "Der Zähler zeigt Zeichen mit und ohne Leerzeichen unmittelbar an." },
@@ -153,6 +166,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "woerter-zaehlen": {
     mode: "workflow",
+    guideTitle: "Textumfang und Lesezeit erfassen",
     steps: [
       { title: "Text einfügen", text: "Füge deinen Aufsatz, Bericht oder Webtext in das Eingabefeld ein." },
       { title: "Struktur auswerten", text: "Das Tool zählt Wörter, Sätze und Absätze und schätzt zusätzlich die Lesezeit." },
@@ -190,6 +204,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "wordle-hilfe": {
     mode: "workflow",
+    guideTitle: "Wordle-Lösungen gezielt eingrenzen",
     steps: [
       { title: "Bekannte Positionen eintragen", text: "Setze bereits bestätigte Buchstaben an die richtige Stelle und verwende Punkte für unbekannte Positionen." },
       { title: "Enthaltene Buchstaben ergänzen", text: "Trage gelbe Buchstaben ein, die im Wort vorkommen, aber noch nicht richtig platziert sind." },
@@ -200,6 +215,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "qr-code-erstellen": {
     mode: "workflow",
+    guideTitle: "Einen QR-Code erstellen und sicher testen",
     steps: [
       { title: "Inhalt festlegen", text: "Gib einen Link, einen Text oder die benötigten WLAN-Zugangsdaten ein." },
       { title: "QR-Code erzeugen", text: "Der statische QR-Code wird direkt im Browser erstellt und enthält die eingegebenen Daten dauerhaft." },
@@ -209,6 +225,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "meine-ip": {
     mode: "workflow",
+    guideTitle: "Öffentliche IP und Browserdaten richtig lesen",
     steps: [
       { title: "Seite öffnen", text: "Beim Aufruf fragt das Tool deine aktuell nach außen sichtbare öffentliche IP-Adresse ab." },
       { title: "IPv4 oder IPv6 erkennen", text: "Das Ergebnis zeigt die verfügbare öffentliche Adresse zusammen mit grundlegenden Browserdaten." },
@@ -218,6 +235,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "ping-test": {
     mode: "workflow",
+    guideTitle: "Reaktionszeit der Verbindung sinnvoll prüfen",
     steps: [
       { title: "Messung starten", text: "Starte mehrere kleine Webanfragen an den SofortTools-Server." },
       { title: "Werte vergleichen", text: "Das Tool ermittelt Durchschnitt, Minimum und Maximum der gemessenen Reaktionszeiten." },
@@ -246,6 +264,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "zufallsgenerator": {
     mode: "workflow",
+    guideTitle: "Namen oder Zahlen zufällig auswählen",
     steps: [
       { title: "Auslosung wählen", text: "Entscheide, ob du einen Namen aus einer Liste oder eine Zahl aus einem Bereich ziehen möchtest." },
       { title: "Teilnehmer oder Grenzen eintragen", text: "Füge Listeneinträge zeilenweise ein oder bestimme Mindest- und Höchstzahl." },
@@ -255,6 +274,7 @@ const toolSeo: Record<string, ToolSeoContent> = {
   },
   "passwortgenerator": {
     mode: "workflow",
+    guideTitle: "Ein starkes Passwort erzeugen und speichern",
     steps: [
       { title: "Passwortlänge bestimmen", text: "Wähle für wichtige Konten möglichst mindestens 16 Zeichen." },
       { title: "Zeichenarten auswählen", text: "Aktiviere Groß- und Kleinbuchstaben, Zahlen und bei unterstützten Diensten Sonderzeichen." },
