@@ -112,6 +112,11 @@ const RESULT_HELP: Record<string, string> = {
   "powerstation-laufzeit-rechner": "Geschätzte Versorgungsdauer aus Nennkapazität, Wirkungsgrad und durchschnittlicher Geräteleistung.",
   "erhaltungsruecklage-rechner": "Frei geplante laufende Rücklage aus Wohnfläche und selbst gewähltem Euro-pro-Quadratmeter-Wert.",
   "werbungskosten-steuerersparnis-rechner": "Vereinfachte zusätzliche Steuerwirkung des Betrags, der über dem eingegebenen Arbeitnehmer-Pauschbetrag liegt.",
+  "wallbox-ladezeit-rechner": "Geschätzte AC-Ladezeit aus nachzuladender Batteriemenge, begrenzender Ladeleistung und angesetztem Ladewirkungsgrad.",
+  "heizoel-reichweite-rechner": "Durchschnittliche Reichweite des nutzbaren Heizölbestands auf Basis des eingegebenen Jahresverbrauchs und der Sicherheitsreserve.",
+  "hundekosten-rechner": "Budgetschätzung der regelmäßigen Hundehaltungskosten; unvorhersehbare Tierarzt- und Betreuungskosten können abweichen.",
+  "umzugskarton-rechner": "Planungswert für die benötigte Kartonmenge aus Wohnfläche, Haushaltsgröße, Sonderbeständen und Reserve.",
+  "eigenkapital-rechner": "Geschätzter Finanzierungsbedarf nach Kaufnebenkosten, einsetzbarem Eigenkapital und zurückbehaltener Liquiditätsreserve.",
 };
 
 export const getGrowthFieldHelp = (label: string) => FIELD_HELP[label] ?? `Gib hier den für deine Berechnung passenden Wert für „${label}“ ein.`;
