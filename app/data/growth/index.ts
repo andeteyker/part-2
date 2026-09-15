@@ -38,19 +38,24 @@ import { nebenkostenVorauszahlungConfig } from "./nebenkosten-vorauszahlung-rech
 import { powerstationLaufzeitConfig } from "./powerstation-laufzeit-rechner";
 import { erhaltungsruecklageConfig } from "./erhaltungsruecklage-rechner";
 import { werbungskostenSteuerersparnisConfig } from "./werbungskosten-steuerersparnis-rechner";
+import { wallboxLadezeitConfig } from "./wallbox-ladezeit-rechner";
+import { heizoelReichweiteConfig } from "./heizoel-reichweite-rechner";
+import { hundekostenConfig } from "./hundekosten-rechner";
+import { umzugskartonConfig } from "./umzugskarton-rechner";
+import { eigenkapitalConfig } from "./eigenkapital-rechner";
 import type { GrowthCategory, GrowthToolConfig } from "./types";
 
-export const growthConfigs: GrowthToolConfig[] = [nettoGehaltConfig, einkommensteuerConfig, pendlerpauschaleConfig, werbungskostenSteuerersparnisConfig, arbeitslosengeldConfig, rentenConfig, zinseszinsConfig, erspartesReichweiteConfig, abfindungConfig, bausparConfig, haushaltsbudgetConfig, kreditSondertilgungConfig, leasingfaktorConfig, fahrtkostenConfig, eautoVerbrennerKostenConfig, stromkostenConfig, energieAbschlagConfig, haushaltsgeraeteKostenConfig, powerstationLaufzeitConfig, heizkostenConfig, co2HeizkostenConfig, gasverbrauchConfig, solarErtragConfig, balkonkraftwerkConfig, bmiConfig, kalorienbedarfConfig, koerperfettConfig, idealgewichtConfig, elterngeldConfig, kindergeldConfig, schwangerschaftConfig, mietkautionConfig, nebenkostenVorauszahlungConfig, anhaltewegConfig, urlaubsanspruchConfig, angebotConfig, skontoConfig, selbststaendigStundensatzConfig, umzugskostenConfig, erhaltungsruecklageConfig];
+export const growthConfigs: GrowthToolConfig[] = [nettoGehaltConfig, einkommensteuerConfig, pendlerpauschaleConfig, werbungskostenSteuerersparnisConfig, arbeitslosengeldConfig, rentenConfig, zinseszinsConfig, erspartesReichweiteConfig, abfindungConfig, bausparConfig, haushaltsbudgetConfig, kreditSondertilgungConfig, leasingfaktorConfig, fahrtkostenConfig, eautoVerbrennerKostenConfig, eigenkapitalConfig, stromkostenConfig, energieAbschlagConfig, haushaltsgeraeteKostenConfig, powerstationLaufzeitConfig, wallboxLadezeitConfig, heizoelReichweiteConfig, heizkostenConfig, co2HeizkostenConfig, gasverbrauchConfig, solarErtragConfig, balkonkraftwerkConfig, bmiConfig, kalorienbedarfConfig, koerperfettConfig, idealgewichtConfig, elterngeldConfig, kindergeldConfig, schwangerschaftConfig, mietkautionConfig, nebenkostenVorauszahlungConfig, hundekostenConfig, anhaltewegConfig, urlaubsanspruchConfig, angebotConfig, skontoConfig, selbststaendigStundensatzConfig, umzugskostenConfig, umzugskartonConfig, erhaltungsruecklageConfig];
 export const growthTools = growthConfigs.map(({ tool }) => tool);
 export const growthToolSeo = Object.fromEntries(growthConfigs.map(({ tool, seo }) => [tool.slug, seo]));
 export const getGrowthConfig = (slug: string) => growthConfigs.find(({ tool }) => tool.slug === slug);
 export const growthCategories: GrowthCategory[] = ["Finanzen & Steuern", "Energie & Umwelt", "Gesundheit & Fitness", "Familie & Leben", "Arbeitgeber & Business"];
 export const growthCategoryDetails: Record<GrowthCategory, { slug: string; kicker: string; description: string; icon: string }> = {
-  "Finanzen & Steuern": { slug: "finanzen-steuern", kicker: "Gehalt, Steuer und Vorsorge", description: "Rechner für Nettogehalt, Einkommensteuer, Werbungskosten, Arbeitsweg, Rücklagen, Kredite, Leasing, Fahrzeugkosten, Rente, Abfindung, Bausparen und Eigentümerplanung.", icon: "€+" },
-  "Energie & Umwelt": { slug: "energie-umwelt", kicker: "Verbrauch, Kosten und Solarstrom", description: "Strom-, Heiz-, CO₂- und Gaskosten, Energieabschläge, Gerätekosten und Powerstation-Laufzeiten berechnen sowie Solarstrom planen.", icon: "kWh" },
+  "Finanzen & Steuern": { slug: "finanzen-steuern", kicker: "Gehalt, Steuer und Vorsorge", description: "Rechner für Nettogehalt, Einkommensteuer, Werbungskosten, Arbeitsweg, Rücklagen, Eigenkapital, Kredite, Leasing, Fahrzeugkosten, Rente, Abfindung, Bausparen und Eigentümerplanung.", icon: "€+" },
+  "Energie & Umwelt": { slug: "energie-umwelt", kicker: "Verbrauch, Kosten und Solarstrom", description: "Strom-, Heiz-, CO₂- und Gaskosten, Heizöl-Reichweite, E-Auto-Ladezeit, Energieabschläge, Gerätekosten und Powerstation-Laufzeiten berechnen sowie Solarstrom planen.", icon: "kWh" },
   "Gesundheit & Fitness": { slug: "gesundheit-fitness", kicker: "Körperwerte verständlich einordnen", description: "BMI, Kalorienbedarf, Körperfett und Gewichtsbereiche als unverbindliche Orientierung berechnen.", icon: "BMI" },
-  "Familie & Leben": { slug: "familie-leben", kicker: "Leistungen und wichtige Termine", description: "Elterngeld, Kindergeld, Mietkaution, Nebenkostenvorauszahlung, Geburtstermin und alltagsnahe Werte wie den Anhalteweg übersichtlich schätzen.", icon: "Fam" },
-  "Arbeitgeber & Business": { slug: "arbeitgeber-business", kicker: "Arbeit, Angebote und Projekte", description: "Urlaubsanspruch, Angebotskalkulation, Skonto, Selbstständigen-Stundensatz und Umzugskosten transparent planen und vergleichen.", icon: "Biz" },
+  "Familie & Leben": { slug: "familie-leben", kicker: "Leistungen und wichtige Termine", description: "Elterngeld, Kindergeld, Hundekosten, Mietkaution, Nebenkostenvorauszahlung, Geburtstermin und alltagsnahe Werte wie den Anhalteweg übersichtlich schätzen.", icon: "Fam" },
+  "Arbeitgeber & Business": { slug: "arbeitgeber-business", kicker: "Arbeit, Angebote und Projekte", description: "Urlaubsanspruch, Angebotskalkulation, Skonto, Selbstständigen-Stundensatz, Umzugskosten und Kartonbedarf transparent planen und vergleichen.", icon: "Biz" },
 };
 
 export type { GrowthCategory, GrowthToolConfig } from "./types";
