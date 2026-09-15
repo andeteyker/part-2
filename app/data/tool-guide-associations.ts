@@ -21,6 +21,11 @@ const toolGuideAssociations: Record<string, string[]> = {
   "powerstation-laufzeit-rechner": ["energiekosten-senken"],
   "erhaltungsruecklage-rechner": ["mietrendite-berechnen", "immobilie-kaufen-finanzieren-plan"],
   "werbungskosten-steuerersparnis-rechner": ["einkommensteuer-pendlerpauschale", "finanzen-steuern-planen"],
+  "wallbox-ladezeit-rechner": ["energiekosten-senken", "geld-rechner-alltag"],
+  "heizoel-reichweite-rechner": ["heizkosten-gasverbrauch", "energiekosten-senken"],
+  "hundekosten-rechner": ["geld-rechner-alltag", "finanzen-steuern-planen"],
+  "umzugskarton-rechner": ["umzugskosten-budget"],
+  "eigenkapital-rechner": ["immobilie-kaufen-finanzieren-plan", "finanzen-steuern-planen"],
 };
 
 export function getAssociatedGuides(toolSlug: string): Guide[] {

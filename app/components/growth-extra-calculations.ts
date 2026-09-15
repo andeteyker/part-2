@@ -126,6 +126,48 @@ export function calculateExtraGrowth(slug: string, values: Values): Output | nul
       const saving = additional * rate;
       return { label: "Geschätzte zusätzliche Steuerwirkung", value: money(saving), detail: `${money(additional)} Werbungskosten oberhalb des Pauschbetrags`, stats: [{ label: "Werbungskosten gesamt", value: money(total) }, { label: "Über Pauschbetrag", value: money(additional) }, { label: "Grenzsteuersatz", value: `${fmt(rate * 100, 1)} %` }] };
     }
+    case "wallbox-ladezeit-rechner": {
+      const battery = Math.max(0, n("akku"));
+      const start = Math.min(100, Math.max(0, n("start")));
+      const target = Math.min(100, Math.max(start, n("ziel")));
+      const power = Math.max(0.1, Math.min(n("wallbox"), n("auto")));
+      const efficiency = Math.min(1, Math.max(0.5, n("wirkungsgrad") / 100));
+      const energy = battery * (target - start) / 100;
+      const hours = energy / (power * efficiency);
+      return { label: "Geschätzte Ladezeit", value: `${fmt(hours, 1)} Stunden`, detail: `${fmt(energy, 1)} kWh nachzuladende Energie`, stats: [{ label: "Wirksame Ladeleistung", value: `${fmt(power, 1)} kW` }, { label: "Ladefenster", value: `${fmt(target - start, 0)} %` }, { label: "Wirkungsgrad", value: `${fmt(efficiency * 100, 0)} %` }] };
+    }
+    case "heizoel-reichweite-rechner": {
+      const stock = Math.max(0, n("bestand"));
+      const annual = Math.max(1, n("jahresverbrauch"));
+      const reserveRate = Math.min(0.8, Math.max(0, n("reserve") / 100));
+      const usable = stock * (1 - reserveRate);
+      const monthly = annual / 12;
+      const months = usable / monthly;
+      return { label: "Geschätzte Reichweite", value: `${fmt(months, 1)} Monate`, detail: `${fmt(usable, 0)} Liter nach Reserve nutzbar`, stats: [{ label: "Ø Monatsverbrauch", value: `${fmt(monthly, 0)} Liter` }, { label: "Sicherheitsreserve", value: `${fmt(stock - usable, 0)} Liter` }, { label: "Rechnerische Reichweite", value: `${fmt(months / 12, 1)} Jahre` }] };
+    }
+    case "hundekosten-rechner": {
+      const monthly = n("futter") + n("versicherung") + n("tierarzt") + n("pflege") + n("betreuung") + n("steuer") / 12;
+      const year = monthly * 12;
+      const firstYear = year + n("einmalig");
+      return { label: "Laufende Kosten pro Monat", value: money(monthly), detail: `${money(year)} laufende Kosten pro Jahr`, stats: [{ label: "Laufende Jahreskosten", value: money(year) }, { label: "Erstes Jahr inkl. Anschaffung", value: money(firstYear) }, { label: "Einmalkosten", value: money(n("einmalig")) }] };
+    }
+    case "umzugskarton-rechner": {
+      const base = Math.max(0, n("flaeche")) / 2 + Math.max(0, n("personen")) * 5 + Math.max(0, n("buecher")) + Math.max(0, n("extra"));
+      const total = Math.ceil(base * (1 + Math.min(0.5, Math.max(0, n("reserve") / 100))));
+      const books = Math.ceil(Math.max(0, n("buecher")));
+      return { label: "Geschätzter Kartonbedarf", value: `${total} Kartons`, detail: `inklusive ${fmt(n("reserve"), 0)} % Reserve`, stats: [{ label: "Grundbedarf vor Reserve", value: `${Math.ceil(base)} Kartons` }, { label: "Davon Bücherkartons", value: `${books} Stück` }, { label: "Zusatz für Nebenräume", value: `${fmt(Math.max(0, n("extra")), 0)} Kartons` }] };
+    }
+    case "eigenkapital-rechner": {
+      const price = Math.max(0, n("kaufpreis"));
+      const costs = price * Math.max(0, n("nebenkosten")) / 100;
+      const total = price + costs;
+      const equity = Math.max(0, n("eigenkapital"));
+      const reserve = Math.min(equity, Math.max(0, n("reserve")));
+      const usableEquity = Math.max(0, equity - reserve);
+      const loan = Math.max(0, total - usableEquity);
+      const quota = total > 0 ? usableEquity / total * 100 : 0;
+      return { label: "Geschätzter Finanzierungsbedarf", value: money(loan), detail: `${fmt(quota, 1)} % Eigenkapitalquote nach Reserve`, stats: [{ label: "Gesamtkosten", value: money(total) }, { label: "Einsetzbares Eigenkapital", value: money(usableEquity) }, { label: "Zurückbehaltene Reserve", value: money(reserve) }] };
+    }
     default:
       return null;
   }
