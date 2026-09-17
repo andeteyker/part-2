@@ -5,6 +5,8 @@ import { notFound, permanentRedirect } from "next/navigation";
 import { SiteFooter } from "../../components/SiteFooter";
 import { SiteHeader } from "../../components/SiteHeader";
 import { categories, categoryDetails, getCategoryBySlug } from "../../data/tool-registry";
+import { allGuides } from "../../data/guides";
+import { getAssociatedToolSlugs } from "../../data/tool-guide-associations";
 import { absoluteUrl } from "../../lib/site";
 import { CategoryIcon } from "../../components/CategoryIcon";
 import { CardArrow } from "../../components/CardArrow";
@@ -52,6 +54,14 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     ...category.tools.map((tool) => ({ ...tool, href: `/tools/${tool.slug}`, studioKind: undefined })),
     ...studioPages.map((page) => ({ ...page, studioKind: page.kind })),
   ];
+  const categoryToolSlugs = new Set(category.tools.map((tool) => tool.slug));
+  const categoryGuides = allGuides().filter((guide) => {
+    const linkedToolSlugs = [
+      ...(guide.toolSlugs ?? [guide.toolSlug]),
+      ...getAssociatedToolSlugs(guide.slug),
+    ];
+    return linkedToolSlugs.some((toolSlug) => categoryToolSlugs.has(toolSlug));
+  }).slice(0, 6);
 
   const canonical = absoluteUrl(`/nischen/${category.slug}`);
   const schema = {
@@ -105,7 +115,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
         <section className="category-tool-list">
           <div className="section-head">
-            <div><p className="eyebrow"><span /> Spezialisierte Werkzeuge</p><h2>{categoryTools.length} Rechner und Seiten für konkrete Aufgaben</h2></div>
+            <div><p className="eyebrow"><span /> Spezialisierte Werkzeuge</p><h2>Rechner und Seiten für konkrete Aufgaben</h2></div>
           </div>
           <ToolCarousel label={category.name}>
             {categoryTools.map((tool) => <Link href={tool.href} className="tool-card" key={tool.href}>
@@ -114,6 +124,20 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
             </Link>)}
           </ToolCarousel>
         </section>
+
+        {categoryGuides.length > 0 && <section className="guide-related" aria-labelledby={`category-guides-${category.slug}`}>
+          <div className="section-head">
+            <div><p className="eyebrow"><span /> Passende Ratgeber</p><h2 id={`category-guides-${category.slug}`}>Hintergründe, Beispiele und nächste Schritte</h2></div>
+            <Link href="/ratgeber">Alle Ratgeber →</Link>
+          </div>
+          <div className="guide-grid compact">
+            {categoryGuides.map((guide) => <Link href={`/ratgeber/${guide.slug}`} key={guide.slug} className="guide-card">
+              <p>{guide.kind === "pillar" ? "Leitfaden" : guide.cluster}</p>
+              <h3>{guide.title}</h3>
+              <span>{guide.excerpt}</span>
+            </Link>)}
+          </div>
+        </section>}
 
         <section className="category-copy">
           <div><p className="eyebrow"><span /> Thematisch gebündelt</p><h2>Weniger suchen, schneller entscheiden</h2></div>
