@@ -22,7 +22,7 @@ export default function AboutPage() {
     <p>Die Rechner sollen Größenordnungen verständlich machen, Varianten vergleichen und die Vorbereitung auf ein Gespräch erleichtern. Sie ersetzen keine individuelle Rechts-, Steuer-, Finanz- oder medizinische Beratung. Gerade bei persönlichen oder weitreichenden Entscheidungen sollte das Ergebnis mit aktuellen Unterlagen oder fachkundigen Stellen abgeglichen werden.</p>
 
     <h2>Korrekturen und Hinweise</h2>
-    <p>Gesetze, Tarife und Richtwerte verändern sich. Wenn dir eine unklare Erklärung, ein veralteter Wert oder ein Rechenfehler auffällt, schreib bitte an <a href="mailto:mielerik@gmail.com">mielerik@gmail.com</a> und nenne den betroffenen Rechner. So können wir den Hinweis gezielt prüfen.</p>
+    <p>Gesetze, Tarife und Richtwerte verändern sich. Wenn dir eine unklare Erklärung, ein veralteter Wert oder ein Rechenfehler auffällt, schreib bitte an <a href="mailto:info@sofort-tools.de">info@sofort-tools.de</a> und nenne den betroffenen Rechner. So können wir den Hinweis gezielt prüfen.</p>
 
     <h2>Betreiber</h2>
     <p>SofortTools ist ein Angebot von Easysites, Inhaber Erik Miel. Die vollständigen Angaben findest du im <Link href="/impressum">Impressum</Link>; Informationen zum Umgang mit Daten stehen in der <Link href="/datenschutz">Datenschutzerklärung</Link>.</p>
