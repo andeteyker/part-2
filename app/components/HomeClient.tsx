@@ -51,11 +51,11 @@ export function HomeClient({ studioPages }: { studioPages: StudioCatalogItem[] }
         <div className="hero-copy">
           <p className="eyebrow"><span /> Kostenlos · Ohne Anmeldung · Direkt im Browser</p>
           <h1>Kostenlose Online-Rechner.<br /><em>Sofort ein klares Ergebnis.</em></h1>
-          <p className="hero-text">SofortTools bietet {catalog.length} kostenlose Online-Rechner und Werkzeuge für Gehalt, Steuern, Immobilien, Energie, Bilder und Alltag – sofort nutzbar, verständlich erklärt und ohne Anmeldung.</p>
+          <p className="hero-text">SofortTools bietet kostenlose Online-Rechner und Werkzeuge für Gehalt, Steuern, Immobilien, Energie, Bilder und Alltag – sofort nutzbar, verständlich erklärt und ohne Anmeldung.</p>
           <label className="tool-search">
             <span aria-hidden="true">⌕</span>
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Welches Tool brauchst du?" aria-label="Tools durchsuchen" />
-            <kbd>{catalog.length} Tools</kbd>
+            <kbd>Alle Tools</kbd>
           </label>
           <div className="trust-row"><span>✓ Keine Registrierung</span><span>✓ Viele Tools arbeiten lokal</span><span>✓ Mobil optimiert</span></div>
         </div>
@@ -65,7 +65,7 @@ export function HomeClient({ studioPages }: { studioPages: StudioCatalogItem[] }
             <Link href={`/nischen/${categoryDetails[categoryItem.category].slug}`} key={categoryItem.name}>
               <span className="rank">0{index + 1}</span>
               <span className="mini-icon"><CategoryIcon category={categoryItem.category} /></span>
-              <span><strong>{categoryItem.name}</strong><small>{categoryItem.subtitle} · {catalog.filter((tool) => tool.category === categoryItem.category).length} Rechner</small></span>
+              <span><strong>{categoryItem.name}</strong><small>{categoryItem.subtitle}</small></span>
               <b>→</b>
             </Link>
           ))}
@@ -75,7 +75,7 @@ export function HomeClient({ studioPages }: { studioPages: StudioCatalogItem[] }
       <section className="tool-section shell" id="tools">
         <div className="section-head">
           <div><p className="eyebrow"><span /> Nach konkretem Anwendungsfall</p><h2>Finde das passende Sofort-Tool</h2></div>
-          <p>{visible.length} spezialisierte Werkzeuge</p>
+          <p>Spezialisierte Werkzeuge für konkrete Aufgaben</p>
         </div>
         <div className="category-tabs" id="kategorien" role="group" aria-label="Werkzeuge filtern">
           {(["Alle", ...categories] as const).map((item) => (
@@ -89,7 +89,7 @@ export function HomeClient({ studioPages }: { studioPages: StudioCatalogItem[] }
                 <header className="cluster-head">
                   <span className="cluster-icon"><CategoryIcon category={group.name} /></span>
                   <div><p>{group.details.kicker}</p><h3><Link href={`/nischen/${group.details.slug}`}>{group.name}</Link></h3><span>{group.details.description}</span></div>
-                  <Link className="cluster-more" href={`/nischen/${group.details.slug}`}>{group.items.length} Tools →</Link>
+                  <Link className="cluster-more" href={`/nischen/${group.details.slug}`}>Alle Tools →</Link>
                 </header>
                 <ToolCarousel label={group.name}>
                   {group.items.map((tool) => (
