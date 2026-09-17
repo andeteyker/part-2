@@ -360,7 +360,7 @@ test("imprint identifies the operator with a complete service address", async ()
   assert.match(html, /Erik Miel/i);
   assert.match(html, /Habichtweg 4/i);
   assert.match(html, /26835 Hesel/i);
-  assert.match(html, /mielerik@gmail\.com/i);
+  assert.match(html, /info@sofort-tools\.de/i);
   assert.doesNotMatch(html, /muss noch ergänzt werden/i);
 });
 
