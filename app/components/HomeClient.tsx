@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { categories, categoryDetails, tools, type ToolCategory } from "../data/tool-registry";
 import { CategoryIcon } from "./CategoryIcon";
 import { CardArrow } from "./CardArrow";
@@ -21,21 +21,34 @@ type CatalogItem = {
   studioKind?: StudioCatalogItem["kind"];
 };
 
+function matchesQuery(tool: CatalogItem, query: string) {
+  const q = query.trim().toLocaleLowerCase("de");
+  if (!q) return true;
+  const haystack = [tool.title, tool.short, tool.category, ...tool.keywords].join(" ").toLocaleLowerCase("de");
+  return haystack.includes(q);
+}
+
 export function HomeClient({ studioPages }: { studioPages: StudioCatalogItem[] }) {
   const [query, setQuery] = useState("");
+  const [submittedQuery, setSubmittedQuery] = useState("");
   const [category, setCategory] = useState<ToolCategory | "Alle">("Alle");
   const catalog = useMemo<CatalogItem[]>(() => [
     ...tools.map((tool) => ({ ...tool, href: `/tools/${tool.slug}`, keywords: tool.keywords })),
     ...studioPages.map((page) => ({ ...page, keywords: [page.kind], studioKind: page.kind })),
   ], [studioPages]);
+
+  const liveMatchCount = useMemo(
+    () => catalog.filter((tool) => matchesQuery(tool, query)).length,
+    [catalog, query],
+  );
+
   const visible = useMemo(() => {
-    const q = query.trim().toLocaleLowerCase("de");
     return catalog.filter((tool) => {
       const inCategory = category === "Alle" || tool.category === category;
-      const haystack = [tool.title, tool.short, tool.category, ...tool.keywords].join(" ").toLocaleLowerCase("de");
-      return inCategory && (!q || haystack.includes(q));
+      return inCategory && matchesQuery(tool, submittedQuery);
     });
-  }, [catalog, query, category]);
+  }, [catalog, submittedQuery, category]);
+
   const groups = categories.map((name) => ({ name, details: categoryDetails[name], items: visible.filter((tool) => tool.category === name) })).filter((group) => group.items.length);
   const featuredCategories: { name: string; category: ToolCategory; subtitle: string }[] = [
     { name: "Handwerker & Renovierung", category: "Handwerker & Renovierung", subtitle: "Sanierung, Ausbau und Angebote" },
@@ -45,6 +58,13 @@ export function HomeClient({ studioPages }: { studioPages: StudioCatalogItem[] }
     { name: "Energie & Verbrauch", category: "Energie & Umwelt", subtitle: "Strom, Heizung, Gas und Solar" },
   ];
 
+  function submitSearch(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSubmittedQuery(query.trim());
+    setCategory("Alle");
+    requestAnimationFrame(() => document.getElementById("tools")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  }
+
   return (
     <>
       <section className="hero shell">
@@ -52,11 +72,11 @@ export function HomeClient({ studioPages }: { studioPages: StudioCatalogItem[] }
           <p className="eyebrow"><span /> Kostenlos · Ohne Anmeldung · Direkt im Browser</p>
           <h1>Kostenlose Online-Rechner.<br /><em>Sofort ein klares Ergebnis.</em></h1>
           <p className="hero-text">SofortTools bietet kostenlose Online-Rechner und Werkzeuge für Gehalt, Steuern, Immobilien, Energie, Bilder und Alltag – sofort nutzbar, verständlich erklärt und ohne Anmeldung.</p>
-          <label className="tool-search">
+          <form className="tool-search" onSubmit={submitSearch} role="search">
             <span aria-hidden="true">⌕</span>
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Welches Tool brauchst du?" aria-label="Tools durchsuchen" />
-            <kbd>Alle Tools</kbd>
-          </label>
+            <kbd aria-live="polite">{query.trim() ? `${liveMatchCount} ${liveMatchCount === 1 ? "Treffer" : "Treffer"}` : "Alle Tools"}</kbd>
+          </form>
           <div className="trust-row"><span>✓ Keine Registrierung</span><span>✓ Viele Tools arbeiten lokal</span><span>✓ Mobil optimiert</span></div>
         </div>
         <aside className="hero-panel" aria-label="Wichtige Kategorien">
@@ -74,8 +94,8 @@ export function HomeClient({ studioPages }: { studioPages: StudioCatalogItem[] }
 
       <section className="tool-section shell" id="tools">
         <div className="section-head">
-          <div><p className="eyebrow"><span /> Nach konkretem Anwendungsfall</p><h2>Finde das passende Sofort-Tool</h2></div>
-          <p>Spezialisierte Werkzeuge für konkrete Aufgaben</p>
+          <div><p className="eyebrow"><span /> Nach konkretem Anwendungsfall</p><h2>{submittedQuery ? `${visible.length} Treffer für „${submittedQuery}“` : "Finde das passende Sofort-Tool"}</h2></div>
+          <p>{submittedQuery ? "Suchergebnisse" : "Spezialisierte Werkzeuge für konkrete Aufgaben"}</p>
         </div>
         <div className="category-tabs" id="kategorien" role="group" aria-label="Werkzeuge filtern">
           {(["Alle", ...categories] as const).map((item) => (
