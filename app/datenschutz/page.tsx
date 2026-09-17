@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 export default function Datenschutz() {
   return <><SiteHeader /><main className="legal-page shell">
     <p className="eyebrow"><span /> Rechtliches</p><h1>Datenschutzerklärung</h1>
-    <h2>1. Verantwortlicher</h2><p>Easysites, Inhaber Erik Miel<br />Habichtweg 4<br />26835 Hesel<br />E-Mail: <a href="mailto:mielerik@gmail.com">mielerik@gmail.com</a></p>
+    <h2>1. Verantwortlicher</h2><p>Easysites, Inhaber Erik Miel<br />Habichtweg 4<br />26835 Hesel<br />E-Mail: <a href="mailto:info@sofort-tools.de">info@sofort-tools.de</a></p>
     <h2>2. Lokale Verarbeitung</h2><p>Die meisten SofortTools verarbeiten Eingaben ausschließlich lokal im Browser. Texte, Bilder, Zahlenwerte und erzeugte Passwörter werden dabei nicht an uns übertragen. Berechnungen bleiben auf dem verwendeten Gerät.</p>
     <h2>3. Server-Protokolle</h2><p>Beim Aufruf der Website verarbeitet der Hostinganbieter technisch notwendige Verbindungsdaten wie IP-Adresse, Zeitpunkt, aufgerufene Seite und Browsertyp. Dies dient der sicheren und stabilen Bereitstellung. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.</p>
     <h2>4. Externe Abfragen</h2><p>Das Werkzeug „Meine IP“ fragt die öffentliche IP-Adresse über den Dienst ipify ab. Dabei entsteht eine direkte Verbindung zu diesem Anbieter. Andere lokale Werkzeuge benötigen keine externe Übertragung.</p>
