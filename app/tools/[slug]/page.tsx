@@ -83,7 +83,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
       {
         "@type": "WebApplication",
         "@id": `${canonical}#app`,
-        name: tool.title,
+        name: searchIntent?.title ?? tool.title,
         url: canonical,
         applicationCategory: "UtilitiesApplication",
         operatingSystem: "Web",
@@ -122,8 +122,8 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
 
         <section className="tool-hero">
           <p className="eyebrow"><span /> {tool.eyebrow}</p>
-          <h1>{tool.title}</h1>
-          <p>{tool.description}</p>
+          <h1>{searchIntent?.title ?? tool.title}</h1>
+          <p>{searchIntent?.description ?? tool.description}</p>
           <div className="tool-badges"><span>✓ Kostenlos</span><span>✓ Ohne Anmeldung</span><span>✓ Sofortiges Ergebnis</span></div>
         </section>
 
