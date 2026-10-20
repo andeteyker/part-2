@@ -20,6 +20,7 @@ import { ToolIcon } from "../../components/ToolIcon";
 import { CardArrow } from "../../components/CardArrow";
 import { ToolResultActions } from "../../components/ToolResultActions";
 import { getToolSources } from "../../data/tool-sources";
+import { searchIntentBySlug } from "../../data/search-intent";
 
 export function generateStaticParams() {
   return tools.map((tool) => ({ slug: tool.slug }));
@@ -31,18 +32,19 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!tool) return {};
 
   const canonical = `/tools/${tool.slug}`;
+  const searchIntent = searchIntentBySlug[tool.slug];
   return {
-    title: tool.title,
-    description: tool.description,
+    title: searchIntent?.title ?? tool.title,
+    description: searchIntent?.description ?? tool.description,
     alternates: { canonical, languages: { "de-DE": canonical, "x-default": canonical } },
     openGraph: {
-      title: `${tool.title} – kostenlos online`,
-      description: tool.description,
+      title: searchIntent?.title ?? `${tool.title} – kostenlos online`,
+      description: searchIntent?.description ?? tool.description,
       url: canonical,
     },
     twitter: {
-      title: `${tool.title} – kostenlos online`,
-      description: tool.description,
+      title: searchIntent?.title ?? `${tool.title} – kostenlos online`,
+      description: searchIntent?.description ?? tool.description,
     },
   };
 }
@@ -65,6 +67,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
   const editorial = getToolEditorial(tool, seo, guides[0]?.excerpt);
   const usefulFaq = getUsefulFaq(tool, seo);
   const sources = getToolSources(tool.slug);
+  const searchIntent = searchIntentBySlug[tool.slug];
 
   const runner = {
     core: <ToolRunner slug={tool.slug} />,
@@ -87,7 +90,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         inLanguage: "de-DE",
         isAccessibleForFree: true,
         offers: { "@type": "Offer", price: "0", priceCurrency: "EUR" },
-        description: tool.description,
+        description: searchIntent?.description ?? tool.description,
       },
       {
         "@type": "BreadcrumbList",
@@ -126,6 +129,14 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
 
         {runner}
         <ToolResultActions title={tool.title} />
+
+        {searchIntent && <section className="tool-editorial" aria-labelledby={`search-intent-${tool.slug}`}>
+          <header className="tool-editorial-head">
+            <div><p className="eyebrow"><span /> Direkt beantwortet</p><h2 id={`search-intent-${tool.slug}`}>{searchIntent.heading}</h2></div>
+          </header>
+          <p className="tool-editorial-lead">{searchIntent.answer}</p>
+          <p>{searchIntent.example}</p>
+        </section>}
 
         <section className={`calculation-guide${isWorkflow ? " workflow-guide" : ""}`} aria-labelledby={`explanation-${tool.slug}`}>
           <header className="calculation-guide-head">
